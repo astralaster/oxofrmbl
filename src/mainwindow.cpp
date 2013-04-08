@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <iostream>
+#include "plugins/protocols/xmpp/XmppContact.h"
 
 using namespace std;
 
@@ -25,15 +25,17 @@ void MainWindow::connected()
 
 void MainWindow::messageReceived(QString msg)
 {
-    ui->messageDisplay->setPlainText(ui->messageDisplay->toPlainText()+"\n"+msg);
+    ui->messageDisplay->setPlainText(ui->messageDisplay->toPlainText()+msg+"\n");
 }
 
 void MainWindow::on_connectButton_clicked()
 {
-    emit connectToServer(ui->usernameEdit->text() +"@"+ui->addressEdit->text(), ui->passwordEdit->text());
+    emit connectToServer(ui->addressEdit->text(), ui->usernameEdit->text(), ui->passwordEdit->text());
 }
 
 void MainWindow::on_sendButton_clicked()
 {
-    emit sendMessage(ui->receiverEdit->text(), ui->messageEdit->toPlainText());
+    ChatContact *to = new XmppContact(ui->receiverEdit->text());
+    ChatMessage msg = ChatMessage(to, ui->messageEdit->toPlainText());
+    emit sendMessage(msg);
 }

@@ -10,14 +10,15 @@ SimpleXmppClient::SimpleXmppClient()
     connect(client, SIGNAL(messageReceived(const QXmppMessage &)), this, SLOT(messageReceivedSlot(const QXmppMessage &)));
 }
 
-void SimpleXmppClient::connectToServer(QString jabberId, QString password)
+void SimpleXmppClient::connectToServer(const QString &address, const QString &user, const QString &password)
 {
-    client->connectToServer(jabberId, password);
+    client->connectToServer(user+"@"+address, password);
 }
 
-void SimpleXmppClient::sendMessage(QString to, QString message)
+
+void SimpleXmppClient::sendMessage(const ChatMessage &msg)
 {
-    client->sendMessage(to, message);
+    client->sendMessage(msg.getContact()->getId(), msg.getBody());
 }
 
 void SimpleXmppClient::connectedSlot()

@@ -250,7 +250,6 @@
    </layout>
    <zorder>connectionFrame</zorder>
    <zorder>messageFrame</zorder>
-   <zorder>gridLayoutWidget</zorder>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">

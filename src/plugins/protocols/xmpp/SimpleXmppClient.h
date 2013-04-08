@@ -4,7 +4,12 @@
 #include "QXmppClient.h"
 #include "QXmppMessage.h"
 
-class SimpleXmppClient : public QObject
+#include "ChatMessage.h"
+#include "ChatClient.h"
+
+#include "XmppContact.h"
+
+class SimpleXmppClient : public ChatClient
 {
     Q_OBJECT
 
@@ -12,8 +17,8 @@ public:
     SimpleXmppClient();
 
 public slots:
-    void connectToServer(QString address, QString port);
-    void sendMessage(QString to, QString message);
+    virtual void connectToServer(const QString &address, const QString &user, const QString &password);
+    virtual void sendMessage(const ChatMessage &msg);
 
 private slots:
     void connectedSlot();

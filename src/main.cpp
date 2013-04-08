@@ -3,7 +3,7 @@
 
 #include <QPushButton>
 
-#include "SimpleXmppClient.h"
+#include "plugins/protocols/xmpp/SimpleXmppClient.h"
 
 #include "QXmppClient.h"
 #include "QXmppLogger.h"
@@ -14,12 +14,13 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    SimpleXmppClient client;
+    ChatClient *client = new SimpleXmppClient();
 
-    w.connect(&w, SIGNAL(connectToServer(QString,QString)), &client, SLOT(connectToServer(QString,QString)));
-    w.connect(&w, SIGNAL(sendMessage(QString,QString)), &client, SLOT(sendMessage(QString,QString)));
-    client.connect(&client, SIGNAL(connected()), &w, SLOT(connected()));
-    client.connect(&client, SIGNAL(messageReceived(QString)), &w, SLOT(messageReceived(QString)));
+    w.connect(&w, SIGNAL(connectToServer(QString,QString,QString)), client, SLOT(connectToServer(QString,QString,QString)));
+    w.connect(&w, SIGNAL(sendMessage(const ChatMessage &)), client, SLOT(sendMessage(const ChatMessage &)));
+
+    client->connect(client, SIGNAL(connected()), &w, SLOT(connected()));
+    client->connect(client, SIGNAL(messageReceived(QString)), &w, SLOT(messageReceived(QString)));
 
     
     return a.exec();

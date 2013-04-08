@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <ChatMessage.h>
 
 namespace Ui {
 class MainWindow;
@@ -24,8 +25,8 @@ private slots:
     void on_sendButton_clicked();
 
 signals:
-    void connectToServer(QString jabberId, QString password);
-    void sendMessage(QString to, QString message);
+    void connectToServer(const QString &address, const QString &user, const QString &password);
+    void sendMessage(const ChatMessage &msg);
 
 private:
     Ui::MainWindow *ui;
