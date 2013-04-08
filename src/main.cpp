@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     w.connect(&w, SIGNAL(connectToServer(QString,QString)), &client, SLOT(connectToServer(QString,QString)));
     w.connect(&w, SIGNAL(sendMessage(QString,QString)), &client, SLOT(sendMessage(QString,QString)));
     client.connect(&client, SIGNAL(connected()), &w, SLOT(connected()));
+    client.connect(&client, SIGNAL(messageReceived(QString)), &w, SLOT(messageReceived(QString)));
 
     
     return a.exec();

@@ -20,6 +20,12 @@ MainWindow::~MainWindow()
 void MainWindow::connected()
 {
     ui->messageFrame->setEnabled(true);
+    ui->connectionFrame->hide();
+}
+
+void MainWindow::messageReceived(QString msg)
+{
+    ui->messageDisplay->setPlainText(ui->messageDisplay->toPlainText()+"\n"+msg);
 }
 
 void MainWindow::on_connectButton_clicked()

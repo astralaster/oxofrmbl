@@ -17,10 +17,10 @@ public:
 
 public slots:
     void connected();
+    void messageReceived(QString);
 
 private slots:
     void on_connectButton_clicked();
-
     void on_sendButton_clicked();
 
 signals:

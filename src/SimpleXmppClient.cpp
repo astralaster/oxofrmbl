@@ -1,15 +1,17 @@
 #include "SimpleXmppClient.h"
 
+
 SimpleXmppClient::SimpleXmppClient()
 {
     client = new QXmppClient();
     client->logger()->setLoggingType(QXmppLogger::StdoutLogging);
+
+    connect(client, SIGNAL(connected()), this, SLOT(connectedSlot()));
+    connect(client, SIGNAL(messageReceived(const QXmppMessage &)), this, SLOT(messageReceivedSlot(const QXmppMessage &)));
 }
 
 void SimpleXmppClient::connectToServer(QString jabberId, QString password)
 {
-    connect(client, SIGNAL(connected()), this, SLOT(connectedSlot()));
-
     client->connectToServer(jabberId, password);
 }
 
@@ -21,4 +23,9 @@ void SimpleXmppClient::sendMessage(QString to, QString message)
 void SimpleXmppClient::connectedSlot()
 {
     emit connected();
+}
+
+void SimpleXmppClient::messageReceivedSlot(const QXmppMessage &msg)
+{
+    emit messageReceived(msg.body());
 }

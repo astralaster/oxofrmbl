@@ -2,6 +2,7 @@
 #define SIMPLEXMPPCLIENT_H
 
 #include "QXmppClient.h"
+#include "QXmppMessage.h"
 
 class SimpleXmppClient : public QObject
 {
@@ -16,9 +17,11 @@ public slots:
 
 private slots:
     void connectedSlot();
+    void messageReceivedSlot(const QXmppMessage &message);
 
 signals:
     void connected();
+    void messageReceived(QString msg);
 
 private:
     QXmppClient *client;
