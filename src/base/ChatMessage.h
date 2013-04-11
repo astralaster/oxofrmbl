@@ -12,7 +12,7 @@ public:
     QString getBody() const {return body;}
 
 private:
-    ChatContact *contact;
+    ChatContact *contact; // owned by this class!
     QString body;
     
 };

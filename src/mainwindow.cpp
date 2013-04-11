@@ -30,12 +30,19 @@ void MainWindow::messageReceived(QString msg)
 
 void MainWindow::on_connectButton_clicked()
 {
-    emit connectToServer(ui->addressEdit->text(), ui->usernameEdit->text(), ui->passwordEdit->text());
+    QString address = ui->addressEdit->text();
+    QString username = ui->usernameEdit->text();
+    QString password = ui->passwordEdit->text();
+
+    emit connectToServer(address, username, password);
 }
 
 void MainWindow::on_sendButton_clicked()
 {
     ChatContact *to = new XmppContact(ui->receiverEdit->text());
     ChatMessage msg = ChatMessage(to, ui->messageEdit->toPlainText());
+
+    ui->messageDisplay->setPlainText(ui->messageDisplay->toPlainText()+msg.getBody()+"\n");
+
     emit sendMessage(msg);
 }

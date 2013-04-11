@@ -1,8 +1,8 @@
 #ifndef SIMPLEXMPPCLIENT_H
 #define SIMPLEXMPPCLIENT_H
 
-#include "QXmppClient.h"
-#include "QXmppMessage.h"
+#include <qxmpp/QXmppClient.h>
+#include <qxmpp/QXmppMessage.h>
 
 #include "ChatMessage.h"
 #include "ChatClient.h"
@@ -15,6 +15,7 @@ class SimpleXmppClient : public ChatClient
 
 public:
     SimpleXmppClient();
+    ~SimpleXmppClient();
 
 public slots:
     virtual void connectToServer(const QString &address, const QString &user, const QString &password);

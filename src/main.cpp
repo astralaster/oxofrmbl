@@ -5,8 +5,8 @@
 
 #include "plugins/protocols/xmpp/SimpleXmppClient.h"
 
-#include "QXmppClient.h"
-#include "QXmppLogger.h"
+#include <qxmpp/QXmppClient.h>
+#include <qxmpp/QXmppLogger.h>
 
 int main(int argc, char *argv[])
 {
@@ -21,7 +21,6 @@ int main(int argc, char *argv[])
 
     client->connect(client, SIGNAL(connected()), &w, SLOT(connected()));
     client->connect(client, SIGNAL(messageReceived(QString)), &w, SLOT(messageReceived(QString)));
-
     
     return a.exec();
 }
