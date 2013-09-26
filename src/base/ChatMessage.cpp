@@ -1,7 +1,12 @@
 #include "ChatMessage.h"
 
 
-ChatMessage::ChatMessage(ChatContact *contact, const QString &body) :
+ChatMessage::ChatMessage(Contact *contact, const QString &body) :
     contact(contact), body(body)
 {
+}
+
+const Account *ChatMessage::getSender() const
+{
+    return contact->getAccount();
 }

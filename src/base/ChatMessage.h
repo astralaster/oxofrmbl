@@ -1,18 +1,26 @@
 #ifndef CHATMESSAGE_H
 #define CHATMESSAGE_H
 
-#include "ChatContact.h"
+#include "Contact.h"
+#include "Account.h"
 
-class ChatMessage
+class Contact;
+class Account;
+
+class ChatMessage: public QObject
 {
+    Q_OBJECT
 
 public:
-    ChatMessage(ChatContact *contact, const QString &body);
-    ChatContact *getContact() const {return contact;}
+    ChatMessage(Contact *contact, const QString &body);
+
+    const Account *getSender() const;
+    Contact *getRecipient() const {return contact;}
+
     QString getBody() const {return body;}
 
 private:
-    ChatContact *contact; // owned by this class!
+    Contact *contact;
     QString body;
     
 };

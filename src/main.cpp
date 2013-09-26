@@ -1,26 +1,29 @@
-#include "mainwindow.h"
+#include "gui/ContactListWindow.h"
+
 #include <QApplication>
 
-#include <QPushButton>
+#include "plugins/protocols/xmpp/XmppAccount.h"
+#include "plugins/protocols/xmpp/XmppContact.h"
 
-#include "plugins/protocols/xmpp/SimpleXmppClient.h"
-
-#include <qxmpp/QXmppClient.h>
-#include <qxmpp/QXmppLogger.h>
+#include "ContactList.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
 
-    ChatClient *client = new SimpleXmppClient();
+    Account *account = new XmppAccount("jabber.ccc.de", "dc2_test", "blubbb");
+    account->connectToServer();
 
-    w.connect(&w, SIGNAL(connectToServer(QString,QString,QString)), client, SLOT(connectToServer(QString,QString,QString)));
-    w.connect(&w, SIGNAL(sendMessage(const ChatMessage &)), client, SLOT(sendMessage(const ChatMessage &)));
+    ContactList cl(account);
 
-    client->connect(client, SIGNAL(connected()), &w, SLOT(connected()));
-    client->connect(client, SIGNAL(messageReceived(QString)), &w, SLOT(messageReceived(QString)));
-    
+    ContactListWindow clw;
+    clw.getList()->setModel(&cl);
+    clw.show();
+
+    a.connect(account, &Account::connected, &cl, &ContactList::retrieveContacts);
+
+    a.connect(&clw, &ContactListWindow::windowClosed, account, &Account::disconnectFromServer);
+    a.connect(&clw, &ContactListWindow::windowClosed, QApplication::exit);
+
     return a.exec();
 }

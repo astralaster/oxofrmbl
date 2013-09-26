@@ -1,14 +1,17 @@
 #ifndef XMPPCONTACT_H
 #define XMPPCONTACT_H
 
-#include "ChatContact.h"
+#include "Contact.h"
 
-class XmppContact : public ChatContact
+class XmppContact : public Contact
 {
 public:
-    XmppContact(const QString &name);
-    XmppContact(const QString &server, const QString &user);
-    virtual QString getId() const {return user+"@"+server;}
+    XmppContact(const Account *acc, const QString &name);
+    XmppContact(const Account *acc, const QString &server, const QString &user);
+
+    QString getDisplayName() const override {return getId();}
+
+    QString getId() const {return user+"@"+server;}
 
 private:
     QString server;
