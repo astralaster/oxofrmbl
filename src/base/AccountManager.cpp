@@ -3,3 +3,8 @@
 AccountManager::AccountManager()
 {
 }
+
+QList<Account *> AccountManager::getAccounts() const
+{
+    return accounts;
+}

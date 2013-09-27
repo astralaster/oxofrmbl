@@ -20,7 +20,7 @@ XmppAccount::~XmppAccount()
     delete client;
 }
 
-QList<Contact*> XmppAccount::getContacts() const
+QList<Contact*> XmppAccount::getContacts()
 {
     QList<Contact*> contacts;
 
@@ -44,7 +44,7 @@ void XmppAccount::disconnectFromServer()
 
 void XmppAccount::sendMessage(const ChatMessage *msg)
 {
-    client->sendMessage(msg->getRecipient()->getId(), msg->getBody());
+    client->sendMessage(msg->getRemoteParticipant()->getId(), msg->getBody());
 }
 
 void XmppAccount::connectedSlot()
@@ -54,5 +54,6 @@ void XmppAccount::connectedSlot()
 
 void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
 {
-    emit messageReceived(msg.body());
+    ChatMessage *message = new ChatMessage(new XmppContact(this, msg.from()), true, msg.body());
+    emit messageReceived(message);
 }

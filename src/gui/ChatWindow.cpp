@@ -4,20 +4,20 @@
 #include <QDebug>
 #include <QKeyEvent>
 
-ChatWindow::ChatWindow(Contact *contact, QWidget *parent) :
-    QMainWindow(parent), contact(contact),
+ChatWindow::ChatWindow(Conversation *conversation, QWidget *parent) :
+    QMainWindow(parent), conversation(conversation),
     ui(new Ui::ChatWindow)
 {
     ui->setupUi(this);
 
     ui->messageEdit->installEventFilter(this);
 
-    setWindowTitle(contact->getDisplayName());
+    setWindowTitle(conversation->getContact()->getDisplayName());
 
     connect(ui->sendButton, &QPushButton::clicked, this, &ChatWindow::sendMessage);
 
-    connect(this, &ChatWindow::messageSent, contact->getAccount(), &Account::sendMessage);
-    connect(contact->getAccount(), &Account::messageReceived, this, &ChatWindow::messageReceived);
+    connect(this, &ChatWindow::messageSent, conversation, &Conversation::sendMessage);
+    connect(conversation, &Conversation::messageReceived, this, &ChatWindow::messageReceived);
 }
 
 ChatWindow::~ChatWindow()
@@ -25,9 +25,9 @@ ChatWindow::~ChatWindow()
     delete ui;
 }
 
-void ChatWindow::messageReceived(const QString &msg)
+void ChatWindow::messageReceived(const ChatMessage *msg)
 {
-    ui->messageLog->addItem(msg);
+    ui->messageLog->addItem(msg->getBody());
 }
 
 bool ChatWindow::eventFilter(QObject *o, QEvent *e)
@@ -48,7 +48,7 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
 
 void ChatWindow::sendMessage()
 {
-    ChatMessage *msg = new ChatMessage(contact, ui->messageEdit->toPlainText());
+    ChatMessage *msg = new ChatMessage(conversation->getContact(), false, ui->messageEdit->toPlainText());
     ui->messageLog->addItem(msg->getBody());
 
     ui->messageEdit->clear();

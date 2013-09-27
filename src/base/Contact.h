@@ -3,23 +3,22 @@
 
 #include <QObject>
 
+#include "common.h"
 #include "Account.h"
-
-class Account;
 
 class Contact : public QObject
 {
     Q_OBJECT
 public:
-    Contact(const Account *acc);
+    Contact(Account *acc);
 
-    const Account *getAccount() const {return account;}
+    Account *getAccount();
 
     virtual QString getId() const = 0;
-    virtual QString getDisplayName() const {return nickname;}
+    virtual QString getDisplayName() const;
 
 protected:
-    const Account *account;
+    Account *account;
     QString nickname;
     
 };

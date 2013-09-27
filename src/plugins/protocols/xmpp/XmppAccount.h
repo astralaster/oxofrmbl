@@ -13,7 +13,7 @@ public:
     XmppAccount(const QString &server, const QString &user, const QString &password);
     ~XmppAccount();
 
-    QList<Contact*> getContacts() const;
+    QList<Contact*> getContacts() override;
 
 public slots:
     virtual bool connectToServer() override;

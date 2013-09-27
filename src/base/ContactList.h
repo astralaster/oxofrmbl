@@ -2,8 +2,8 @@
 #define CONTACTLIST_H
 
 #include <QAbstractItemModel>
-#include <QSharedPointer>
 
+#include "common.h"
 #include "Contact.h"
 
 class ContactList : public QAbstractListModel
@@ -12,7 +12,7 @@ class ContactList : public QAbstractListModel
 public:
     ContactList(Account *account);
 
-    void addContact(Contact *contact) {contacts.append(contact);}
+    void addContact(Contact *contact);
     Contact *getContact(int index) const;
 
 

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "Contact.h"
+#include "Conversation.h"
 
 namespace Ui {
 class ChatWindow;
@@ -14,20 +15,20 @@ class ChatWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit ChatWindow(Contact *contact, QWidget *parent = 0);
+    explicit ChatWindow(Conversation *conversation, QWidget *parent = 0);
     ~ChatWindow();
 
 signals:
     void messageSent(const ChatMessage *msg);
 
 public slots:
-    void messageReceived(const QString &msg);
+    void messageReceived(const ChatMessage *msg);
     bool eventFilter(QObject *o, QEvent *e) override;
 
 protected:
     void sendMessage();
 
-    Contact *contact;
+    Conversation *conversation;
     Ui::ChatWindow *ui;
 
 };

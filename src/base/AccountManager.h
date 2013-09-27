@@ -3,6 +3,7 @@
 
 #include <QList>
 
+#include "common.h"
 #include "Account.h"
 
 class AccountManager
@@ -11,7 +12,7 @@ public:
     AccountManager();
 
     void addAccount(Account *a);
-    QList<Account*> getAccounts() const {return accounts;}
+    QList<Account*> getAccounts() const;
 
 private:
     QList<Account*> accounts;

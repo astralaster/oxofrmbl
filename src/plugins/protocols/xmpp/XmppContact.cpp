@@ -1,17 +1,33 @@
 #include <QStringList>
 
+#include <QDebug>
+
 #include "XmppContact.h"
 
-XmppContact::XmppContact(const Account *acc, const QString &name) : XmppContact(acc, name.split("@")[1], name.split("@")[0])
+XmppContact::XmppContact(Account *acc, const QString &jid) : Contact(acc), jid(jid)
 {
-    //QStringList jidParts = name.split("@");
-    //server = jidParts[1];
-    //user = jidParts[0];
 }
 
-XmppContact::XmppContact(const Account *acc, const QString &server, const QString &user) :
-    Contact(acc),
-    server(server), user(user)
+XmppContact::XmppContact(Account *acc, const QString &server, const QString &user) :
+    XmppContact(acc, server+"@"+user)
 {
+}
+
+QString XmppContact::getId() const
+{
+    return parseJabberId(jid)[0] +"@"+ parseJabberId(jid)[1];
+}
+
+QStringList XmppContact::parseJabberId(const QString jid)
+{
+    QRegExp rxp("(.+)@(.+)/(.+)");
+
+    if(!rxp.exactMatch(jid)) {
+        rxp.setPattern("(.+)@(.+)");
+    }
+
+    rxp.indexIn(jid);
+
+    return QStringList({rxp.cap(1), rxp.cap(2), rxp.cap(4)});
 }
 

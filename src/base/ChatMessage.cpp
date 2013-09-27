@@ -1,12 +1,22 @@
 #include "ChatMessage.h"
 
 
-ChatMessage::ChatMessage(Contact *contact, const QString &body) :
-    contact(contact), body(body)
+ChatMessage::ChatMessage(Contact *remoteParticipant, bool incoming, const QString &body) :
+    remoteParticipant(remoteParticipant), incoming(incoming), body(body)
 {
 }
 
-const Account *ChatMessage::getSender() const
+const Account *ChatMessage::getLocalParticipant() const
 {
-    return contact->getAccount();
+    return remoteParticipant->getAccount();
+}
+
+const Contact *ChatMessage::getRemoteParticipant() const
+{
+    return remoteParticipant;
+}
+
+QString ChatMessage::getBody() const
+{
+    return body;
 }

@@ -5,11 +5,9 @@
 #include <QMap>
 #include <QString>
 
+#include "common.h"
 #include "ChatMessage.h"
 #include "Contact.h"
-
-class Contact;
-class ChatMessage;
 
 class Account : public QObject
 {
@@ -17,10 +15,10 @@ class Account : public QObject
 public:
     Account();
 
-    virtual QList<Contact*> getContacts() const = 0;
+    virtual QList<Contact*> getContacts() = 0;
 
 signals:
-    void messageReceived(const QString &msg);
+    void messageReceived(const ChatMessage *msg);
     void connected();
 
 public slots:

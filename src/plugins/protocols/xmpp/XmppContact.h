@@ -6,16 +6,16 @@
 class XmppContact : public Contact
 {
 public:
-    XmppContact(const Account *acc, const QString &name);
-    XmppContact(const Account *acc, const QString &server, const QString &user);
+    XmppContact(Account *acc, const QString &jid);
+    XmppContact(Account *acc, const QString &server, const QString &user);
 
     QString getDisplayName() const override {return getId();}
+    QString getId() const;
 
-    QString getId() const {return user+"@"+server;}
+    static QStringList parseJabberId(const QString jid);
 
 private:
-    QString server;
-    QString user;
+    QString jid;
 };
 
 #endif // XMPPCONTACT_H

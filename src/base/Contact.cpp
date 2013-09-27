@@ -1,5 +1,15 @@
 #include "Contact.h"
 
-Contact::Contact(const Account *acc) : account(acc)
+Contact::Contact(Account *acc) : account(acc)
 {
+}
+
+Account *Contact::getAccount()
+{
+    return account;
+}
+
+QString Contact::getDisplayName() const
+{
+    return nickname;
 }

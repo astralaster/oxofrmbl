@@ -7,6 +7,11 @@ ContactList::ContactList(Account *account) : account(account)
 
 }
 
+void ContactList::addContact(Contact *contact)
+{
+    contacts.append(contact);
+}
+
 Contact *ContactList::getContact(int index) const
 {
     return contacts[index];

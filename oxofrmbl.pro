@@ -24,7 +24,8 @@ SOURCES += src/main.cpp\
     src/plugins/protocols/xmpp/XmppAccount.cpp \
     src/gui/ChatWindow.cpp \
     src/gui/ChatLogWidget.cpp \
-    src/ApplicationController.cpp
+    src/ApplicationController.cpp \
+    src/base/Conversation.cpp
 
 
 HEADERS += \
@@ -38,7 +39,9 @@ HEADERS += \
     src/plugins/protocols/xmpp/XmppAccount.h \
     src/gui/ChatWindow.h \
     src/gui/ChatLogWidget.h \
-    src/ApplicationController.h
+    src/ApplicationController.h \
+    src/base/Conversation.h \
+    src/common.h
 
 FORMS += \
     src/gui/ContactListWindow.ui \

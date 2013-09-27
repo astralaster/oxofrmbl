@@ -1,26 +1,28 @@
 #ifndef CHATMESSAGE_H
 #define CHATMESSAGE_H
 
-#include "Contact.h"
+#include "common.h"
+#include "Conversation.h"
 #include "Account.h"
-
-class Contact;
-class Account;
 
 class ChatMessage: public QObject
 {
     Q_OBJECT
 
 public:
-    ChatMessage(Contact *contact, const QString &body);
+    ChatMessage(Contact *remoteParticipant, bool incoming, const QString &body);
 
-    const Account *getSender() const;
-    Contact *getRecipient() const {return contact;}
+    bool isIncoming() const {return incoming;}
 
-    QString getBody() const {return body;}
+    const Account *getLocalParticipant() const;
+    const Contact *getRemoteParticipant() const;
+
+    QString getBody() const;
 
 private:
-    Contact *contact;
+    Contact *remoteParticipant;
+
+    bool incoming;
     QString body;
     
 };
