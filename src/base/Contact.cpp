@@ -1,6 +1,6 @@
 #include "Contact.h"
 
-Contact::Contact(Account *acc) : account(acc)
+Contact::Contact(Account *acc) : QObject(acc), account(acc)
 {
 }
 

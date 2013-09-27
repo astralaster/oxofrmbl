@@ -15,6 +15,8 @@ public:
     void addContact(Contact *contact);
     Contact *getContact(int index) const;
 
+    Account *getAccount() const;
+
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

@@ -13,6 +13,11 @@ XmppContact::XmppContact(Account *acc, const QString &server, const QString &use
 {
 }
 
+QString XmppContact::getDisplayName() const
+{
+    return getId();
+}
+
 QString XmppContact::getId() const
 {
     return parseJabberId(jid)[0] +"@"+ parseJabberId(jid)[1];

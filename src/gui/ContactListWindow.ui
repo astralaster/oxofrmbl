@@ -16,7 +16,54 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QListView" name="contactList"/>
+     <widget class="QWidget" name="widget" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QCheckBox" name="showOffline">
+         <property name="text">
+          <string>Show Offline</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="ContactListWidget" name="contactList"/>
+    </item>
+    <item>
+     <widget class="QComboBox" name="status">
+      <item>
+       <property name="text">
+        <string>Online</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Away</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Offline</string>
+       </property>
+      </item>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -30,8 +77,14 @@
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ContactListWidget</class>
+   <extends>QListView</extends>
+   <header>gui/widgets/ContactListWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

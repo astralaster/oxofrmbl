@@ -2,7 +2,7 @@
 #define CHATMESSAGE_H
 
 #include "common.h"
-#include "Conversation.h"
+#include "Chat.h"
 #include "Account.h"
 
 class ChatMessage: public QObject
@@ -10,17 +10,19 @@ class ChatMessage: public QObject
     Q_OBJECT
 
 public:
-    ChatMessage(Contact *remoteParticipant, bool incoming, const QString &body);
+    ChatMessage(Chat *chat, bool incoming, const QString &body);
 
     bool isIncoming() const {return incoming;}
 
     const Account *getLocalParticipant() const;
     const Contact *getRemoteParticipant() const;
 
+    bool isEmpty() const;
+
     QString getBody() const;
 
 private:
-    Contact *remoteParticipant;
+    Chat *chat;
 
     bool incoming;
     QString body;

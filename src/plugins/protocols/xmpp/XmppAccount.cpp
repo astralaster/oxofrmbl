@@ -1,7 +1,7 @@
 #include "XmppAccount.h"
 #include "XmppContact.h"
 
-XmppAccount::XmppAccount(const QString &server, const QString &user, const QString &password) :
+XmppAccount::XmppAccount(const QString &server, const QString &user, const QString &password) : Account(),
     client(new QXmppClient()), server(server), user(user), password(password)
 
 {
@@ -11,8 +11,6 @@ XmppAccount::XmppAccount(const QString &server, const QString &user, const QStri
 
     connect(client, &QXmppClient::connected, this, &XmppAccount::connectedSlot);
     connect(client, &QXmppClient::messageReceived, this, &XmppAccount::messageReceivedSlot);
-
-
 }
 
 XmppAccount::~XmppAccount()
@@ -29,6 +27,11 @@ QList<Contact*> XmppAccount::getContacts()
     }
 
     return contacts;
+}
+
+QString XmppAccount::getDisplayName() const
+{
+    return user+"@"+server;
 }
 
 bool XmppAccount::connectToServer()
@@ -54,6 +57,17 @@ void XmppAccount::connectedSlot()
 
 void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
 {
-    ChatMessage *message = new ChatMessage(new XmppContact(this, msg.from()), true, msg.body());
+    if(msg.type() != QXmppMessage::Chat) {
+        return;
+    }
+
+    auto from = XmppContact::parseJabberId(msg.from());
+    auto chat = getChat(from[0]+"@"+from[1]);
+
+    if(chat == nullptr) {
+        chat = startChat(new XmppContact(this, msg.from()));
+    }
+
+    auto message = new ChatMessage(chat, true, msg.body());
     emit messageReceived(message);
 }

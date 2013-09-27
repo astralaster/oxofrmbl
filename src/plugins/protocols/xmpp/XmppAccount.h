@@ -9,11 +9,13 @@
 
 class XmppAccount : public Account
 {
+    Q_OBJECT
 public:
     XmppAccount(const QString &server, const QString &user, const QString &password);
     ~XmppAccount();
 
     QList<Contact*> getContacts() override;
+    QString getDisplayName() const override;
 
 public slots:
     virtual bool connectToServer() override;

@@ -17,6 +17,11 @@ Contact *ContactList::getContact(int index) const
     return contacts[index];
 }
 
+Account *ContactList::getAccount() const
+{
+    return account;
+}
+
 int ContactList::rowCount(const QModelIndex &parent) const
 {
     return contacts.count();

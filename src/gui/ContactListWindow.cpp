@@ -3,7 +3,7 @@
 
 #include "ChatWindow.h"
 #include "ContactList.h"
-#include "Conversation.h"
+#include "Chat.h"
 
 #include <QDebug>
 
@@ -32,8 +32,6 @@ void ContactListWindow::closeEvent(QCloseEvent *e)
 void ContactListWindow::on_contactList_doubleClicked(const QModelIndex &index)
 {
     auto contact = dynamic_cast<ContactList*>(ui->contactList->model())->getContact(index.row());
-    auto conversation = new Conversation(contact, contact->getAccount());
 
-    auto w = new ChatWindow(conversation);
-    w->show();
+    contact->getAccount()->startChat(contact);
 }

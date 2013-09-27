@@ -4,20 +4,21 @@
 #include <QDebug>
 #include <QKeyEvent>
 
-ChatWindow::ChatWindow(Conversation *conversation, QWidget *parent) :
-    QMainWindow(parent), conversation(conversation),
+ChatWindow::ChatWindow(Chat *chat, QWidget *parent) :
+    QMainWindow(parent), chat(chat),
     ui(new Ui::ChatWindow)
 {
     ui->setupUi(this);
 
     ui->messageEdit->installEventFilter(this);
+    ui->messageEdit->setFocus();
 
-    setWindowTitle(conversation->getContact()->getDisplayName());
+    setWindowTitle(chat->getContact()->getDisplayName());
 
     connect(ui->sendButton, &QPushButton::clicked, this, &ChatWindow::sendMessage);
 
-    connect(this, &ChatWindow::messageSent, conversation, &Conversation::sendMessage);
-    connect(conversation, &Conversation::messageReceived, this, &ChatWindow::messageReceived);
+    connect(this, &ChatWindow::messageSent, chat, &Chat::sendMessage);
+    connect(chat, &Chat::messageReceived, this, &ChatWindow::messageReceived);
 }
 
 ChatWindow::~ChatWindow()
@@ -27,7 +28,7 @@ ChatWindow::~ChatWindow()
 
 void ChatWindow::messageReceived(const ChatMessage *msg)
 {
-    ui->messageLog->addItem(msg->getBody());
+    ui->messageLog->addMessage(msg);
 }
 
 bool ChatWindow::eventFilter(QObject *o, QEvent *e)
@@ -35,9 +36,12 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
     if(o == ui->messageEdit && e->type() == QKeyEvent::KeyPress) {
         QKeyEvent *ev = (QKeyEvent*)e;
 
-        if(ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return) {
-            e->accept();
-            ui->sendButton->click();
+        if((ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return)) {
+
+            if(!(ev->modifiers() & Qt::SHIFT)) {
+                e->accept();
+                sendMessage();
+            }
 
             return true;
         }
@@ -46,13 +50,22 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
     return false;
 }
 
+void ChatWindow::closeEvent(QCloseEvent *e)
+{
+    chat->getAccount()->endChat(chat);
+}
+
 void ChatWindow::sendMessage()
 {
-    ChatMessage *msg = new ChatMessage(conversation->getContact(), false, ui->messageEdit->toPlainText());
-    ui->messageLog->addItem(msg->getBody());
+    QString body = ui->messageEdit->toPlainText();
 
-    ui->messageEdit->clear();
-    ui->messageEdit->setFocus();
+    if(!body.isEmpty()) {
+        auto msg = new ChatMessage(chat, false, body);
+        ui->messageLog->addMessage(msg);
 
-    emit messageSent(msg);
+        ui->messageEdit->clear();
+        ui->messageEdit->setFocus();
+
+        emit messageSent(msg);
+    }
 }

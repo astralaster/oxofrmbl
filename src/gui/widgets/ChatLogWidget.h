@@ -2,12 +2,17 @@
 #define CHATLOGWIDGET_H
 
 #include <QListWidget>
+#include <QTextEdit>
 
-class ChatLogWidget : public QListWidget
+#include "ChatMessage.h"
+
+class ChatLogWidget : public QTextEdit
 {
     Q_OBJECT
 public:
     explicit ChatLogWidget(QWidget *parent = 0);
+
+    void addMessage(const ChatMessage *msg);
 
 signals:
 
