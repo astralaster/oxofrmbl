@@ -26,7 +26,8 @@ SOURCES += src/main.cpp\
     src/gui/widgets/ChatLogWidget.cpp \
     src/gui/widgets/ContactListWidget.cpp \
     src/gui/GuiController.cpp \
-    src/base/Chat.cpp
+    src/base/Chat.cpp \
+    src/ApplicationController.cpp
 
 
 HEADERS += \
@@ -43,7 +44,8 @@ HEADERS += \
     src/gui/widgets/ChatLogWidget.h \
     src/gui/widgets/ContactListWidget.h \
     src/gui/GuiController.h \
-    src/base/Chat.h
+    src/base/Chat.h \
+    src/ApplicationController.h
 
 FORMS += \
     src/gui/ContactListWindow.ui \

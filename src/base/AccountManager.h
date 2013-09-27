@@ -6,10 +6,11 @@
 #include "common.h"
 #include "Account.h"
 
-class AccountManager
+class AccountManager : public QObject
 {
+    Q_OBJECT
 public:
-    AccountManager();
+    explicit AccountManager(QObject *parent = 0);
 
     void addAccount(Account *a);
     QList<Account*> getAccounts() const;
