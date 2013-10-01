@@ -5,30 +5,47 @@
 #include <qxmpp/QXmppMessage.h>
 #include <qxmpp/QXmppRosterManager.h>
 
-#include "Account.h"
+#include "base/Account.h"
 
 class XmppAccount : public Account
 {
     Q_OBJECT
 public:
-    XmppAccount(const QString &server, const QString &user, const QString &password);
+    XmppAccount(const QString &server = "", const QString &user = "", const QString &password = "");
     ~XmppAccount();
 
-    QList<Contact*> getContacts() override;
-    QString getDisplayName() const override;
+    QString getServer() const;
+    QString getUser() const;
+    QString getPassword() const;
+    QString getResource() const;
+
+    QString getId() const override;
 
 public slots:
-    virtual bool connectToServer() override;
-    virtual void disconnectFromServer() override;
-    virtual void sendMessage(const ChatMessage *msg) override;
+    bool connectToServer() override;
+    void disconnectFromServer() override;
+    void sendMessage(const ChatMessage *msg) override;
+
+    void setState(const QString &server, const QString &user, const QString &password, const QString &resource);
+    void setServer(const QString &server);
+    void setUser(const QString &user);
+    void setPassword(const QString &password);
+    void setResource(const QString &resource);
+
+    void setStatus(Account::Status status) override;
+
+    void retrieveContacts();
+    void clearContacts();
+
+    void save() const override;
+    void load() override;
 
 private slots:
-    void connectedSlot();
     void messageReceivedSlot(const QXmppMessage &message);
 
 private:
     QXmppClient *client;
-    QString server, user, password;
+    QString server, user, password, resource;
 };
 
 #endif // XMPPACCOUNT_H

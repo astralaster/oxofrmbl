@@ -1,7 +1,7 @@
 #ifndef XMPPCONTACT_H
 #define XMPPCONTACT_H
 
-#include "Contact.h"
+#include "base/Contact.h"
 
 class XmppContact : public Contact
 {

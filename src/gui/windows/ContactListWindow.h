@@ -1,8 +1,12 @@
 #ifndef CONTACTLISTWINDOW_H
 #define CONTACTLISTWINDOW_H
 
-#include <QListView>
 #include <QMainWindow>
+#include <QListView>
+#include <QComboBox>
+
+#include "base/Account.h"
+#include "base/ContactList.h"
 
 namespace Ui {
 class ContactListWindow;
@@ -13,18 +17,19 @@ class ContactListWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit ContactListWindow(QWidget *parent = 0);
+    explicit ContactListWindow(ContactList *contacts, QWidget *parent = 0);
     ~ContactListWindow();
 
-    QListView *getList();
+    QComboBox *getStatusSelect();
 
 signals:
-    void windowClosed(int retcode=0);
+    void statusChanged(Account::Status status);
 
 private slots:
     void closeEvent(QCloseEvent *e) override;
 
     void on_contactList_doubleClicked(const QModelIndex &index);
+    void on_status_currentIndexChanged(int index);
 
 private:
     Ui::ContactListWindow *ui;

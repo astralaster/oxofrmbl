@@ -4,6 +4,6 @@
 class Contact;
 class Account;
 class ChatMessage;
-class Chat;
+class ChatSession;
 
 #endif // COMMON_H

@@ -9,34 +9,45 @@
 #include "ChatMessage.h"
 #include "Contact.h"
 
-class Account : public QObject
+class Account : public Person
 {
     Q_OBJECT
 public:
-    Account();
+    explicit Account(QObject *parent = 0);
+    ~Account();
 
-    Chat *startChat(Contact *contact);
-    virtual Chat *getChat(const QString &contactId);
+    ChatSession *getSession(const QString &contactId);
 
-    virtual QString getDisplayName() const = 0;
-    virtual QMap<QString, Chat*> getChats();
-    virtual QList<Contact*> getContacts() = 0;
+    QMap<QString, ChatSession*> getSessions();
+    QList<Contact*> getContacts();
+
+    bool isActive() const;
 
 signals:
-    void chatStarted(Chat *chat);
-    void chatActivated(Chat *chat);
+    void sessionStarted(ChatSession *session);
+    void sessionActivated(ChatSession *session);
     void messageReceived(const ChatMessage *msg);
     void connected();
+    void disconnected();
 
 public slots:
     virtual bool connectToServer() = 0;
     virtual void disconnectFromServer() = 0;
     virtual void sendMessage(const ChatMessage *msg) = 0;
 
-    virtual void endChat(Chat *chat);
+    virtual void addContact(Contact *contact);
+
+    virtual ChatSession *startSession(Contact *contact);
+    virtual void endSession(ChatSession *session);
+
+    virtual void save() const = 0;
+    virtual void load() = 0;
 
 protected:
-    QMap<QString, Chat*> chats;
+    bool active = true;
+
+    QList<Contact*> contacts;
+    QMap<QString, ChatSession*> chatSessions;
 };
 
 #endif // ACCOUNT_H

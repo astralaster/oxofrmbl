@@ -44,7 +44,7 @@
      </widget>
     </item>
     <item>
-     <widget class="ContactListWidget" name="contactList"/>
+     <widget class="QListView" name="contactList"/>
     </item>
     <item>
      <widget class="QComboBox" name="status">
@@ -78,13 +78,6 @@
    </property>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ContactListWidget</class>
-   <extends>QListView</extends>
-   <header>gui/widgets/ContactListWidget.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

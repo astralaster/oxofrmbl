@@ -1,19 +1,25 @@
 #include "ChatMessage.h"
 
+#include <QDebug>
 
-ChatMessage::ChatMessage(Chat *chat, bool incoming, const QString &body) : QObject(chat),
-    chat(chat), incoming(incoming), body(body)
+
+ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &body) : QObject(session),
+    Session(session), incoming(incoming), body(body)
+{
+}
+
+ChatMessage::~ChatMessage()
 {
 }
 
 const Account *ChatMessage::getLocalParticipant() const
 {
-    return chat->getAccount();
+    return Session->getAccount();
 }
 
 const Contact *ChatMessage::getRemoteParticipant() const
 {
-    return chat->getContact();
+    return Session->getContact();
 }
 
 bool ChatMessage::isEmpty() const

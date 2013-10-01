@@ -4,8 +4,8 @@
 #include <QDebug>
 #include <QKeyEvent>
 
-ChatWindow::ChatWindow(Chat *chat, QWidget *parent) :
-    QMainWindow(parent), chat(chat),
+ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
+    QMainWindow(parent), session(session),
     ui(new Ui::ChatWindow)
 {
     ui->setupUi(this);
@@ -13,12 +13,14 @@ ChatWindow::ChatWindow(Chat *chat, QWidget *parent) :
     ui->messageEdit->installEventFilter(this);
     ui->messageEdit->setFocus();
 
-    setWindowTitle(chat->getContact()->getDisplayName());
+    ui->sendButton->setVisible(false);
+
+    setWindowTitle(session->getContact()->getDisplayName());
 
     connect(ui->sendButton, &QPushButton::clicked, this, &ChatWindow::sendMessage);
 
-    connect(this, &ChatWindow::messageSent, chat, &Chat::sendMessage);
-    connect(chat, &Chat::messageReceived, this, &ChatWindow::messageReceived);
+    connect(this, &ChatWindow::messageSent, session, &ChatSession::sendMessage);
+    connect(session, &ChatSession::messageReceived, this, &ChatWindow::messageReceived);
 }
 
 ChatWindow::~ChatWindow()
@@ -41,9 +43,8 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
             if(!(ev->modifiers() & Qt::SHIFT)) {
                 e->accept();
                 sendMessage();
+                return true;
             }
-
-            return true;
         }
     }
 
@@ -52,7 +53,8 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
 
 void ChatWindow::closeEvent(QCloseEvent *e)
 {
-    chat->getAccount()->endChat(chat);
+    session->getAccount()->endSession(session);
+    e->accept();
 }
 
 void ChatWindow::sendMessage()
@@ -60,7 +62,7 @@ void ChatWindow::sendMessage()
     QString body = ui->messageEdit->toPlainText();
 
     if(!body.isEmpty()) {
-        auto msg = new ChatMessage(chat, false, body);
+        auto msg = new ChatMessage(session, false, body);
         ui->messageLog->addMessage(msg);
 
         ui->messageEdit->clear();

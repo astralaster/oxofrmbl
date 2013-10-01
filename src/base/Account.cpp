@@ -2,41 +2,60 @@
 
 #include <QDebug>
 
-Account::Account()
+Account::Account(QObject *parent) : Person(parent)
 {
-
 }
 
-Chat *Account::startChat(Contact *contact)
+Account::~Account()
 {
-    Chat *chat;
+}
 
-    if(!chats.contains(contact->getId())) {
-        chat = new Chat(contact, this);
 
-        chats[contact->getId()] = chat;
+ChatSession *Account::getSession(const QString &contactId)
+{
+    return chatSessions.contains(contactId) ? chatSessions[contactId] : nullptr;
+}
 
-        emit chatStarted(chat);
+QMap<QString, ChatSession*> Account::getSessions()
+{
+    return chatSessions;
+}
+
+QList<Contact*> Account::getContacts()
+{
+    return contacts;
+}
+
+bool Account::isActive() const
+{
+    return active;
+}
+
+void Account::addContact(Contact *contact)
+{
+    contacts.append(contact);
+}
+
+ChatSession *Account::startSession(Contact *contact)
+{
+    ChatSession *session;
+
+    if(!chatSessions.contains(contact->getId())) {
+        session = new ChatSession(contact, this);
+
+        chatSessions[contact->getId()] = session;
+
+        emit sessionStarted(session);
     } else {
-        chat = chats[contact->getId()];
-        emit chatActivated(chat);
+        session = chatSessions[contact->getId()];
+        emit sessionActivated(session);
     }
 
-    return chat;
+    return session;
 }
 
-Chat *Account::getChat(const QString &contactId)
+void Account::endSession(ChatSession *session)
 {
-    return chats.contains(contactId) ? chats[contactId] : nullptr;
-}
-
-QMap<QString, Chat*> Account::getChats()
-{
-    return chats;
-}
-
-void Account::endChat(Chat *chat)
-{
-    chats.remove(chat->getContact()->getId());
-    delete chat;
+    chatSessions.remove(session->getContact()->getId());
+    delete session;
 }

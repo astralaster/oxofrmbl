@@ -1,25 +1,44 @@
 #include "ApplicationController.h"
 
+#include <QApplication>
+#include <QSettings>
 
 #include "plugins/protocols/xmpp/XmppAccount.h"
 #include "plugins/protocols/xmpp/XmppContact.h"
+#include "plugins/protocols/xmpp/gui/XmppAccountWindow.h"
 
 #include "gui/GuiController.h"
 
 ApplicationController::ApplicationController(QObject *parent) :
-    QObject(parent), accountManager(this)
+    QObject(parent)
 {
+    QCoreApplication::setOrganizationName("kfnnmpa");
+    QCoreApplication::setApplicationName("oxofrmbl");
+
     auto account = new XmppAccount("jabber.ccc.de", "dc2_test", "blubbb");
     account->connectToServer();
 
-    accountManager.addAccount(account);
+    //qDebug() << account->metaObject()->className();
 
-    ContactList *cl = new ContactList(account);
+    accountManager = new AccountManager(this);
+    accountManager->addAccount(account);
 
-    auto gui = new GuiController(cl, this);
+    contactList = new ContactList(account);
 
-    connect(gui, &GuiController::exitApp, account, &Account::disconnectFromServer);
-    connect(gui, SIGNAL(exitApp()), SLOT(QApplication::exit()));
+    auto gui = new GuiController(this);
 
-    connect(account, &Account::connected, cl, &ContactList::retrieveContacts);
+    connect(gui, &GuiController::quit, account, &Account::disconnectFromServer);
+    connect(gui, &GuiController::quit, this, &ApplicationController::quit);
+
+    //connect(account, &Account::connected, contactList, &ContactList::retrieveContacts);
+}
+
+ContactList *ApplicationController::getContactList()
+{
+    return contactList;
+}
+
+AccountManager *ApplicationController::getAccountManager()
+{
+    return accountManager;
 }

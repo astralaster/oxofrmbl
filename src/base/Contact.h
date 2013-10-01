@@ -4,22 +4,20 @@
 #include <QObject>
 
 #include "common.h"
+#include "Person.h"
 #include "Account.h"
 
-class Contact : public QObject
+class Contact : public Person
 {
     Q_OBJECT
 public:
-    Contact(Account *acc);
+    Contact(Account *acc = nullptr);
+    ~Contact();
 
-    Account *getAccount();
-
-    virtual QString getId() const = 0;
-    virtual QString getDisplayName() const;
+    virtual Account *getAccount();
 
 protected:
     Account *account;
-    QString nickname;
     
 };
 

@@ -7,11 +7,13 @@
 #include "Contact.h"
 #include "Account.h"
 
-class Chat : public QObject
+class ChatSession : public QObject
 {
     Q_OBJECT
 public:
-    Chat(Contact *contact, Account *account);
+    ChatSession(Contact *contact, Account *account);
+    ~ChatSession();
+
     Contact *getContact() {return contact;}
     Account *getAccount() {return account;}
 

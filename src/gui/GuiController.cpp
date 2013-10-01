@@ -1,32 +1,77 @@
 #include "GuiController.h"
 
 #include <QApplication>
+#include <QDebug>
+#include <QShortcut>
 
-GuiController::GuiController(ContactList *cl, QObject *parent) :
-    QObject(parent)
+GuiController::GuiController(ApplicationController *app) :
+    QObject(app), app(app)
 {
-    connect(cl->getAccount(), &Account::chatStarted, this, &GuiController::startChat);
-    connect(cl->getAccount(), &Account::chatActivated, this, &GuiController::activateChat);
+    clw = new ContactListWindow(app->getContactList());
 
-    connect(&clw, &ContactListWindow::windowClosed, cl->getAccount(), &Account::disconnectFromServer);
-    connect(&clw, &ContactListWindow::windowClosed, QApplication::exit);
+    auto trayIcon = new QSystemTrayIcon(QIcon::fromTheme("user-available"), this);
+    trayIcon->setVisible(true);
 
-    clw.getList()->setModel(cl);
-    clw.show();
+    trayIcon->setContextMenu(trayContextMenu());
+
+    auto quitShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q), clw);
+    //quitShortcut->setContext(Qt::ApplicationShortcut);
+
+    connect(quitShortcut, &QShortcut::activated, this, &GuiController::quit);
+    connect(trayIcon, &QSystemTrayIcon::activated, this, &GuiController::activateContactList);
+
+    for(Account *a : app->getAccountManager()->getAccounts()) {
+        connect(a, &Account::sessionStarted,   this, &GuiController::startChat);
+        connect(a, &Account::sessionActivated, this, &GuiController::activateChat);
+    }
+
+
+    connect(clw, &ContactListWindow::statusChanged, app->getAccountManager(), &AccountManager::changeStatus);
+    clw->show();
 }
 
-void GuiController::startChat(Chat *chat)
+void GuiController::startChat(ChatSession *session)
 {
-    auto cw = new ChatWindow(chat);
-    chatWindows[chat] = cw;
+    auto cw = new ChatWindow(session);
+    chatWindows[session] = cw;
 
     cw->show();
 }
 
-void GuiController::activateChat(Chat *chat)
+void GuiController::activateChat(ChatSession *session)
 {
-    ChatWindow *cw = chatWindows[chat];
+    ChatWindow *cw = chatWindows[session];
 
     cw->showNormal();
     cw->activateWindow();
+}
+
+void GuiController::showAccountsWindow()
+{
+    if(aw == nullptr) {
+        aw = new AccountsWindow(app->getAccountManager());
+    }
+
+    aw->setVisible(true);
+}
+
+void GuiController::activateContactList(QSystemTrayIcon::ActivationReason reason)
+{
+    if(reason == QSystemTrayIcon::Trigger) {
+        clw->setVisible(!clw->isVisible());
+    } else if(reason == QSystemTrayIcon::Context) {
+
+    } else {
+        emit(quit());
+    }
+}
+
+QMenu *GuiController::trayContextMenu() const
+{
+    QMenu *result = new QMenu();
+
+    result->addAction("Accounts", this, SLOT(showAccountsWindow()));
+    result->addAction(QIcon::fromTheme("application-exit"), "Quit", this, SIGNAL(quit()));
+
+    return result;
 }

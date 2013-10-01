@@ -3,8 +3,8 @@
 
 #include <QObject>
 
-#include "ContactList.h"
-#include "AccountManager.h"
+#include "base/ContactList.h"
+#include "base/AccountManager.h"
 
 class ApplicationController : public QObject
 {
@@ -12,13 +12,15 @@ class ApplicationController : public QObject
 public:
     explicit ApplicationController(QObject *parent = 0);
 
-signals:
+    ContactList *getContactList();
+    AccountManager *getAccountManager();
 
-public slots:
+signals:
+    void quit();
 
 protected:
-    //ContactList contactList;
-    AccountManager accountManager;
+    ContactList *contactList;
+    AccountManager *accountManager;
 
 };
 

@@ -4,7 +4,7 @@
 #include <QListWidget>
 #include <QTextEdit>
 
-#include "ChatMessage.h"
+#include "base/ChatMessage.h"
 
 class ChatLogWidget : public QTextEdit
 {
@@ -12,11 +12,10 @@ class ChatLogWidget : public QTextEdit
 public:
     explicit ChatLogWidget(QWidget *parent = 0);
 
-    void addMessage(const ChatMessage *msg);
-
 signals:
 
 public slots:
+    void addMessage(const ChatMessage *msg);
 
 };
 

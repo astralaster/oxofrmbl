@@ -4,17 +4,12 @@
 
 ContactList::ContactList(Account *account) : account(account)
 {
-
-}
-
-void ContactList::addContact(Contact *contact)
-{
-    contacts.append(contact);
+    connect(account, &Account::connected, this, &ContactList::retrieveContacts);
 }
 
 Contact *ContactList::getContact(int index) const
 {
-    return contacts[index];
+    return account->getContacts()[index];
 }
 
 Account *ContactList::getAccount() const
@@ -24,14 +19,14 @@ Account *ContactList::getAccount() const
 
 int ContactList::rowCount(const QModelIndex &parent) const
 {
-    return contacts.count();
+    return account->getContacts().count();
 }
 
 QVariant ContactList::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole)
     {
-        return contacts[index.row()]->getDisplayName();
+        return account->getContacts()[index.row()]->getDisplayName();
     }
 
     return QVariant();
@@ -39,7 +34,5 @@ QVariant ContactList::data(const QModelIndex &index, int role) const
 
 void ContactList::retrieveContacts()
 {
-    contacts.append(account->getContacts());
-
     emit dataChanged(index(0), index(0));
 }

@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 
-#include "Contact.h"
-#include "Chat.h"
+#include "base/Contact.h"
+#include "base/ChatSession.h"
 
 namespace Ui {
 class ChatWindow;
@@ -15,7 +15,7 @@ class ChatWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit ChatWindow(Chat *chat, QWidget *parent = 0);
+    explicit ChatWindow(ChatSession *session, QWidget *parent = 0);
     ~ChatWindow();
 
 signals:
@@ -30,7 +30,7 @@ public slots:
 protected:
     void sendMessage();
 
-    Chat *chat;
+    ChatSession *session;
     Ui::ChatWindow *ui;
 
 };

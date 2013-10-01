@@ -2,28 +2,41 @@
 #define GUICONTROLLER_H
 
 #include <QObject>
+#include <QSystemTrayIcon>
+#include <QMenu>
 
-#include "ContactList.h"
-#include "Chat.h"
-#include "ContactListWindow.h"
-#include "ChatWindow.h"
+#include "ApplicationController.h"
+#include "base/ContactList.h"
+#include "base/ChatSession.h"
+
+#include "windows/ContactListWindow.h"
+#include "windows/ChatWindow.h"
+#include "windows/AccountsWindow.h"
 
 class GuiController : public QObject
 {
     Q_OBJECT
 public:
-    explicit GuiController(ContactList *cl, QObject *parent = 0);
+    explicit GuiController(ApplicationController *app = 0);
 
 signals:
-    void exitApp();
+    void quit();
 
 public slots:
-    void startChat(Chat *chat);
-    void activateChat(Chat *chat);
+    void startChat(ChatSession *session);
+    void activateChat(ChatSession *session);
+
+    void showAccountsWindow();
+    void activateContactList(QSystemTrayIcon::ActivationReason reason);
 
 protected:
-    QMap<Chat*, ChatWindow*> chatWindows;
-    ContactListWindow clw;
+    QMenu *trayContextMenu() const;
+
+    ApplicationController *app;
+
+    QMap<ChatSession*, ChatWindow*> chatWindows;
+    ContactListWindow *clw;
+    AccountsWindow *aw = nullptr;
 
 };
 

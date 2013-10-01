@@ -1,15 +1,16 @@
 #include "Contact.h"
 
-Contact::Contact(Account *acc) : QObject(acc), account(acc)
+#include <QDebug>
+
+Contact::Contact(Account *acc) : Person(acc), account(acc)
+{
+}
+
+Contact::~Contact()
 {
 }
 
 Account *Contact::getAccount()
 {
     return account;
-}
-
-QString Contact::getDisplayName() const
-{
-    return nickname;
 }
