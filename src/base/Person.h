@@ -3,30 +3,22 @@
 
 #include <QObject>
 
+#include "interfaces/PersonInterface.h"
+
 #include "common.h"
 
-class Person : public QObject {
+class Person : public QObject, public PersonInterface {
     Q_OBJECT
-
+    Q_INTERFACES(PersonInterface)
 public:
-    enum Status
-    {
-        Online = 0,
-        Away,
-        Offline,
-        Unknown
-    };
-
     explicit Person(QObject *parent) : QObject(parent){}
     explicit Person(const QString &nickname, QObject *parent) : QObject(parent), nickname(nickname){}
-
-    virtual QString getId() const = 0;
 
     virtual QString getDisplayName() const {
         return nickname.isEmpty() ? getId() : nickname;
     }
 
-    Status getStatus() const {
+    virtual Status getStatus() const {
         return status;
     }
 

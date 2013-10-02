@@ -3,22 +3,29 @@
 
 #include <QSettings>
 
-XmppAccount::XmppAccount(const QString &server, const QString &user, const QString &password) :
-    Account(), client(new QXmppClient()), server(server), user(user), password(password)
+XmppAccount::XmppAccount()
 {
-    client->logger()->setLoggingType(QXmppLogger::StdoutLogging);
 
-    connect(&client->rosterManager(), &QXmppRosterManager::rosterReceived, this, &XmppAccount::retrieveContacts);
-
-    connect(client, &QXmppClient::connected, this, &XmppAccount::connected);
-    connect(client, &QXmppClient::messageReceived, this, &XmppAccount::messageReceivedSlot);
-
-    connect(this, &XmppAccount::disconnected, this, &XmppAccount::clearContacts);
 }
 
 XmppAccount::~XmppAccount()
 {
     delete client;
+}
+
+void XmppAccount::initAccount()
+{
+    client = new QXmppClient();
+
+    client->logger()->setLoggingType(QXmppLogger::StdoutLogging);
+
+    connect(this, &XmppAccount::connected, account, &Account::connected);
+    connect(&client->rosterManager(), &QXmppRosterManager::rosterReceived, this, &XmppAccount::retrieveContacts);
+
+    connect(client, &QXmppClient::messageReceived, this, &XmppAccount::messageReceivedSlot);
+    connect(this, &XmppAccount::messageReceived, account, &Account::messageReceived);
+
+    //connect(this, &XmppAccount::disconnected, this, &XmppAccount::clearContacts);
 }
 
 QString XmppAccount::getServer() const
@@ -41,41 +48,59 @@ QString XmppAccount::getResource() const
     return resource;
 }
 
+QString XmppAccount::getType() const
+{
+    return "xmpp";
+}
+
 void XmppAccount::retrieveContacts()
 {
     for(auto contact_jid: client->rosterManager().getRosterBareJids()) {
-        contacts.append(new XmppContact(this, contact_jid));
+        account->addContact(new Contact(new XmppContact(contact_jid), account));
     }
 
     emit connected();
 }
 
-void XmppAccount::clearContacts()
-{
-    contacts.clear();
-}
-
 void XmppAccount::save() const
 {
-    QString key = QString("accounts/xmpp/%1/%2").arg(getId()).arg("%1");
+    QSettings settings;
 
-    QSettings().setValue(key.arg("server"), server);
-    QSettings().setValue(key.arg("user"), user);
-    QSettings().setValue(key.arg("password"), password);
+    settings.beginGroup(QString("accounts/xmpp/%1/").arg(account->getId()));
+
+    settings.setValue("server", server);
+    settings.setValue("user", user);
+    settings.setValue("password", password);
+
+    settings.endGroup();
 }
 
 void XmppAccount::load()
 {
-    QString key = QString("accounts/xmpp/%1/%2").arg(getId()).arg("%1");
+    QSettings settings;
 
-    server = QSettings().value(key.arg("server")).toString();
-    user = QSettings().value(key.arg("user")).toString();
-    password = QSettings().value(key.arg("password")).toString();
+    settings.beginGroup(QString("accounts/xmpp/%1/").arg(account->getId()));
+
+    server = settings.value("server", server).toString();
+    user = settings.value("user", user).toString();
+    password = settings.value("password", password).toString();
+
+    settings.endGroup();
 }
 
 QString XmppAccount::getId() const
 {
     return user+"@"+server;
+}
+
+QString XmppAccount::getDisplayName() const
+{
+    return getId();
+}
+
+void XmppAccount::setAccountObject(Account *account)
+{
+    this->account = account;
 }
 
 bool XmppAccount::connectToServer()
@@ -123,9 +148,9 @@ void XmppAccount::setResource(const QString &resource)
     this->resource = resource;
 }
 
-void XmppAccount::setStatus(Person::Status status)
+void XmppAccount::setStatus(Status status)
 {
-    Person::setStatus(status);
+    //Person::setStatus(status);
 
     QXmppPresence presence;
 
@@ -162,11 +187,13 @@ void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
     }
 
     auto from = XmppContact::parseJabberId(msg.from());
-    auto session = getSession(from[0]+"@"+from[1]);
+    auto session = account->getSession(from[0]+"@"+from[1]);
 
     if((msg.state() == QXmppMessage::Active || !msg.state()) && !msg.body().isEmpty()) {
         if(session == nullptr) {
-            session = startSession(new XmppContact(this, msg.from()));
+            auto contact = new Contact(new XmppContact(msg.from()), account);
+
+            session = account->startSession(contact);
         }
 
         auto message = new ChatMessage(session, true, msg.body());

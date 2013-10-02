@@ -12,16 +12,16 @@
 ApplicationController::ApplicationController(QObject *parent) :
     QObject(parent)
 {
-    QCoreApplication::setOrganizationName("kfnnmpa");
+    QCoreApplication::setOrganizationName("oxofrmbl");
     QCoreApplication::setApplicationName("oxofrmbl");
-
-    auto account = new XmppAccount("jabber.ccc.de", "dc2_test", "blubbb");
-    account->connectToServer();
 
     //qDebug() << account->metaObject()->className();
 
     accountManager = new AccountManager(this);
-    accountManager->addAccount(account);
+    accountManager->load();
+
+    auto account = accountManager->getAccount(0);
+    account->connectToServer();
 
     contactList = new ContactList(account);
 
@@ -30,7 +30,7 @@ ApplicationController::ApplicationController(QObject *parent) :
     connect(gui, &GuiController::quit, account, &Account::disconnectFromServer);
     connect(gui, &GuiController::quit, this, &ApplicationController::quit);
 
-    //connect(account, &Account::connected, contactList, &ContactList::retrieveContacts);
+    connect(account, &Account::connected, contactList, &ContactList::retrieveContacts);
 }
 
 ContactList *ApplicationController::getContactList()

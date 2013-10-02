@@ -8,6 +8,10 @@
 #include "base/Account.h"
 #include "base/ContactList.h"
 
+#include "gui/GuiController.h"
+
+class GuiController;
+
 namespace Ui {
 class ContactListWindow;
 }
@@ -17,7 +21,7 @@ class ContactListWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit ContactListWindow(ContactList *contacts, QWidget *parent = 0);
+    explicit ContactListWindow(GuiController *controller, ContactList *contacts, QWidget *parent = 0);
     ~ContactListWindow();
 
     QComboBox *getStatusSelect();

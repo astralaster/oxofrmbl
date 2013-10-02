@@ -7,7 +7,7 @@
 GuiController::GuiController(ApplicationController *app) :
     QObject(app), app(app)
 {
-    clw = new ContactListWindow(app->getContactList());
+    clw = new ContactListWindow(this, app->getContactList());
 
     auto trayIcon = new QSystemTrayIcon(QIcon::fromTheme("user-available"), this);
     trayIcon->setVisible(true);
@@ -24,7 +24,6 @@ GuiController::GuiController(ApplicationController *app) :
         connect(a, &Account::sessionStarted,   this, &GuiController::startChat);
         connect(a, &Account::sessionActivated, this, &GuiController::activateChat);
     }
-
 
     connect(clw, &ContactListWindow::statusChanged, app->getAccountManager(), &AccountManager::changeStatus);
     clw->show();

@@ -10,6 +10,8 @@ XmppAccountWindow::XmppAccountWindow(AccountManager *accountManager, XmppAccount
     ui->setupUi(this);
 
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &XmppAccountWindow::accepted);
+    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &XmppAccountWindow::close);
+
     connect(this, &XmppAccountWindow::accepted, this, &XmppAccountWindow::accept);
 
     if(account != nullptr) {
@@ -22,14 +24,18 @@ XmppAccountWindow::XmppAccountWindow(AccountManager *accountManager, XmppAccount
 
 XmppAccountWindow::~XmppAccountWindow()
 {
+    qDebug() << "~XmppAccountWindow";
     delete ui;
 }
 
 void XmppAccountWindow::accept()
 {
     if(account == nullptr) {
-        account = new XmppAccount();
-        accountManager->addAccount(account);
+        auto _account = new Account();
+        account = new XmppAccount(_account);
+        _account->setAccountObject(account);
+
+        accountManager->addAccount(_account);
     }
 
     account->setState(ui->server->text(), ui->username->text(), ui->password->text(), ui->resource->text());

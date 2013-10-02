@@ -22,12 +22,12 @@ AccountsWindow::~AccountsWindow()
 
 void AccountsWindow::openAccount(const QModelIndex &index)
 {
-    auto account = dynamic_cast<XmppAccount*>(manager->getAccount(index.row()));
+    //auto account = dynamic_cast<XmppAccount*>(manager->getAccount(index.row()));
 
-    (new XmppAccountWindow(manager, account, this))->show();
+    //(new XmppAccountWindow(manager, account, this))->show();
 }
 
 void AccountsWindow::on_addAccount_clicked()
 {
-    (new XmppAccountWindow(manager, nullptr, this))->show();
+    //(new XmppAccountWindow(manager, nullptr, this))->show();
 }

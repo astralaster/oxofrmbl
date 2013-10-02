@@ -4,12 +4,13 @@
 
 #include "XmppContact.h"
 
-XmppContact::XmppContact(Account *acc, const QString &jid) : Contact(acc), jid(jid)
+XmppContact::XmppContact(const QString &jid) :
+    jid(jid)
 {
 }
 
-XmppContact::XmppContact(Account *acc, const QString &server, const QString &user) :
-    XmppContact(acc, server+"@"+user)
+XmppContact::XmppContact(const QString &server, const QString &user) :
+    XmppContact(server+"@"+user)
 {
 }
 
@@ -34,5 +35,10 @@ QStringList XmppContact::parseJabberId(const QString jid)
     rxp.indexIn(jid);
 
     return QStringList({rxp.cap(1), rxp.cap(2), rxp.cap(4)});
+}
+
+void XmppContact::setStatus(PersonInterface::Status status)
+{
+
 }
 

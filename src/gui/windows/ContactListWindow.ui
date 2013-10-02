@@ -76,7 +76,19 @@
      <height>26</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionAccounts"/>
+   </widget>
+   <addaction name="menuSettings"/>
   </widget>
+  <action name="actionAccounts">
+   <property name="text">
+    <string>Accounts</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

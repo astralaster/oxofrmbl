@@ -7,13 +7,14 @@
 #include "ChatWindow.h"
 #include "base/ChatSession.h"
 
-ContactListWindow::ContactListWindow(ContactList *contacts, QWidget *parent) :
+ContactListWindow::ContactListWindow(GuiController *controller, ContactList *contacts, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ContactListWindow)
 {
     ui->setupUi(this);
-
     ui->contactList->setModel(contacts);
+
+    connect(ui->actionAccounts, &QAction::triggered, controller, &GuiController::showAccountsWindow);
 }
 
 ContactListWindow::~ContactListWindow()

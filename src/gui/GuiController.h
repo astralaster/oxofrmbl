@@ -13,6 +13,8 @@
 #include "windows/ChatWindow.h"
 #include "windows/AccountsWindow.h"
 
+class ContactListWindow;
+
 class GuiController : public QObject
 {
     Q_OBJECT

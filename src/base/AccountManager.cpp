@@ -1,6 +1,10 @@
 #include "AccountManager.h"
 
+#include <QApplication>
 #include <QDebug>
+#include <QDir>
+#include <QPluginLoader>
+#include <QSettings>
 
 AccountManager::AccountManager(QObject *parent) : QAbstractListModel(parent)
 {
@@ -17,7 +21,7 @@ void AccountManager::addAccount(Account *a)
     emit dataChanged(index(accounts.size()-1),index(accounts.size()-1));
 }
 
-QList<Account*> AccountManager::getAccounts() const
+QList<Account *> AccountManager::getAccounts() const
 {
     return accounts;
 }
@@ -53,16 +57,54 @@ void AccountManager::changeStatus(Person::Status status)
 
 void AccountManager::save() const
 {
-    //QStringList list;
+    QSettings settings;
 
-    /*QString key = QString("accounts/list/%1");
+    settings.beginWriteArray("accounts/list/", accounts.size());
+
+    int i=0;
 
     for(auto a: accounts) {
-        QSettings().setValue(key.arg("server"), server);
-    }*/
+        settings.setArrayIndex(i++);
+        settings.setValue("id", a->getId());
+        settings.setValue("type", a->getType());
+
+        a->save();
+    }
+
+    settings.endArray();
 }
 
 void AccountManager::load()
 {
+    QSettings settings;
 
+    int size = settings.beginReadArray("accounts/list/");
+
+    QDir path(QApplication::applicationDirPath());
+    path.cd("plugins/protocols/");
+
+    for(int i=0; i<size; ++i) {
+        settings.setArrayIndex(i);
+
+        QString type = settings.value("type").toString();
+
+        path.cd(type);
+
+        QPluginLoader loader(path.absoluteFilePath(QString("lib%1_plugin.so").arg(type)));
+
+        auto account = new Account();
+
+        AccountInterface *object = qobject_cast<AccountInterface*>(loader.instance());
+
+        account->setAccountObject(object);
+
+        account->setId(settings.value("id").toString());
+        account->load();
+
+        account->initAccount();
+
+        accounts.append(account);
+    }
+
+    settings.endArray();
 }
