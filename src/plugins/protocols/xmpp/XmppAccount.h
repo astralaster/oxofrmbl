@@ -1,7 +1,7 @@
 #ifndef XMPPACCOUNT_H
 #define XMPPACCOUNT_H
 
-#include <QtPlugin>
+#include <QString>
 
 #include <qxmpp/QXmppClient.h>
 #include <qxmpp/QXmppMessage.h>
@@ -14,11 +14,10 @@
 class XmppAccount : public QObject, public AccountInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.oxofrmbl/protocols/xmpp/account")
     Q_INTERFACES(AccountInterface)
 public:
     XmppAccount();
-    XmppAccount(Account *account, const QString &server = "", const QString &user = "", const QString &password = "");
+    //XmppAccount(Account *account, const QString &server = "", const QString &user = "", const QString &password = "");
     ~XmppAccount();
 
     void initAccount();
@@ -31,6 +30,7 @@ public:
     QString getType() const override;
     QString getId() const override;
     QString getDisplayName() const override;
+    Account *getAccountObject() override;
 
     void setAccountObject(Account *account);
 

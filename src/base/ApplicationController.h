@@ -3,6 +3,9 @@
 
 #include <QObject>
 
+#include "interfaces/ProtocolPluginInterface.h"
+
+#include "common.h"
 #include "base/ContactList.h"
 #include "base/AccountManager.h"
 
@@ -14,11 +17,19 @@ public:
 
     ContactList *getContactList();
     AccountManager *getAccountManager();
+    
+    QList<QString> getProtocolPluginNames() const;
+    ProtocolPlugin *getProtocolPlugin(const QString &protocol);
 
 signals:
     void quit();
+    
+public slots:
+    void discoverPlugins();
 
 protected:
+    QMap<QString, ProtocolPlugin*> protocolPlugins;
+    
     ContactList *contactList;
     AccountManager *accountManager;
 

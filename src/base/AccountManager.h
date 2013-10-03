@@ -5,13 +5,14 @@
 #include <QList>
 
 #include "common.h"
+#include "ApplicationController.h"
 #include "Account.h"
 
 class AccountManager : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit AccountManager(QObject *parent = 0);
+    explicit AccountManager(ApplicationController *app, QObject *parent = 0);
 
     Account *getAccount(int index);
     QList<Account*> getAccounts() const;
@@ -27,6 +28,7 @@ public slots:
     void load();
 
 private:
+    ApplicationController *app;
     QList<Account*> accounts;
 };
 

@@ -3,8 +3,9 @@
 
 #include <QtPlugin>
 
+#include "common.h"
+#include "base/Account.h"
 #include "PersonInterface.h"
-#include "base/ChatSession.h"
 
 class AccountInterface : public PersonInterface
 {
@@ -14,6 +15,7 @@ public:
     virtual void initAccount() = 0;
 
     virtual QString getType() const = 0;
+    virtual Account *getAccountObject() =0;
     virtual void setAccountObject(Account *account) = 0;
 
     virtual bool connectToServer() = 0;

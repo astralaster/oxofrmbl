@@ -2,8 +2,9 @@
 
 #include <QDebug>
 
-Account::Account(AccountInterface *account, QObject *parent) : Person(parent), account(account)
+Account::Account(AccountInterface *account, QObject *parent) : Person(parent)
 {
+    setAccountObject(account);
 }
 
 Account::~Account()
@@ -13,6 +14,11 @@ Account::~Account()
 void Account::initAccount()
 {
     account->initAccount();
+}
+
+AccountInterface *Account::getAccountObject()
+{
+    return account;
 }
 
 ChatSession *Account::getSession(const QString &contactId)

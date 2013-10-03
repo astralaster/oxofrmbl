@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "../XmppPlugin.h"
+
 #include "base/AccountManager.h"
 #include "plugins/protocols/xmpp/XmppAccount.h"
 
@@ -15,15 +17,15 @@ class XmppAccountWindow : public QDialog
     Q_OBJECT
 
 public:
-    explicit XmppAccountWindow(AccountManager *accountManager, XmppAccount *account = nullptr, QWidget *parent = 0);
+    explicit XmppAccountWindow(XmppPlugin *plugin, XmppAccount *account = nullptr, QWidget *parent = 0);
     ~XmppAccountWindow();
 
 private slots:
     void accept() override;
 
 private:
+    XmppPlugin *plugin;
     XmppAccount *account;
-    AccountManager *accountManager;
     Ui::XmppAccountWindow *ui;
 };
 

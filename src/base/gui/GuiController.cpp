@@ -7,7 +7,7 @@
 GuiController::GuiController(ApplicationController *app) :
     QObject(app), app(app)
 {
-    clw = new ContactListWindow(this, app->getContactList());
+    clw = new ContactListWindow(this);
 
     auto trayIcon = new QSystemTrayIcon(QIcon::fromTheme("user-available"), this);
     trayIcon->setVisible(true);
@@ -48,7 +48,7 @@ void GuiController::activateChat(ChatSession *session)
 void GuiController::showAccountsWindow()
 {
     if(aw == nullptr) {
-        aw = new AccountsWindow(app->getAccountManager());
+        aw = new AccountsWindow(app);
     }
 
     aw->setVisible(true);
@@ -63,6 +63,11 @@ void GuiController::activateContactList(QSystemTrayIcon::ActivationReason reason
     } else {
         emit(quit());
     }
+}
+
+void GuiController::addContactList(ContactList *cl)
+{
+    clw->addContactList(cl);
 }
 
 QMenu *GuiController::trayContextMenu() const

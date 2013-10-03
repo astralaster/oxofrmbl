@@ -3,15 +3,19 @@
 
 #include <QListView>
 
+#include "base/ContactList.h"
+
 class ContactListWidget : public QListView
 {
     Q_OBJECT
 public:
-    explicit ContactListWidget(QWidget *parent = 0);
-
-signals:
-
+    explicit ContactListWidget(ContactList *cl, QWidget *parent = 0);
+    
 public slots:
+    void openContact(const QModelIndex &index);
+
+private:
+    ContactList *contactList;
 
 };
 

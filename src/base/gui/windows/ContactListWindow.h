@@ -21,18 +21,20 @@ class ContactListWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit ContactListWindow(GuiController *controller, ContactList *contacts, QWidget *parent = 0);
+    explicit ContactListWindow(GuiController *controller, QWidget *parent = 0);
     ~ContactListWindow();
 
     QComboBox *getStatusSelect();
 
 signals:
     void statusChanged(Account::Status status);
+    
+public slots:
+    void addContactList(ContactList *cl);
 
 private slots:
     void closeEvent(QCloseEvent *e) override;
 
-    void on_contactList_doubleClicked(const QModelIndex &index);
     void on_status_currentIndexChanged(int index);
 
 private:

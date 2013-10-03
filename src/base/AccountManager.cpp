@@ -6,7 +6,7 @@
 #include <QPluginLoader>
 #include <QSettings>
 
-AccountManager::AccountManager(QObject *parent) : QAbstractListModel(parent)
+AccountManager::AccountManager(ApplicationController *app, QObject *parent) : QAbstractListModel(parent), app(app)
 {
 }
 
@@ -18,6 +18,9 @@ Account *AccountManager::getAccount(int index)
 void AccountManager::addAccount(Account *a)
 {
     accounts << a;
+    
+    connect(a, &Account::accountSaved, this, &AccountManager::save);
+    
     emit dataChanged(index(accounts.size()-1),index(accounts.size()-1));
 }
 
@@ -28,13 +31,6 @@ QList<Account *> AccountManager::getAccounts() const
 
 int AccountManager::rowCount(const QModelIndex &parent) const
 {
-    /*int result = 0;
-
-    for(auto a : accounts) {
-        result += a->getContacts()->count();
-    }
-
-    return result;*/
     return accounts.count();
 }
 
@@ -67,8 +63,6 @@ void AccountManager::save() const
         settings.setArrayIndex(i++);
         settings.setValue("id", a->getId());
         settings.setValue("type", a->getType());
-
-        a->save();
     }
 
     settings.endArray();
@@ -80,30 +74,20 @@ void AccountManager::load()
 
     int size = settings.beginReadArray("accounts/list/");
 
-    QDir path(QApplication::applicationDirPath());
-    path.cd("plugins/protocols/");
-
     for(int i=0; i<size; ++i) {
         settings.setArrayIndex(i);
 
         QString type = settings.value("type").toString();
+        
+        ProtocolPlugin *plugin = app->getProtocolPlugin(type);
 
-        path.cd(type);
-
-        QPluginLoader loader(path.absoluteFilePath(QString("lib%1_plugin.so").arg(type)));
-
-        auto account = new Account();
-
-        AccountInterface *object = qobject_cast<AccountInterface*>(loader.instance());
-
-        account->setAccountObject(object);
+        AccountInterface *_account = plugin->createAccount();
+        Account *account = _account->getAccountObject();
 
         account->setId(settings.value("id").toString());
         account->load();
 
         account->initAccount();
-
-        accounts.append(account);
     }
 
     settings.endArray();

@@ -4,15 +4,15 @@
 #include <QDebug>
 #include <QCloseEvent>
 
+#include "gui/widgets/ContactListWidget.h"
 #include "ChatWindow.h"
 #include "base/ChatSession.h"
 
-ContactListWindow::ContactListWindow(GuiController *controller, ContactList *contacts, QWidget *parent) :
+ContactListWindow::ContactListWindow(GuiController *controller, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ContactListWindow)
 {
     ui->setupUi(this);
-    ui->contactList->setModel(contacts);
 
     connect(ui->actionAccounts, &QAction::triggered, controller, &GuiController::showAccountsWindow);
 }
@@ -28,19 +28,16 @@ QComboBox *ContactListWindow::getStatusSelect()
     return ui->status;
 }
 
+void ContactListWindow::addContactList(ContactList *cl)
+{
+    this->ui->contactListLayout->addWidget(new ContactListWidget(cl, ui->contactList));
+}
+
 void ContactListWindow::closeEvent(QCloseEvent *e)
 {
     //setVisible(false);
     //e->ignore();
     //emit windowClosed();
-}
-
-
-void ContactListWindow::on_contactList_doubleClicked(const QModelIndex &index)
-{
-    auto contact = dynamic_cast<ContactList*>(ui->contactList->model())->getContact(index.row());
-
-    contact->getAccount()->startSession(contact);
 }
 
 void ContactListWindow::on_status_currentIndexChanged(int index)

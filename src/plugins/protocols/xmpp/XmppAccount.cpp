@@ -73,6 +73,8 @@ void XmppAccount::save() const
     settings.setValue("password", password);
 
     settings.endGroup();
+    
+    emit account->accountSaved();
 }
 
 void XmppAccount::load()
@@ -96,6 +98,11 @@ QString XmppAccount::getId() const
 QString XmppAccount::getDisplayName() const
 {
     return getId();
+}
+
+Account *XmppAccount::getAccountObject()
+{
+    return account;
 }
 
 void XmppAccount::setAccountObject(Account *account)

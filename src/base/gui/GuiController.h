@@ -30,6 +30,8 @@ public slots:
 
     void showAccountsWindow();
     void activateContactList(QSystemTrayIcon::ActivationReason reason);
+    
+    void addContactList(ContactList *cl);
 
 protected:
     QMenu *trayContextMenu() const;

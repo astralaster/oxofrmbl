@@ -19,6 +19,8 @@ public:
     ~Account();
 
     void initAccount();
+    
+    AccountInterface *getAccountObject();
 
     ChatSession *getSession(const QString &contactId);
 
@@ -40,6 +42,7 @@ signals:
     void messageReceived(const ChatMessage *msg);
     void connected();
     void disconnected();
+    void accountSaved();
 
 public slots:
     bool connectToServer();

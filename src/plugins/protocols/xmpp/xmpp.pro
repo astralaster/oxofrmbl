@@ -13,11 +13,13 @@ TARGET = $$qtLibraryTarget(xmpp_plugin)
 SOURCES += \
     XmppAccount.cpp \
     XmppContact.cpp \
-    gui/XmppAccountWindow.cpp
+    gui/XmppAccountWindow.cpp \
+    XmppPlugin.cpp
     
 HEADERS += \
     XmppContact.h \
     XmppAccount.h \
-    gui/XmppAccountWindow.h
+    gui/XmppAccountWindow.h \
+    XmppPlugin.h
     
 FORMS += gui/XmppAccountWindow.ui
