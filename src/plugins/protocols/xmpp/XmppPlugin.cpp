@@ -10,13 +10,9 @@ XmppPlugin::XmppPlugin(QObject *parent) :
 {
 }
 
-XmppAccount *XmppPlugin::createAccount()
+Account *XmppPlugin::createAccount()
 {
-    auto account = new XmppAccount();
-    
-    app->getAccountManager()->addAccount(new Account(account));
-    
-    return account;
+    return new Account(new XmppAccount());
 }
 
 void XmppPlugin::showAccountWindow(Account *account)

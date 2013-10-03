@@ -10,24 +10,25 @@ TARGET = $$qtLibraryTarget(oxofrmbl_base)
 HEADERS += \
     ApplicationController.h \
     ChatMessage.h \
-    ContactList.h \
     Account.h \
     Contact.h \
     AccountManager.h \
     Person.h \
-    ChatSession.h
+    ChatSession.h \
+    Status.h
 
 SOURCES += \
     ApplicationController.cpp \
     ChatSession.cpp \
     ChatMessage.cpp \
-    ContactList.cpp \
     Account.cpp \
     Contact.cpp \
-    AccountManager.cpp
+    AccountManager.cpp \
+    Status.cpp
 
 SOURCES += \
     gui/GuiController.cpp \
+    gui/ContactList.cpp \
     gui/windows/ContactListWindow.cpp \
     gui/windows/ChatWindow.cpp \
     gui/windows/AccountsWindow.cpp \
@@ -36,6 +37,7 @@ SOURCES += \
 
 HEADERS += \
     gui/GuiController.h \
+    gui/ContactList.h \
     gui/windows/ContactListWindow.h \
     gui/windows/ChatWindow.h \
     gui/windows/AccountsWindow.h \

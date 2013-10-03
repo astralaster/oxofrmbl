@@ -3,7 +3,7 @@
 
 #include <QListView>
 
-#include "base/ContactList.h"
+#include "../ContactList.h"
 
 class ContactListWidget : public QListView
 {

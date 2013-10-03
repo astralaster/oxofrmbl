@@ -41,9 +41,3 @@ void XmppContact::setJid(const QString &jid)
 {
     this->jid = jid;
 }
-
-void XmppContact::setStatus(PersonInterface::Status status)
-{
-
-}
-

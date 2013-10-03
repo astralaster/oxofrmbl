@@ -5,6 +5,7 @@
 
 #include "interfaces/PersonInterface.h"
 
+#include "base/Status.h"
 #include "common.h"
 
 class Person : public QObject, public PersonInterface {
@@ -18,21 +19,21 @@ public:
         return nickname.isEmpty() ? getId() : nickname;
     }
 
-    virtual Status getStatus() const {
+    virtual Status *getStatus() {
         return status;
     }
 
 signals:
-    void statusChanged(Status status);
+    void statusChanged(Status *status);
 
 public slots:
-    virtual void setStatus(Status status) {
+    virtual void setStatus(Status *status) {
         this->status = status;
         emit statusChanged(status);
     }
 
 protected:
-    Status status;
+    Status *status = nullptr;
     QString nickname;
 };
 

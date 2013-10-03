@@ -13,20 +13,17 @@ class XmppPlugin : public QObject, public ProtocolPlugin
     Q_PLUGIN_METADATA(IID "com.oxofrmbl/protocols/xmpp/")
     Q_INTERFACES(ProtocolPlugin)
     
-signals:
-    void accountCreated();
-    
 public:
     explicit XmppPlugin(QObject *parent = 0);
     
-    XmppAccount *createAccount() override;
-    void showAccountWindow(Account *account = nullptr) override;
+    Account *createAccount() override;
+    void showAccountWindow(Account *account) override;
     
 public slots:
     void init(ApplicationController *app) override;
 
 private:
-    ApplicationController *app;
+    ApplicationController *app = nullptr;
     
 };
 

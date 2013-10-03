@@ -9,8 +9,6 @@
 #include "plugins/protocols/xmpp/XmppContact.h"
 #include "plugins/protocols/xmpp/gui/XmppAccountWindow.h"
 
-#include "gui/GuiController.h"
-
 ApplicationController::ApplicationController(QObject *parent) :
     QObject(parent)
 {
@@ -21,28 +19,17 @@ ApplicationController::ApplicationController(QObject *parent) :
 
     //qDebug() << account->metaObject()->className();
 
-    accountManager = new AccountManager(this);
+    accountManager = new AccountManager(this);    
+    gui = new GuiController(this);
+    
+    connect(accountManager, &AccountManager::accountAdded,   gui, &GuiController::addAccount);
+    connect(accountManager, &AccountManager::accountRemoved, gui, &GuiController::removeAccount);
+    
     accountManager->load();
     
-    auto gui = new GuiController(this);
+    accountManager->connectAccounts();
     
-    for(auto account : accountManager->getAccounts()) {
-        account->connectToServer();
-        
-        connect(gui, &GuiController::quit, account, &Account::disconnectFromServer);
-        connect(gui, &GuiController::quit, this, &ApplicationController::quit);
-    
-        contactList = new ContactList(account);
-    
-        connect(account, &Account::connected, contactList, &ContactList::retrieveContacts);
-        
-        gui->addContactList(contactList);
-    }
-}
-
-ContactList *ApplicationController::getContactList()
-{
-    return contactList;
+    gui->show();
 }
 
 AccountManager *ApplicationController::getAccountManager()
@@ -58,6 +45,15 @@ QList<QString> ApplicationController::getProtocolPluginNames() const
 ProtocolPlugin *ApplicationController::getProtocolPlugin(const QString &protocol)
 {
     return protocolPlugins[protocol];
+}
+
+void ApplicationController::addAccount(Account *account)
+{
+    gui->addAccount(account);
+    
+    /*if(account->isConnected()) {
+        
+    }*/
 }
 
 void ApplicationController::discoverPlugins()

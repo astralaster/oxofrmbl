@@ -14,12 +14,10 @@ XmppAccountWindow::XmppAccountWindow(XmppPlugin *plugin, XmppAccount *account, Q
 
     connect(this, &XmppAccountWindow::accepted, this, &XmppAccountWindow::accept);
 
-    if(account != nullptr) {
-        ui->username->setText(account->getUser());
-        ui->server->setText(account->getServer());
-        ui->password->setText(account->getPassword());
-        ui->resource->setText(account->getResource());
-    }
+    ui->username->setText(account->getUser());
+    ui->server->setText(account->getServer());
+    ui->password->setText(account->getPassword());
+    ui->resource->setText(account->getResource());
 }
 
 XmppAccountWindow::~XmppAccountWindow()
@@ -29,13 +27,11 @@ XmppAccountWindow::~XmppAccountWindow()
 
 void XmppAccountWindow::accept()
 {
-    if(account == nullptr) {
-        account = plugin->createAccount();
-    }
-
     account->setState(ui->server->text(), ui->username->text(), ui->password->text(), ui->resource->text());
     account->save();
-    //accountManager->save();
+    
+    account->initAccount();
+    account->connectToServer();
 
     close();
 }

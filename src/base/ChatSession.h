@@ -27,8 +27,8 @@ private slots:
     void messageReceivedSlot(const ChatMessage *msg);
 
 private:
-    Contact *contact;
-    Account *account;
+    Contact *contact = nullptr;
+    Account *account = nullptr;
 };
 
 #endif // CONVERSATION_H

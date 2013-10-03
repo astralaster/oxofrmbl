@@ -21,8 +21,8 @@ public:
     Account *getAccount();
 
 protected:
-    ContactInterface *contact;
-    Account *account;
+    ContactInterface *contact = nullptr;
+    Account *account = nullptr;
     
 };
 

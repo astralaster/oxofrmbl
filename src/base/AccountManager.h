@@ -19,16 +19,27 @@ public:
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    
+signals:
+    void changed(bool saveData);
+    void accountRemoved(Account *account);
+    void accountAdded(Account *account);
 
 public slots:
-    void addAccount(Account *a);
-    void changeStatus(Account::Status status);
+    void accountSavedSlot();
+    void dataChangedSlot(bool save);
+    
+    void connectAccounts();
+    
+    void addAccount(Account *account, bool saveData = false);
+    void removeAccount(Account *account);
+    void changeStatus(Status *status);
 
     void save() const;
     void load();
 
 private:
-    ApplicationController *app;
+    ApplicationController *app = nullptr;
     QList<Account*> accounts;
 };
 

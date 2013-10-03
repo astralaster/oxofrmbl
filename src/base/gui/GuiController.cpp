@@ -20,12 +20,11 @@ GuiController::GuiController(ApplicationController *app) :
     connect(quitShortcut, &QShortcut::activated, this, &GuiController::quit);
     connect(trayIcon, &QSystemTrayIcon::activated, this, &GuiController::activateContactList);
 
-    for(Account *a : app->getAccountManager()->getAccounts()) {
-        connect(a, &Account::sessionStarted,   this, &GuiController::startChat);
-        connect(a, &Account::sessionActivated, this, &GuiController::activateChat);
-    }
-
     connect(clw, &ContactListWindow::statusChanged, app->getAccountManager(), &AccountManager::changeStatus);
+}
+
+void GuiController::show()
+{
     clw->show();
 }
 
@@ -61,13 +60,33 @@ void GuiController::activateContactList(QSystemTrayIcon::ActivationReason reason
     } else if(reason == QSystemTrayIcon::Context) {
 
     } else {
-        emit(quit());
+        emit quit();
     }
 }
 
-void GuiController::addContactList(ContactList *cl)
+void GuiController::addAccount(Account *account)
 {
-    clw->addContactList(cl);
+    connect(account, &Account::sessionStarted,   this, &GuiController::startChat);
+    connect(account, &Account::sessionActivated, this, &GuiController::activateChat);
+    
+    connect(this, &GuiController::quit, account, &Account::disconnectFromServer);
+    connect(this, &GuiController::quit, app, &ApplicationController::quit);
+
+    auto contactList = new ContactList(account, this);
+
+    connect(account, &Account::connected, contactList, &ContactList::retrieveContacts);
+    
+    contactLists[account] = contactList;
+    clw->addContactList(contactList);
+}
+
+void GuiController::removeAccount(Account *account)
+{
+    auto cl = contactLists.take(account);
+    
+    clw->removeContactList(cl);
+    
+    delete cl;
 }
 
 QMenu *GuiController::trayContextMenu() const

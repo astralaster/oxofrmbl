@@ -6,8 +6,10 @@
 #include "interfaces/ProtocolPluginInterface.h"
 
 #include "common.h"
-#include "base/ContactList.h"
 #include "base/AccountManager.h"
+
+#include "gui/GuiController.h"
+
 
 class ApplicationController : public QObject
 {
@@ -15,7 +17,6 @@ class ApplicationController : public QObject
 public:
     explicit ApplicationController(QObject *parent = 0);
 
-    ContactList *getContactList();
     AccountManager *getAccountManager();
     
     QList<QString> getProtocolPluginNames() const;
@@ -25,13 +26,14 @@ signals:
     void quit();
     
 public slots:
+    void addAccount(Account *account);
     void discoverPlugins();
 
 protected:
     QMap<QString, ProtocolPlugin*> protocolPlugins;
     
-    ContactList *contactList;
-    AccountManager *accountManager;
+    GuiController *gui = nullptr;
+    AccountManager *accountManager = nullptr;
 
 };
 

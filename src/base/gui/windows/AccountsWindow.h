@@ -5,7 +5,7 @@
 #include <QMainWindow>
 
 #include "common.h"
-#include "base/AccountManager.h"
+#include "../../ApplicationController.h"
 
 namespace Ui {
 class AccountsWindow;
@@ -21,11 +21,16 @@ public:
 
 public slots:
     void addAccount();
+    //void deleteAccount();
     void openAccount(const QModelIndex &index);
 
 private slots:
     void on_addAccount_clicked();
-
+    
+    void on_removeAccount_clicked();
+    
+    void on_close_clicked();
+    
 private:
     ApplicationController *app;
     Ui::AccountsWindow *ui;

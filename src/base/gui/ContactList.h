@@ -4,13 +4,13 @@
 #include <QAbstractItemModel>
 
 #include "common.h"
-#include "Contact.h"
+#include "base/Contact.h"
 
 class ContactList : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    ContactList(Account *account);
+    ContactList(Account *account, QObject *parent);
 
     Contact *getContact(int index) const;
     Account *getAccount() const;
@@ -22,7 +22,7 @@ public slots:
     void retrieveContacts();
 
 private:
-    Account *account;
+    Account *account = nullptr;
     
 };
 

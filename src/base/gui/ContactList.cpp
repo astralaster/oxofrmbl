@@ -2,7 +2,8 @@
 
 #include <QDebug>
 
-ContactList::ContactList(Account *account) : account(account)
+ContactList::ContactList(Account *account, QObject *parent) : 
+    QAbstractListModel(parent), account(account)
 {
     connect(account, &Account::connected, this, &ContactList::retrieveContacts);
 }

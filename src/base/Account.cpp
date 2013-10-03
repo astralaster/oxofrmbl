@@ -59,7 +59,7 @@ QString Account::getDisplayName() const
     }
 }
 
-PersonInterface::Status Account::getStatus() const
+Status *Account::getStatus()
 {
     return status;
 }
@@ -69,6 +69,11 @@ void Account::setId(const QString &id)
     accountId = id;
 }
 
+bool Account::isConnected() const
+{
+    return connectedStatus;
+}
+
 bool Account::isActive() const
 {
     return active;
@@ -76,7 +81,8 @@ bool Account::isActive() const
 
 bool Account::connectToServer()
 {
-    return account->connectToServer();
+    connectedStatus = account->connectToServer();
+    return connectedStatus;
 }
 
 void Account::disconnectFromServer()
@@ -94,10 +100,9 @@ void Account::addContact(Contact *contact)
     contacts.append(contact);
 }
 
-void Account::setStatus(Status status)
+void Account::setStatus(Status *status)
 {
-    this->status = status;
-    account->setStatus(status);
+    Person::setStatus(status);
 }
 
 void Account::setAccountObject(AccountInterface *account)
@@ -128,6 +133,11 @@ void Account::endSession(ChatSession *session)
 {
     chatSessions.remove(session->getContact()->getId());
     delete session;
+}
+
+void Account::remove()
+{
+    account->remove();
 }
 
 void Account::save() const

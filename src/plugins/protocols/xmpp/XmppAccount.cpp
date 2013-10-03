@@ -19,13 +19,73 @@ void XmppAccount::initAccount()
 
     client->logger()->setLoggingType(QXmppLogger::StdoutLogging);
 
-    connect(this, &XmppAccount::connected, account, &Account::connected);
     connect(&client->rosterManager(), &QXmppRosterManager::rosterReceived, this, &XmppAccount::retrieveContacts);
-
     connect(client, &QXmppClient::messageReceived, this, &XmppAccount::messageReceivedSlot);
-    connect(this, &XmppAccount::messageReceived, account, &Account::messageReceived);
-
+    
     //connect(this, &XmppAccount::disconnected, this, &XmppAccount::clearContacts);
+}
+
+
+Account *XmppAccount::getAccountObject()
+{
+    return account;
+}
+
+void XmppAccount::setAccountObject(Account *account)
+{
+    this->account = account;
+    connect(this, &XmppAccount::connected, account, &Account::connected);
+    connect(this, &XmppAccount::accountSaved, account, &Account::accountSaved);
+    connect(this, &XmppAccount::messageReceived, account, &Account::messageReceived);    
+    connect(account, &Account::statusChanged, this, &XmppAccount::setStatus);
+}
+
+void XmppAccount::retrieveContacts()
+{
+    for(auto contact_jid: client->rosterManager().getRosterBareJids()) {
+        account->addContact(new Contact(new XmppContact(contact_jid), account));
+    }
+
+    emit connected();
+}
+
+void XmppAccount::remove()
+{
+    client->disconnectFromServer();
+    QSettings().remove(QString("accounts/xmpp/%1/").arg(account->getId()));
+}
+
+void XmppAccount::save() const
+{
+    QSettings settings;
+
+    settings.beginGroup(QString("accounts/xmpp/%1/").arg(account->getId()));
+
+    settings.setValue("server", server);
+    settings.setValue("user", user);
+    settings.setValue("password", password);
+
+    settings.endGroup();
+    
+    emit accountSaved();
+}
+
+void XmppAccount::load()
+{
+    QSettings settings;
+
+    settings.beginGroup(QString("accounts/xmpp/%1/").arg(account->getId()));
+
+    server = settings.value("server", server).toString();
+    user = settings.value("user", user).toString();
+    password = settings.value("password", password).toString();
+
+    settings.endGroup();
+}
+
+void XmppAccount::presenceReceivedSlot(const QXmppPresence &presence)
+{
+    
 }
 
 QString XmppAccount::getServer() const
@@ -53,42 +113,6 @@ QString XmppAccount::getType() const
     return "xmpp";
 }
 
-void XmppAccount::retrieveContacts()
-{
-    for(auto contact_jid: client->rosterManager().getRosterBareJids()) {
-        account->addContact(new Contact(new XmppContact(contact_jid), account));
-    }
-
-    emit connected();
-}
-
-void XmppAccount::save() const
-{
-    QSettings settings;
-
-    settings.beginGroup(QString("accounts/xmpp/%1/").arg(account->getId()));
-
-    settings.setValue("server", server);
-    settings.setValue("user", user);
-    settings.setValue("password", password);
-
-    settings.endGroup();
-    
-    emit account->accountSaved();
-}
-
-void XmppAccount::load()
-{
-    QSettings settings;
-
-    settings.beginGroup(QString("accounts/xmpp/%1/").arg(account->getId()));
-
-    server = settings.value("server", server).toString();
-    user = settings.value("user", user).toString();
-    password = settings.value("password", password).toString();
-
-    settings.endGroup();
-}
 
 QString XmppAccount::getId() const
 {
@@ -98,16 +122,6 @@ QString XmppAccount::getId() const
 QString XmppAccount::getDisplayName() const
 {
     return getId();
-}
-
-Account *XmppAccount::getAccountObject()
-{
-    return account;
-}
-
-void XmppAccount::setAccountObject(Account *account)
-{
-    this->account = account;
 }
 
 bool XmppAccount::connectToServer()
@@ -155,13 +169,14 @@ void XmppAccount::setResource(const QString &resource)
     this->resource = resource;
 }
 
-void XmppAccount::setStatus(Status status)
+void XmppAccount::setStatus(Status *status)
 {
+    qDebug() << "blub";
     //Person::setStatus(status);
 
     QXmppPresence presence;
 
-    switch (status) {
+    switch (status->getType()) {
     case Status::Away:
         presence.setType(QXmppPresence::Available);
         presence.setAvailableStatusType(QXmppPresence::Away);

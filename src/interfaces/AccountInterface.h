@@ -22,6 +22,7 @@ public:
     virtual void disconnectFromServer() = 0;
     virtual void sendMessage(const ChatMessage *msg) = 0;
 
+    virtual void remove() = 0;
     virtual void save() const = 0;
     virtual void load() = 0;
 };

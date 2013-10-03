@@ -31,12 +31,11 @@ public:
     QString getId() const override;
     QString getDisplayName() const override;
     Account *getAccountObject() override;
-
-    void setAccountObject(Account *account);
-
+    
 signals:
+    void accountSaved() const;
     void messageReceived(const ChatMessage *msg);
-    void connected();
+    void connected() ;
     void disconnected();
 
 public slots:
@@ -44,26 +43,31 @@ public slots:
     void disconnectFromServer() override;
     void sendMessage(const ChatMessage *msg) override;
 
+    void retrieveContacts();
+
+    void remove() override;
+    void save() const override;
+    void load() override;
+    
+public slots:
     void setState(const QString &server, const QString &user, const QString &password, const QString &resource);
     void setServer(const QString &server);
     void setUser(const QString &user);
     void setPassword(const QString &password);
     void setResource(const QString &resource);
-
-    void setStatus(Status status) override;
-
-    void retrieveContacts();
-
-    void save() const override;
-    void load() override;
+    
+    void setAccountObject(Account *account);
+    void setStatus(Status *status);
+    
 
 private slots:
+    void presenceReceivedSlot(const QXmppPresence &presence);
     void messageReceivedSlot(const QXmppMessage &message);
 
 private:
-    Account *account;
+    Account *account = nullptr;
 
-    QXmppClient *client;
+    QXmppClient *client = nullptr;
     QString server, user, password, resource;
 };
 

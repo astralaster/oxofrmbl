@@ -6,9 +6,11 @@
 #include <QComboBox>
 
 #include "base/Account.h"
-#include "base/ContactList.h"
 
-#include "gui/GuiController.h"
+#include "../ContactList.h"
+#include "../GuiController.h"
+
+#include "../widgets/ContactListWidget.h"
 
 class GuiController;
 
@@ -27,10 +29,11 @@ public:
     QComboBox *getStatusSelect();
 
 signals:
-    void statusChanged(Account::Status status);
+    void statusChanged(Status *status);
     
 public slots:
     void addContactList(ContactList *cl);
+    void removeContactList(ContactList *cl);
 
 private slots:
     void closeEvent(QCloseEvent *e) override;
@@ -38,6 +41,7 @@ private slots:
     void on_status_currentIndexChanged(int index);
 
 private:
+    QMap<ContactList*, ContactListWidget*> contactLists;
     Ui::ContactListWindow *ui;
 };
 

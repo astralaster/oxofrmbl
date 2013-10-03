@@ -4,7 +4,6 @@
 #include <QDebug>
 #include <QCloseEvent>
 
-#include "gui/widgets/ContactListWidget.h"
 #include "ChatWindow.h"
 #include "base/ChatSession.h"
 
@@ -30,7 +29,19 @@ QComboBox *ContactListWindow::getStatusSelect()
 
 void ContactListWindow::addContactList(ContactList *cl)
 {
-    this->ui->contactListLayout->addWidget(new ContactListWidget(cl, ui->contactList));
+    auto widget = new ContactListWidget(cl, ui->contactList);
+    
+    contactLists[cl] = widget;
+    
+    this->ui->contactListLayout->addWidget(widget);
+}
+
+void ContactListWindow::removeContactList(ContactList *cl)
+{
+    auto widget = contactLists.take(cl);
+    this->ui->contactListLayout->removeWidget(widget);
+    
+    delete widget;
 }
 
 void ContactListWindow::closeEvent(QCloseEvent *e)
@@ -42,5 +53,8 @@ void ContactListWindow::closeEvent(QCloseEvent *e)
 
 void ContactListWindow::on_status_currentIndexChanged(int index)
 {
-    emit statusChanged((Account::Status)index);
+    auto status = new Status();
+    status->setType(Status::Type(index));
+    
+    emit statusChanged(status);
 }

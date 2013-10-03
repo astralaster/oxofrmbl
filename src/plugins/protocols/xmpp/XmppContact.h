@@ -22,7 +22,6 @@ public:
 
 public slots:
     void setJid(const QString &jid);
-    void setStatus(Status status) override;
 
 private:
     QString jid;

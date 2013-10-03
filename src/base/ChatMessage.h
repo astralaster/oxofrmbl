@@ -23,7 +23,7 @@ public:
     QString getBody() const;
 
 private:
-    ChatSession *Session;
+    ChatSession *Session = nullptr;
 
     bool incoming;
     QString body;

@@ -15,7 +15,7 @@ class Account : public Person
 {
     Q_OBJECT
 public:
-    explicit Account(AccountInterface *account = nullptr, QObject *parent = 0);
+    explicit Account(AccountInterface *account, QObject *parent = 0);
     ~Account();
 
     void initAccount();
@@ -30,10 +30,11 @@ public:
     QString getType() const;
     QString getId() const;
     QString getDisplayName() const;
-    Status getStatus() const;
+    Status *getStatus();
 
     void setId(const QString &id);
 
+    bool isConnected() const;
     bool isActive() const;
 
 signals:
@@ -51,19 +52,21 @@ public slots:
 
     void addContact(Contact *contact);
 
-    void setStatus(Status status);
+    void setStatus(Status *status);
     void setAccountObject(AccountInterface *account);
 
     ChatSession *startSession(Contact *contact);
     void endSession(ChatSession *session);
 
+    void remove();
     void save() const;
     void load();
 
 protected:
-    AccountInterface *account;
+    AccountInterface *account = nullptr;
     QString accountId;
 
+    bool connectedStatus = false;
     bool active = true;
 
     QList<Contact*> contacts;

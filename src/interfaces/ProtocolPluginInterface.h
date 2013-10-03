@@ -9,9 +9,9 @@ class ProtocolPlugin : public Plugin {
 public:
     virtual ~ProtocolPlugin() {}
     
-    virtual AccountInterface *createAccount() = 0;
+    virtual Account *createAccount() = 0;
     
-    virtual void showAccountWindow(Account *account = nullptr) = 0;
+    virtual void showAccountWindow(Account *account) = 0;
 };
 
 Q_DECLARE_INTERFACE(ProtocolPlugin, "com.oxofrmbl/plugins/ProtocolPlugin/1.0")
