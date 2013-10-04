@@ -2,11 +2,11 @@
 
 #include <QDebug>
 
-Contact::Contact(ContactInterface *contact, Account *acc) : Person(acc), contact(contact), account(acc)
+Contact::Contact(Account *acc) : Person(acc), account(acc)
 {
 }
 
-QString Contact::getId() const
+/*QString Contact::getId() const
 {
     return contact->getId();
 }
@@ -14,7 +14,7 @@ QString Contact::getId() const
 QString Contact::getDisplayName() const
 {
     return contact->getDisplayName();
-}
+}*/
 
 Account *Contact::getAccount()
 {

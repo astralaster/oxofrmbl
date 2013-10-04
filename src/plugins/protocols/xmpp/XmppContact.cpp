@@ -4,13 +4,12 @@
 
 #include "XmppContact.h"
 
-XmppContact::XmppContact(const QString &jid) :
-    jid(jid)
+XmppContact::XmppContact(Account *account, const QString &jid) : Contact(account), jid(jid)
 {
 }
 
-XmppContact::XmppContact(const QString &server, const QString &user) :
-    XmppContact(server+"@"+user)
+XmppContact::XmppContact(Account *account, const QString &server, const QString &user) :
+    XmppContact(account, server+"@"+user)
 {
 }
 

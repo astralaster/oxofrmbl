@@ -11,15 +11,12 @@ TEMPLATE = app
 
 INCLUDEPATH += ./
 
-SOURCES += main.cpp
-
 HEADERS += \
     common.h \
-    interfaces/PersonInterface.h \
-    interfaces/ContactInterface.h \
-    interfaces/AccountInterface.h \
     interfaces/PluginInterface.h \
-    interfaces/ProtocolPluginInterface.h \
+    interfaces/ProtocolPluginInterface.h
+
+SOURCES += main.cpp
 
 INCLUDES += QDebug
 

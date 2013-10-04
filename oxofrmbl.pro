@@ -7,6 +7,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    src/base \
     src \
+    src/base \
     src/plugins/protocols/xmpp

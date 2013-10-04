@@ -4,16 +4,13 @@
 #include <QString>
 
 #include "XmppAccount.h"
-#include "interfaces/ContactInterface.h"
 
-class XmppContact : public QObject, public ContactInterface
+class XmppContact : public Contact
 {
     Q_OBJECT
-    Q_INTERFACES(ContactInterface)
 public:
-    XmppContact();
-    XmppContact(const QString &jid);
-    XmppContact(const QString &server, const QString &user);
+    XmppContact(Account *account, const QString &jid);
+    XmppContact(Account *account, const QString &server, const QString &user);
 
     QString getDisplayName() const override;
     QString getId() const;

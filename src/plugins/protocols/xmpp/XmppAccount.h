@@ -7,14 +7,11 @@
 #include <qxmpp/QXmppMessage.h>
 #include <qxmpp/QXmppRosterManager.h>
 
-#include "base/ChatMessage.h"
+#include "base/Account.h"
 
-#include "interfaces/AccountInterface.h"
-
-class XmppAccount : public QObject, public AccountInterface
+class XmppAccount : public Account
 {
     Q_OBJECT
-    Q_INTERFACES(AccountInterface)
 public:
     XmppAccount();
     //XmppAccount(Account *account, const QString &server = "", const QString &user = "", const QString &password = "");
@@ -30,13 +27,6 @@ public:
     QString getType() const override;
     QString getId() const override;
     QString getDisplayName() const override;
-    Account *getAccountObject() override;
-    
-signals:
-    void accountSaved() const;
-    void messageReceived(const ChatMessage *msg);
-    void connected() ;
-    void disconnected();
 
 public slots:
     bool connectToServer() override;
@@ -65,8 +55,6 @@ private slots:
     void messageReceivedSlot(const QXmppMessage &message);
 
 private:
-    Account *account = nullptr;
-
     QXmppClient *client = nullptr;
     QString server, user, password, resource;
 };

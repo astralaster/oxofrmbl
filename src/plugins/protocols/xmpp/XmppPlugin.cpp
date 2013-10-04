@@ -12,15 +12,17 @@ XmppPlugin::XmppPlugin(QObject *parent) :
 
 Account *XmppPlugin::createAccount()
 {
-    return new Account(new XmppAccount());
+    qDebug() << "create account";
+    return new XmppAccount();
 }
 
 void XmppPlugin::showAccountWindow(Account *account)
 {
-    (new XmppAccountWindow(this, dynamic_cast<XmppAccount*>(account->getAccountObject())))->show();
+    (new XmppAccountWindow(this, dynamic_cast<XmppAccount*>(account)))->show();
 }
 
 void XmppPlugin::init(ApplicationController *app)
 {
+
     this->app = app;
 }

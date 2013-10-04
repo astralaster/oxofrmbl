@@ -2,7 +2,6 @@
 #define PROTOCOLPLUGININTERFACE_H
 
 #include "common.h"
-#include "AccountInterface.h"
 #include "PluginInterface.h"
 
 class ProtocolPlugin : public Plugin {

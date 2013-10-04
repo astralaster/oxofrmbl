@@ -71,6 +71,8 @@ void ApplicationController::discoverPlugins()
             ProtocolPlugin *plugin = qobject_cast<ProtocolPlugin*>(loader.instance());
             plugin->init(this);
             
+            qDebug() << QString("loaded %1 plugin").arg(protocol);
+            
             protocolPlugins[protocol] = plugin;
         } else {
             qDebug() << loader.errorString();

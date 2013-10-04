@@ -3,17 +3,16 @@
 
 #include <QObject>
 
-#include "interfaces/PersonInterface.h"
-
 #include "base/Status.h"
 #include "common.h"
 
-class Person : public QObject, public PersonInterface {
+class Person : public QObject {
     Q_OBJECT
-    Q_INTERFACES(PersonInterface)
 public:
     explicit Person(QObject *parent) : QObject(parent){}
     explicit Person(const QString &nickname, QObject *parent) : QObject(parent), nickname(nickname){}
+    
+    virtual QString getId() const = 0;
 
     virtual QString getDisplayName() const {
         return nickname.isEmpty() ? getId() : nickname;

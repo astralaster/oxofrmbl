@@ -2,6 +2,7 @@
 #include "ui_AccountsWindow.h"
 
 #include <QMenu>
+#include <QMessageBox>
 
 #include "base/AccountManager.h"
 #include "plugins/protocols/xmpp/gui/XmppAccountWindow.h"
@@ -62,7 +63,9 @@ void AccountsWindow::on_removeAccount_clicked()
     
     auto account = dynamic_cast<Account*>(app->getAccountManager()->getAccount(index.row()));
     
-    app->getAccountManager()->removeAccount(account);
+    if(QMessageBox::question(this, "Delete Account", QString("Are you sure, that you want to delete %1?").arg(account->getId())) == QMessageBox::Yes) {
+        app->getAccountManager()->removeAccount(account);
+    }
 }
 
 void AccountsWindow::on_close_clicked()

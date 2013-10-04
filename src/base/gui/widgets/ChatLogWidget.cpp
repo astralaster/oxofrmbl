@@ -1,5 +1,7 @@
 #include "ChatLogWidget.h"
 
+#include <QDebug>
+
 ChatLogWidget::ChatLogWidget(QWidget *parent) :
     QTextEdit(parent)
 {
@@ -14,5 +16,5 @@ void ChatLogWidget::addMessage(const ChatMessage *msg)
 
     QString message = msg->getBody();
 
-    append(sender+":"+message);
+    append(sender+": "+message);
 }

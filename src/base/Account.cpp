@@ -2,23 +2,12 @@
 
 #include <QDebug>
 
-Account::Account(AccountInterface *account, QObject *parent) : Person(parent)
+Account::Account(QObject *parent) : Person(parent)
 {
-    setAccountObject(account);
 }
 
 Account::~Account()
 {
-}
-
-void Account::initAccount()
-{
-    account->initAccount();
-}
-
-AccountInterface *Account::getAccountObject()
-{
-    return account;
 }
 
 ChatSession *Account::getSession(const QString &contactId)
@@ -36,24 +25,19 @@ QList<Contact*> Account::getContacts()
     return contacts;
 }
 
-QString Account::getType() const
-{
-    return account->getType();
-}
-
-QString Account::getId() const
+/*QString Account::getId() const
 {
     if(accountId.isEmpty()) {
         return account->getId();
     } else {
         return accountId;
     }
-}
+}*/
 
 QString Account::getDisplayName() const
 {
     if(nickname.isEmpty()) {
-        return account->getDisplayName();
+        return getDisplayName();
     } else {
         return nickname;
     }
@@ -79,22 +63,6 @@ bool Account::isActive() const
     return active;
 }
 
-bool Account::connectToServer()
-{
-    connectedStatus = account->connectToServer();
-    return connectedStatus;
-}
-
-void Account::disconnectFromServer()
-{
-    account->disconnectFromServer();
-}
-
-void Account::sendMessage(const ChatMessage *msg)
-{
-    account->sendMessage(msg);
-}
-
 void Account::addContact(Contact *contact)
 {
     contacts.append(contact);
@@ -103,12 +71,6 @@ void Account::addContact(Contact *contact)
 void Account::setStatus(Status *status)
 {
     Person::setStatus(status);
-}
-
-void Account::setAccountObject(AccountInterface *account)
-{
-    this->account = account;
-    account->setAccountObject(this);
 }
 
 ChatSession *Account::startSession(Contact *contact)
@@ -133,19 +95,4 @@ void Account::endSession(ChatSession *session)
 {
     chatSessions.remove(session->getContact()->getId());
     delete session;
-}
-
-void Account::remove()
-{
-    account->remove();
-}
-
-void Account::save() const
-{
-    account->save();
-}
-
-void Account::load()
-{
-    account->load();
 }
