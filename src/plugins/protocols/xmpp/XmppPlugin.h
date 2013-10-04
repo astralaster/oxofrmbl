@@ -27,4 +27,7 @@ private:
     
 };
 
+QXmppPresence &operator<<(QXmppPresence &presence, const Status &status);
+Status &operator<<(Status &status, const QXmppPresence &presence);
+
 #endif // XMPPPLUGIN_H

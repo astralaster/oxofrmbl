@@ -51,6 +51,7 @@ public slots:
     
 
 private slots:
+    void clearContacts();
     void presenceReceivedSlot(const QXmppPresence &presence);
     void messageReceivedSlot(const QXmppMessage &message);
 

@@ -32,7 +32,7 @@ public slots:
     }
 
 protected:
-    Status *status = nullptr;
+    Status *status = new Status();
     QString nickname;
 };
 

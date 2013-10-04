@@ -32,12 +32,17 @@ public:
 signals:
     void sessionStarted(ChatSession *session);
     void sessionActivated(ChatSession *session);
+    
     void messageReceived(const ChatMessage *msg);
+    void contactStatusChanged(Contact *contact, Status *status);
+   
     void connected();
     void disconnected();
     void accountSaved() const;
 
 public slots:
+    void contactStatusChangedSlot(Status *status);
+    
     virtual bool connectToServer() = 0;
     virtual void disconnectFromServer() = 0;
     virtual void sendMessage(const ChatMessage *msg) = 0;

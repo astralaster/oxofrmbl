@@ -22,6 +22,8 @@ signals:
     void messageSent(const ChatMessage *msg);
 
 public slots:
+    void updateContactStatus(Status *status);
+    
     void messageReceived(const ChatMessage *msg);
     bool eventFilter(QObject *o, QEvent *e) override;
 

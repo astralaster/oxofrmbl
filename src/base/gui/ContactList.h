@@ -19,6 +19,8 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 public slots:
+    void updateContactStatus(Contact *contact, Status *status);
+    void clearContacts();
     void retrieveContacts();
 
 private:

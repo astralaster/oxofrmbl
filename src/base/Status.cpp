@@ -5,6 +5,11 @@ Status::Status(QObject *parent) :
 {
 }
 
+bool Status::isOnline() const
+{
+    return type == Online;
+}
+
 Status::Type Status::getType() const
 {
     return type;

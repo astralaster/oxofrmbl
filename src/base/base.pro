@@ -15,7 +15,8 @@ HEADERS += \
     AccountManager.h \
     Person.h \
     ChatSession.h \
-    Status.h
+    Status.h \
+    gui/StatusIcon.h
 
 SOURCES += \
     ApplicationController.cpp \
@@ -24,7 +25,8 @@ SOURCES += \
     Account.cpp \
     Contact.cpp \
     AccountManager.cpp \
-    Status.cpp
+    Status.cpp \
+    gui/StatusIcon.cpp
 
 SOURCES += \
     gui/GuiController.cpp \

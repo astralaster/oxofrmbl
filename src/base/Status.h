@@ -17,6 +17,7 @@ public:
     
     explicit Status(QObject *parent = 0);
     
+    bool isOnline() const;
     Type getType() const;
     
 public slots:

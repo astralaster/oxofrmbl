@@ -63,9 +63,15 @@ bool Account::isActive() const
     return active;
 }
 
+void Account::contactStatusChangedSlot(Status *status)
+{
+    emit contactStatusChanged(qobject_cast<Contact*>(QObject::sender()), status);
+}
+
 void Account::addContact(Contact *contact)
 {
     contacts.append(contact);
+    connect(contact, &Contact::statusChanged, this, &Account::contactStatusChangedSlot);
 }
 
 void Account::setStatus(Status *status)

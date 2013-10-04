@@ -1,11 +1,16 @@
 #include "ContactList.h"
+#include "StatusIcon.h"
 
 #include <QDebug>
+#include <QIcon>
 
 ContactList::ContactList(Account *account, QObject *parent) : 
     QAbstractListModel(parent), account(account)
 {
     connect(account, &Account::connected, this, &ContactList::retrieveContacts);
+    connect(account, &Account::disconnected, this, &ContactList::clearContacts);
+    
+    connect(account, &Account::contactStatusChanged, this, &ContactList::updateContactStatus);
 }
 
 Contact *ContactList::getContact(int index) const
@@ -25,12 +30,31 @@ int ContactList::rowCount(const QModelIndex &parent) const
 
 QVariant ContactList::data(const QModelIndex &index, int role) const
 {
-    if (role == Qt::DisplayRole)
-    {
-        return account->getContacts()[index.row()]->getDisplayName();
+    Contact *contact = account->getContacts()[index.row()];
+    
+    switch (role) {
+    case Qt::DisplayRole:
+        return contact->getDisplayName();
+        break;
+        
+    case Qt::DecorationRole:
+        return StatusIcon::forStatus(contact->getStatus());
+        break;
+        
+    default:
+        return QVariant();
+        break;
     }
+}
 
-    return QVariant();
+void ContactList::updateContactStatus(Contact *contact, Status *status)
+{
+    emit dataChanged(index(0), index(0));
+}
+
+void ContactList::clearContacts()
+{
+    emit dataChanged(index(0), index(0));
 }
 
 void ContactList::retrieveContacts()

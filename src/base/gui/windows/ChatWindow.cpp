@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QKeyEvent>
 
+#include "gui/StatusIcon.h"
+
 ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
     QMainWindow(parent), session(session),
     ui(new Ui::ChatWindow)
@@ -14,18 +16,27 @@ ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
     ui->messageEdit->setFocus();
 
     ui->sendButton->setVisible(false);
+    
+    auto contact = session->getContact();
 
-    setWindowTitle(session->getContact()->getDisplayName());
+    setWindowTitle(contact->getDisplayName());
+    setWindowIcon(StatusIcon::forStatus(contact->getStatus()));
 
     connect(ui->sendButton, &QPushButton::clicked, this, &ChatWindow::sendMessage);
 
     connect(this, &ChatWindow::messageSent, session, &ChatSession::sendMessage);
     connect(session, &ChatSession::messageReceived, this, &ChatWindow::messageReceived);
+    connect(contact, &Contact::statusChanged, this, &ChatWindow::updateContactStatus);
 }
 
 ChatWindow::~ChatWindow()
 {
     delete ui;
+}
+
+void ChatWindow::updateContactStatus(Status *status)
+{
+    setWindowIcon(StatusIcon::forStatus(status));
 }
 
 void ChatWindow::messageReceived(const ChatMessage *msg)

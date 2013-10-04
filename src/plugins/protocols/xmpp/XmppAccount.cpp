@@ -2,6 +2,7 @@
 
 #include <QSettings>
 
+#include "XmppPlugin.h"
 #include "XmppContact.h"
 
 XmppAccount::XmppAccount()
@@ -23,7 +24,10 @@ void XmppAccount::initAccount()
     connect(&client->rosterManager(), &QXmppRosterManager::rosterReceived, this, &XmppAccount::retrieveContacts);
     connect(client, &QXmppClient::messageReceived, this, &XmppAccount::messageReceivedSlot);
     
-    //connect(this, &XmppAccount::disconnected, this, &XmppAccount::clearContacts);
+    connect(client, &QXmppClient::presenceReceived, this, &XmppAccount::presenceReceivedSlot);
+    
+    connect(client, &QXmppClient::disconnected, this, &XmppAccount::disconnected);
+    connect(this, &XmppAccount::disconnected, this, &XmppAccount::clearContacts);
 }
 
 void XmppAccount::retrieveContacts()
@@ -67,11 +71,6 @@ void XmppAccount::load()
     password = settings.value("password", password).toString();
 
     settings.endGroup();
-}
-
-void XmppAccount::presenceReceivedSlot(const QXmppPresence &presence)
-{
-    
 }
 
 QString XmppAccount::getServer() const
@@ -160,35 +159,22 @@ void XmppAccount::setResource(const QString &resource)
 
 void XmppAccount::setStatus(Status *status)
 {
-    qDebug() << "blub";
-    //Person::setStatus(status);
-
     QXmppPresence presence;
 
-    switch (status->getType()) {
-    case Status::Away:
-        presence.setType(QXmppPresence::Available);
-        presence.setAvailableStatusType(QXmppPresence::Away);
-        break;
-
-    case Status::Offline:
-        presence = QXmppPresence::Unavailable;
-        presence.setType(QXmppPresence::Unavailable);
-        presence.setAvailableStatusType(QXmppPresence::Away);
-        break;
-
-    case Status::Online:
-    default:
-        presence.setType(QXmppPresence::Available);
-        presence.setAvailableStatusType(QXmppPresence::Online);
-        break;
-    }
+    presence << *status;
 
     client->setClientPresence(presence);
 
     if(presence.type() == QXmppPresence::Unavailable) {
         disconnectFromServer();
     }
+    
+    Account::setStatus(status);
+}
+
+void XmppAccount::clearContacts()
+{
+    contacts.clear();
 }
 
 void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
@@ -207,7 +193,31 @@ void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
             session = startSession(contact);
         }
 
-        auto message = new ChatMessage(session, true, msg.xhtml());
+        auto message = new ChatMessage(session, true, msg.body());
         emit messageReceived(message);
+    }
+}
+
+
+void XmppAccount::presenceReceivedSlot(const QXmppPresence &presence)
+{
+    auto from = XmppContact::parseJabberId(presence.from());
+    auto id = from[0]+"@"+from[1];
+    
+    if(id == getId()) {
+        return;
+    }
+    
+    Contact *contact = nullptr;
+    
+    for(Contact *c: contacts) {
+        if(c->getId() == id) {
+            contact = c;
+            break;
+        }
+    }
+    
+    if(contact != nullptr) {
+        contact->setStatus(&(*contact->getStatus() << presence));
     }
 }
