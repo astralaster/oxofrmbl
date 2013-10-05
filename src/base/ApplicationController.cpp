@@ -60,11 +60,13 @@ void ApplicationController::addAccount(Account *account)
 
 void ApplicationController::discoverPlugins()
 {
-    QDir path(QApplication::applicationDirPath());
-    path.cd("plugins/protocols/");
+    QDir path(OXOFRMBL_LIBDIR);
+    path.cd("plugins/protocols");
     
     for(auto protocol : path.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
         path.cd(protocol);
+        
+        qDebug() << "entering " << path.path();
         
         QPluginLoader loader(path.absoluteFilePath(QString("lib%1_plugin.so").arg(protocol)));
         loader.load();

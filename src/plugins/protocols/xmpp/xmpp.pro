@@ -28,11 +28,8 @@ target.path = $$LIBDIR/oxofrmbl/plugins/protocols/xmpp/
 
 INSTALLS += target
 
-debug {
+CONFIG(debug, debug|release) {
     LIBS += -lqxmpp -L../../../build/base/ -loxofrmbl_base
+} else {
+    LIBS += -lqxmpp -Wl,-rpath,/usr/lib/oxofrmbl/ -L../../../build/base/ -loxofrmbl_base
 }
-
-release {
-    LIBS += -L/usr/lib/oxofrmbl/ -loxofrmbl_base
-}
-

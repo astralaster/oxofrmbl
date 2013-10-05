@@ -1,6 +1,5 @@
 include(../../oxofrmbl.pri)
 
-
 TEMPLATE = lib
 QT += core network widgets
 
@@ -55,6 +54,12 @@ FORMS += \
     gui/windows/ContactListWindow.ui \
     gui/windows/ChatWindow.ui \
     gui/windows/AccountsWindow.ui
+
+CONFIG(debug, debug|release) {
+    DEFINES += 'OXOFRMBL_LIBDIR=\"QCoreApplication::applicationDirPath()\"'
+} else {
+    DEFINES += 'OXOFRMBL_LIBDIR=\'\"$${OXOFRMBL_LIBDIR}\"\''
+}
 
 target.path = $$LIBDIR/oxofrmbl/
 INSTALLS += target
