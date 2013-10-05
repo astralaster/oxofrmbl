@@ -6,8 +6,7 @@
 #include <QString>
 
 #include "common.h"
-#include "ChatMessage.h"
-#include "Contact.h"
+#include "Person.h"
 
 class Account : public Person
 {

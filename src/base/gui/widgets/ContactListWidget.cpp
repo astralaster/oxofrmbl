@@ -1,5 +1,9 @@
 #include "ContactListWidget.h"
 
+#include "base/Account.h"
+#include "base/Contact.h"
+#include "gui/ContactList.h"
+
 ContactListWidget::ContactListWidget(ContactList *cl, QWidget *parent) :
     QListView(parent), contactList(cl)
 {

@@ -3,7 +3,7 @@
 
 #include <QIcon>
 
-#include "base/Status.h"
+#include "common.h"
 
 class StatusIcon
 {

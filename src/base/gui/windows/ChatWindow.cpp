@@ -5,6 +5,11 @@
 #include <QKeyEvent>
 
 #include "gui/StatusIcon.h"
+#include "base/Account.h"
+#include "base/Contact.h"
+#include "base/ChatSession.h"
+#include "base/ChatMessage.h"
+#include "base/Status.h"
 
 ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
     QMainWindow(parent), session(session),

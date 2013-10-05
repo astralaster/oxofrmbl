@@ -4,7 +4,6 @@
 #include <QAbstractItemModel>
 
 #include "common.h"
-#include "base/Contact.h"
 
 class ContactList : public QAbstractListModel
 {

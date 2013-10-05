@@ -3,8 +3,7 @@
 
 #include <QMainWindow>
 
-#include "base/Contact.h"
-#include "base/ChatSession.h"
+#include "common.h"
 
 namespace Ui {
 class ChatWindow;

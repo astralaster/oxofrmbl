@@ -2,6 +2,8 @@
 
 #include <QDebug>
 
+#include "Account.h"
+#include "ChatSession.h"
 
 ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &body) : QObject(session),
     Session(session), incoming(incoming), body(body)

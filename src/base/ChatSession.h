@@ -4,8 +4,6 @@
 #include <QObject>
 
 #include "common.h"
-#include "Account.h"
-#include "Contact.h"
 
 class ChatSession : public QObject
 {

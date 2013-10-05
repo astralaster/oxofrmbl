@@ -1,6 +1,8 @@
 #include "ChatSession.h"
 
-#include <QDebug>
+#include "Account.h"
+#include "Contact.h"
+#include "ChatMessage.h"
 
 ChatSession::ChatSession(Contact *contact, Account *account) : QObject(account),
     contact(contact), account(account)

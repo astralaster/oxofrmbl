@@ -2,14 +2,9 @@
 #define APPLICATIONCONTROLLER_H
 
 #include <QObject>
-
-#include "interfaces/ProtocolPluginInterface.h"
+#include <QMap>
 
 #include "common.h"
-#include "base/AccountManager.h"
-
-#include "gui/GuiController.h"
-
 
 class ApplicationController : public QObject
 {

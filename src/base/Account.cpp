@@ -1,6 +1,9 @@
 #include "Account.h"
 
-#include <QDebug>
+#include "Status.h"
+#include "ChatMessage.h"
+#include "Contact.h"
+#include "ChatSession.h"
 
 Account::Account(QObject *parent) : Person(parent)
 {

@@ -1,8 +1,11 @@
 #include "ContactList.h"
-#include "StatusIcon.h"
 
-#include <QDebug>
 #include <QIcon>
+
+#include "base/Account.h"
+#include "base/Contact.h"
+#include "base/Status.h"
+#include "StatusIcon.h"
 
 ContactList::ContactList(Account *account, QObject *parent) : 
     QAbstractListModel(parent), account(account)

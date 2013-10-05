@@ -3,7 +3,7 @@
 
 #include <QString>
 
-#include "XmppAccount.h"
+#include "base/Contact.h"
 
 class XmppContact : public Contact
 {

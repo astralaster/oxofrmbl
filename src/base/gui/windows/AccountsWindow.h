@@ -5,7 +5,6 @@
 #include <QMainWindow>
 
 #include "common.h"
-#include "../../ApplicationController.h"
 
 namespace Ui {
 class AccountsWindow;

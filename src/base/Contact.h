@@ -5,7 +5,6 @@
 
 #include "common.h"
 #include "Person.h"
-#include "Account.h"
 
 class Contact : public Person
 {

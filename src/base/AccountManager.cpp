@@ -6,6 +6,10 @@
 #include <QPluginLoader>
 #include <QSettings>
 
+#include "Account.h"
+#include "ApplicationController.h"
+#include "interfaces/ProtocolPluginInterface.h"
+
 AccountManager::AccountManager(ApplicationController *app, QObject *parent) : QAbstractListModel(parent), app(app)
 {
     connect(this, &AccountManager::changed, this, &AccountManager::dataChangedSlot);

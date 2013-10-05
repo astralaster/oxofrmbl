@@ -5,12 +5,7 @@
 #include <QListView>
 #include <QComboBox>
 
-#include "base/Account.h"
-
-#include "../ContactList.h"
-#include "../GuiController.h"
-
-#include "../widgets/ContactListWidget.h"
+#include "common.h"
 
 class GuiController;
 
@@ -37,7 +32,6 @@ public slots:
 
 private slots:
     void closeEvent(QCloseEvent *e) override;
-
     void on_status_currentIndexChanged(int index);
 
 private:

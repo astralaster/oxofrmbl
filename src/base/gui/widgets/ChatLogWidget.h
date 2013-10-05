@@ -4,7 +4,7 @@
 #include <QListWidget>
 #include <QTextEdit>
 
-#include "base/ChatMessage.h"
+#include "common.h"
 
 class ChatLogWidget : public QTextEdit
 {

@@ -1,9 +1,9 @@
 #ifndef CHATMESSAGE_H
 #define CHATMESSAGE_H
 
+#include <QObject>
+
 #include "common.h"
-#include "Account.h"
-#include "ChatSession.h"
 
 class ChatMessage: public QObject
 {

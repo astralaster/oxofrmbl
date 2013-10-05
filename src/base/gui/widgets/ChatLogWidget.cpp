@@ -1,6 +1,8 @@
 #include "ChatLogWidget.h"
 
-#include <QDebug>
+#include "base/Account.h"
+#include "base/Contact.h"
+#include "base/ChatMessage.h"
 
 ChatLogWidget::ChatLogWidget(QWidget *parent) :
     QTextEdit(parent)

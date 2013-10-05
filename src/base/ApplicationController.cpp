@@ -2,12 +2,14 @@
 
 #include <QApplication>
 #include <QDir>
+#include <QDebug>
 #include <QPluginLoader>
 #include <QSettings>
 
-#include "plugins/protocols/xmpp/XmppAccount.h"
-#include "plugins/protocols/xmpp/XmppContact.h"
-#include "plugins/protocols/xmpp/gui/XmppAccountWindow.h"
+#include "AccountManager.h"
+#include "Account.h"
+#include "gui/GuiController.h"
+#include "interfaces/ProtocolPluginInterface.h"
 
 ApplicationController::ApplicationController(QObject *parent) :
     QObject(parent)

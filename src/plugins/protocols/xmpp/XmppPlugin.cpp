@@ -1,9 +1,11 @@
 #include "XmppPlugin.h"
 
 #include "base/Account.h"
+#include "base/Status.h"
 #include "XmppAccount.h"
 
 #include "gui/XmppAccountWindow.h"
+
 
 XmppPlugin::XmppPlugin(QObject *parent) :
     QObject(parent)

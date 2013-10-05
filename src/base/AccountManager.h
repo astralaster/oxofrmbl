@@ -5,8 +5,6 @@
 #include <QList>
 
 #include "common.h"
-#include "ApplicationController.h"
-#include "Account.h"
 
 class AccountManager : public QAbstractListModel
 {

@@ -4,6 +4,17 @@
 #include <QDebug>
 #include <QShortcut>
 
+#include "ContactList.h"
+#include "base/ApplicationController.h"
+#include "base/Account.h"
+#include "base/AccountManager.h"
+#include "base/Status.h"
+#include "base/ChatSession.h"
+
+#include "windows/ContactListWindow.h"
+#include "windows/ChatWindow.h"
+#include "windows/AccountsWindow.h"
+
 GuiController::GuiController(ApplicationController *app) :
     QObject(app), app(app)
 {

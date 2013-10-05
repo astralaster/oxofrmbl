@@ -1,7 +1,7 @@
 #ifndef PLUGININTERFACE_H
 #define PLUGININTERFACE_H
 
-#include "base/ApplicationController.h"
+#include "common.h"
 
 class Plugin {
 public:

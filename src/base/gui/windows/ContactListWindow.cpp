@@ -6,6 +6,10 @@
 
 #include "ChatWindow.h"
 #include "base/ChatSession.h"
+#include "base/Status.h"
+
+#include "gui/GuiController.h"
+#include "gui/widgets/ContactListWidget.h"
 
 ContactListWindow::ContactListWindow(GuiController *controller, QWidget *parent) :
     QMainWindow(parent),

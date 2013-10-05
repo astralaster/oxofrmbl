@@ -5,7 +5,6 @@
 
 #include <qxmpp/QXmppClient.h>
 #include <qxmpp/QXmppMessage.h>
-#include <qxmpp/QXmppRosterManager.h>
 
 #include "base/Account.h"
 

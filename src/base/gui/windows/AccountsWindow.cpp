@@ -4,8 +4,11 @@
 #include <QMenu>
 #include <QMessageBox>
 
+#include "base/Account.h"
 #include "base/AccountManager.h"
-#include "plugins/protocols/xmpp/gui/XmppAccountWindow.h"
+#include "base/ApplicationController.h"
+
+#include "interfaces/ProtocolPluginInterface.h"
 
 AccountsWindow::AccountsWindow(ApplicationController *app, QWidget *parent) :
     QMainWindow(parent), app(app),

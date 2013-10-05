@@ -5,13 +5,7 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 
-#include "../ApplicationController.h"
-#include "ContactList.h"
-#include "base/ChatSession.h"
-
-#include "windows/ContactListWindow.h"
-#include "windows/ChatWindow.h"
-#include "windows/AccountsWindow.h"
+#include "common.h"
 
 class ContactListWindow;
 

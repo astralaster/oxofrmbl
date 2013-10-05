@@ -1,5 +1,7 @@
 #include "StatusIcon.h"
 
+#include "base/Status.h"
+
 StatusIcon::StatusIcon()
 {
 }

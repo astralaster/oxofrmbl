@@ -26,7 +26,8 @@ SOURCES += \
     Contact.cpp \
     AccountManager.cpp \
     Status.cpp \
-    gui/StatusIcon.cpp
+    gui/StatusIcon.cpp \
+    Person.cpp
 
 SOURCES += \
     gui/GuiController.cpp \

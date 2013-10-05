@@ -2,6 +2,10 @@
 
 #include <QSettings>
 
+#include <qxmpp/QXmppRosterManager.h>
+
+#include "base/ChatMessage.h"
+
 #include "XmppPlugin.h"
 #include "XmppContact.h"
 
