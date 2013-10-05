@@ -31,5 +31,5 @@ INSTALLS += target
 CONFIG(debug, debug|release) {
     LIBS += -lqxmpp -L../../../build/base/ -loxofrmbl_base
 } else {
-    LIBS += -lqxmpp -L/usr/lib/oxofrmbl/ -loxofrmbl_base
+    LIBS += -lqxmpp -Wl,-rpath,/usr/lib/oxofrmbl/ -L../../../build/base/ -loxofrmbl_base
 }

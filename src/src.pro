@@ -28,5 +28,5 @@ INSTALLS += target
 CONFIG(debug, debug|release) {
     LIBS += -L./build/base/ -loxofrmbl_base
 } else {
-    LIBS += -L/usr/lib/oxofrmbl/ -loxofrmbl_base
+    LIBS += -Wl,-rpath,/usr/lib/oxofrmbl/ -L./build/base/ -loxofrmbl_base
 }
