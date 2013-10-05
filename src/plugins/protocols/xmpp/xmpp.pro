@@ -1,14 +1,14 @@
+include(../../../../oxofrmbl.pri)
+
 TEMPLATE = lib
 CONFIG  += plugin
 QT += core network widgets
 
-LIBS += -lqxmpp -L../../../base/ -loxofrmbl_base
-
+INCLUDEPATH += ../../../
 QMAKE_CXXFLAGS += -Wall -std=c++11
 
-INCLUDEPATH += ../../../
-
 TARGET = $$qtLibraryTarget(xmpp_plugin)
+DESTDIR = ../../../build/plugins/protocols/xmpp/
 
 SOURCES += \
     XmppAccount.cpp \
@@ -23,3 +23,16 @@ HEADERS += \
     XmppPlugin.h
     
 FORMS += gui/XmppAccountWindow.ui
+
+target.path = $$LIBDIR/oxofrmbl/plugins/protocols/xmpp/
+
+INSTALLS += target
+
+debug {
+    LIBS += -lqxmpp -L../../../build/base/ -loxofrmbl_base
+}
+
+release {
+    LIBS += -L/usr/lib/oxofrmbl/ -loxofrmbl_base
+}
+

@@ -1,11 +1,14 @@
+include(../../oxofrmbl.pri)
+
+
 TEMPLATE = lib
 QT += core network widgets
 
+INCLUDEPATH += ../
 QMAKE_CXXFLAGS += -Wall -std=c++11
 
-INCLUDEPATH += ../
-
 TARGET = $$qtLibraryTarget(oxofrmbl_base)
+DESTDIR = ../build/base
 
 HEADERS += \
     ApplicationController.h \
@@ -52,3 +55,6 @@ FORMS += \
     gui/windows/ContactListWindow.ui \
     gui/windows/ChatWindow.ui \
     gui/windows/AccountsWindow.ui
+
+target.path = $$LIBDIR/oxofrmbl/
+INSTALLS += target

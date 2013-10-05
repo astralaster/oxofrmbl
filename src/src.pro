@@ -1,3 +1,5 @@
+include(../oxofrmbl.pri)
+
 #-------------------------------------------------
 #
 # Project created by QtCreator 2013-04-07T12:05:32
@@ -7,9 +9,11 @@
 QT += core gui widgets network
 
 TARGET = oxofrmbl
+DESTDIR = build
 TEMPLATE = app
 
 INCLUDEPATH += ./
+QMAKE_CXXFLAGS += -Wall -std=c++11
 
 HEADERS += \
     common.h \
@@ -18,8 +22,13 @@ HEADERS += \
 
 SOURCES += main.cpp
 
-INCLUDES += QDebug
+target.path = $$PREFIX/bin/
+INSTALLS += target
 
-LIBS += -L./base/ -loxofrmbl_base
+debug {
+    LIBS += -L./build/base/ -loxofrmbl_base
+}
 
-QMAKE_CXXFLAGS += -Wall -std=c++11
+release {
+    LIBS += -L/usr/lib/oxofrmbl/ -loxofrmbl_base
+}
