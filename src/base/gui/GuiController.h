@@ -21,7 +21,7 @@ class GuiController : public QObject
 {
     Q_OBJECT
 public:
-    explicit GuiController(ApplicationController *app = 0);
+    explicit GuiController(ApplicationController *m_app = 0);
 
 signals:
     void quit();
@@ -30,6 +30,7 @@ public slots:
     void show();
     void startChat(ChatSession *session);
     void activateChat(ChatSession *session);
+    void changeStatusIcon(Status *status);
 
     void showAccountsWindow();
     void showAboutDialog();
@@ -41,16 +42,19 @@ public slots:
 public slots:
     void addAccount(Account *account);
     void removeAccount(Account *account);
-
-protected:
+    
+private:
     QMenu *trayContextMenu() const;
 
-    ApplicationController *app = nullptr;
-    ContactListWindow *clw = nullptr;
-    AccountsWindow *aw = nullptr;
+private:
+    QSystemTrayIcon *m_trayIcon;
+
+    ApplicationController *m_app = nullptr;
+    ContactListWindow *m_contactListWindow = nullptr;
+    AccountsWindow *m_accountsWindow = nullptr;
     
-    QMap<Account*, ContactList*> contactLists;
-    QMap<ChatSession*, ChatWindow*> chatWindows;
+    QMap<Account*, ContactList*> m_contactLists;
+    QMap<ChatSession*, ChatWindow*> m_chatWindows;
 
 };
 

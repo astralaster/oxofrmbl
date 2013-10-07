@@ -49,15 +49,6 @@ ProtocolPlugin *ApplicationController::protocolPlugin(const QString &protocol)
     return protocolPlugins[protocol];
 }
 
-void ApplicationController::addAccount(Account *account)
-{
-    m_gui->addAccount(account);
-    
-    /*if(account->isConnected()) {
-        
-    }*/
-}
-
 void ApplicationController::discoverPlugins()
 {
     QDir path(OXOFRMBL_LIBDIR);

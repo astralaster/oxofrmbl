@@ -33,7 +33,6 @@ signals:
     void quit();
     
 public slots:
-    void addAccount(Account *account);
     void discoverPlugins();
 
 protected:
