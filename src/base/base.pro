@@ -9,6 +9,8 @@ QMAKE_CXXFLAGS += -Wall -std=c++11
 TARGET = $$qtLibraryTarget(oxofrmbl_base)
 DESTDIR = ../build/base
 
+LIBS += -lotr
+
 HEADERS += \
     ApplicationController.h \
     ChatMessage.h \
@@ -18,7 +20,10 @@ HEADERS += \
     Person.h \
     ChatSession.h \
     Status.h \
-    gui/StatusIcon.h
+    gui/StatusIcon.h \
+    MessageHandler.h \
+    otr/OtrMessageHandler.h \
+    gui/windows/AddContactDialog.h
 
 SOURCES += \
     ApplicationController.cpp \
@@ -29,7 +34,10 @@ SOURCES += \
     AccountManager.cpp \
     Status.cpp \
     gui/StatusIcon.cpp \
-    Person.cpp
+    Person.cpp \
+    MessageHandler.cpp \
+    otr/OtrMessageHandler.cpp \
+    gui/windows/AddContactDialog.cpp
 
 SOURCES += \
     gui/GuiController.cpp \
@@ -53,7 +61,8 @@ HEADERS += \
 FORMS += \
     gui/windows/ContactListWindow.ui \
     gui/windows/ChatWindow.ui \
-    gui/windows/AccountsWindow.ui
+    gui/windows/AccountsWindow.ui \
+    gui/windows/AddContactDialog.ui
 
 CONFIG(debug, debug|release) {
     DEFINES += 'OXOFRMBL_LIBDIR=\"QCoreApplication::applicationDirPath()\"'

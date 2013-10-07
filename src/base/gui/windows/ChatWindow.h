@@ -5,6 +5,8 @@
 
 #include "common.h"
 
+#include "base/ChatSession.h"
+
 namespace Ui {
 class ChatWindow;
 }
@@ -14,7 +16,7 @@ class ChatWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit ChatWindow(ChatSession *session, QWidget *parent = 0);
+    explicit ChatWindow(ChatSession *session, QWidget *parent = nullptr);
     ~ChatWindow();
 
 signals:

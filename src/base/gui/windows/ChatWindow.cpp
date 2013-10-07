@@ -22,10 +22,10 @@ ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
 
     ui->sendButton->setVisible(false);
     
-    auto contact = session->getContact();
+    auto contact = session->contact();
 
-    setWindowTitle(contact->getDisplayName());
-    setWindowIcon(StatusIcon::forStatus(contact->getStatus()));
+    setWindowTitle(contact->displayName());
+    setWindowIcon(StatusIcon::forStatus(contact->status()));
 
     connect(ui->sendButton, &QPushButton::clicked, this, &ChatWindow::sendMessage);
 
@@ -69,7 +69,7 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
 
 void ChatWindow::closeEvent(QCloseEvent *e)
 {
-    session->getAccount()->endSession(session);
+    session->account()->endSession(session);
     e->accept();
 }
 

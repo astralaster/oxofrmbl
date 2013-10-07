@@ -3,6 +3,8 @@
 
 #include <QMenu>
 #include <QMessageBox>
+#include <QKeyEvent>
+#include <QDebug>
 
 #include "base/Account.h"
 #include "base/AccountManager.h"
@@ -16,9 +18,10 @@ AccountsWindow::AccountsWindow(ApplicationController *app, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->accountsList->setModel(app->getAccountManager());
+    ui->accountsList->installEventFilter(this);
+    ui->accountsList->setModel(app->accountManager());
 
-    connect(ui->accountsList, &QListView::doubleClicked, this, &AccountsWindow::openAccount);
+    connect(ui->accountsList, &QListView::doubleClicked, this, &AccountsWindow::openAccountAtIndex);
 }
 
 AccountsWindow::~AccountsWindow()
@@ -29,29 +32,58 @@ AccountsWindow::~AccountsWindow()
 void AccountsWindow::addAccount(/*const QString &protocol*/)
 {
     QString protocol = qobject_cast<QAction*>(QObject::sender())->text();
-    ProtocolPlugin *plugin = app->getProtocolPlugin(protocol);
+    ProtocolPlugin *plugin = app->protocolPlugin(protocol);
     
     auto account = plugin->createAccount();
     
-    app->getAccountManager()->addAccount(account);
+    auto accountWindow = plugin->createAccountWindow(account);
     
-    plugin->showAccountWindow(account);
+    if(accountWindow->exec() == QDialog::Accepted) {
+        app->accountManager()->addAccount(account);
+    } else {
+        delete account;
+    }
 }
 
-void AccountsWindow::openAccount(const QModelIndex &index)
+void AccountsWindow::removeSelectedAccount()
 {
-    auto account = dynamic_cast<Account*>(app->getAccountManager()->getAccount(index.row()));
+    removeAccountAtIndex(ui->accountsList->currentIndex());
+}
+
+void AccountsWindow::removeAccountAtIndex(const QModelIndex &index)
+{
+    auto account = dynamic_cast<Account*>(app->accountManager()->account(index.row()));
     
-    ProtocolPlugin *plugin = app->getProtocolPlugin(account->getType());
+    if(QMessageBox::question(this, "Delete Account", QString("Are you sure, that you want to delete %1?").arg(account->id())) == QMessageBox::Yes) {
+        app->accountManager()->removeAccount(account);
+    }
+}
+
+void AccountsWindow::openAccountAtIndex(const QModelIndex &index)
+{
+    auto account = dynamic_cast<Account*>(app->accountManager()->account(index.row()));
     
-    plugin->showAccountWindow(account);
+    ProtocolPlugin *plugin = app->protocolPlugin(account->type());
+    
+    plugin->createAccountWindow(account);
+}
+
+void AccountsWindow::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Delete) {
+        event->accept();
+        
+        return;
+    }
+    
+    event->ignore();
 }
 
 void AccountsWindow::on_addAccount_clicked()
 {
     QMenu *menu = new QMenu(this);
     
-    for(auto a: app->getProtocolPluginNames()) {
+    for(auto a: app->protocolPluginNames()) {
         menu->addAction(a, this, SLOT(addAccount()));
     }
     
@@ -62,13 +94,7 @@ void AccountsWindow::on_addAccount_clicked()
 
 void AccountsWindow::on_removeAccount_clicked()
 {
-    auto index = ui->accountsList->currentIndex();
-    
-    auto account = dynamic_cast<Account*>(app->getAccountManager()->getAccount(index.row()));
-    
-    if(QMessageBox::question(this, "Delete Account", QString("Are you sure, that you want to delete %1?").arg(account->getId())) == QMessageBox::Yes) {
-        app->getAccountManager()->removeAccount(account);
-    }
+    removeSelectedAccount();
 }
 
 void AccountsWindow::on_close_clicked()

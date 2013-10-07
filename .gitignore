@@ -1,5 +1,7 @@
 # C++ objects and libs
 
+DEPENDS
+
 *.slo
 *.lo
 *.o

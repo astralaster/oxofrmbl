@@ -6,8 +6,16 @@
 #include <QMenu>
 
 #include "common.h"
+#include "base/ApplicationController.h"
 
+#include "ContactList.h"
+#include "windows/AccountsWindow.h"
+#include "windows/ChatWindow.h"
+#include "windows/ContactListWindow.h"
+
+class ApplicationController;
 class ContactListWindow;
+class AccountsWindow;
 
 class GuiController : public QObject
 {
@@ -24,7 +32,11 @@ public slots:
     void activateChat(ChatSession *session);
 
     void showAccountsWindow();
-    void activateContactList(QSystemTrayIcon::ActivationReason reason);
+    void showAboutDialog();
+    void showAddContactDialog();
+    void trayMenuTriggered(QSystemTrayIcon::ActivationReason reason);
+    
+    void handleError();
     
 public slots:
     void addAccount(Account *account);

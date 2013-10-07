@@ -7,21 +7,30 @@ Person::Person(QObject *parent) : Person("", parent)
 
 }
 
-Person::Person(const QString &nickname, QObject *parent) : QObject(parent), status(new Status()), nickname(nickname)
+Person::Person(const QString &id, QObject *parent) : QObject(parent), m_id(id), m_status(new Status())
 {
-
+    
 }
 
-QString Person::getDisplayName() const {
-    return nickname.isEmpty() ? getId() : nickname;
+QString Person::id() const
+{
+    return m_id;
 }
 
-Status *Person::getStatus() {
-    return status;
+QString Person::displayName() const {
+    return m_nickname.isEmpty() ? id() : m_nickname;
 }
 
-void Person::setStatus(Status *status) {
-    this->status = status;
-    emit statusChanged(status);
+Status *Person::status() {
+    return m_status;
+}
+
+void Person::setId(const QString &id) {
+    this->m_id = id;
+}
+
+void Person::setStatus(Status *currentStatus) {
+    this->m_status = currentStatus;
+    emit statusChanged(currentStatus);
 }
 

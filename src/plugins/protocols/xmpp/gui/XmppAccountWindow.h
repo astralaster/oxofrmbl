@@ -4,9 +4,10 @@
 #include <QDialog>
 
 #include "../XmppPlugin.h"
+#include "../XmppAccount.h"
 
 #include "base/AccountManager.h"
-#include "plugins/protocols/xmpp/XmppAccount.h"
+
 
 namespace Ui {
 class XmppAccountWindow;
@@ -17,7 +18,7 @@ class XmppAccountWindow : public QDialog
     Q_OBJECT
 
 public:
-    explicit XmppAccountWindow(XmppPlugin *plugin, XmppAccount *account = nullptr, QWidget *parent = 0);
+    explicit XmppAccountWindow(XmppPlugin *plugin, XmppAccount *account = nullptr, QWidget *parent = nullptr);
     ~XmppAccountWindow();
 
 private slots:

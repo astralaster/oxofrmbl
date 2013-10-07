@@ -18,14 +18,14 @@ public:
 
     void initAccount();
 
-    QString getServer() const;
-    QString getUser() const;
-    QString getPassword() const;
-    QString getResource() const;
+    QString server() const;
+    QString user() const;
+    QString password() const;
+    QString resource() const;
 
-    QString getType() const override;
-    QString getId() const override;
-    QString getDisplayName() const override;
+    QString type() const override;
+    QString id() const override;
+    QString displayName() const override;
 
 public slots:
     bool connectToServer() override;
@@ -45,8 +45,11 @@ public slots:
     void setPassword(const QString &password);
     void setResource(const QString &resource);
     
-    void setAccountObject(Account *account);
-    void setStatus(Status *status);
+    void setStatus(Status *status) override;
+    
+    Contact *createContact(const QString &contactId) override;
+    void addContact(Contact *contact) override;
+    void removeContact(Contact *contact) override;
     
 
 private slots:
@@ -55,8 +58,8 @@ private slots:
     void messageReceivedSlot(const QXmppMessage &message);
 
 private:
-    QXmppClient *client = nullptr;
-    QString server, user, password, resource;
+    QXmppClient *m_client = nullptr;
+    QString m_server, m_user, m_password, m_resource;
 };
 
 

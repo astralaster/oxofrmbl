@@ -10,6 +10,8 @@ QMAKE_CXXFLAGS += -Wall -std=c++11
 TARGET = $$qtLibraryTarget(xmpp_plugin)
 DESTDIR = ../../../build/plugins/protocols/xmpp/
 
+LIBS += -lqxmpp
+
 SOURCES += \
     XmppAccount.cpp \
     XmppContact.cpp \
@@ -29,7 +31,7 @@ target.path = $$LIBDIR/oxofrmbl/plugins/protocols/xmpp/
 INSTALLS += target
 
 CONFIG(debug, debug|release) {
-    LIBS += -lqxmpp -L../../../build/base/ -loxofrmbl_base
+    LIBS += -L../../../build/base -loxofrmbl_base
 } else {
-    LIBS += -lqxmpp -Wl,-rpath,/usr/lib/oxofrmbl/ -L../../../build/base/ -loxofrmbl_base
+    LIBS += -Wl,-rpath,/usr/lib/oxofrmbl -L../../../build/base -loxofrmbl_base
 }

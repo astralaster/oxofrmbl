@@ -103,11 +103,41 @@
     </property>
     <addaction name="actionAccounts"/>
    </widget>
+   <widget class="QMenu" name="menuContacts">
+    <property name="title">
+     <string>Contacts</string>
+    </property>
+    <addaction name="actionAddContact"/>
+   </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>?</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menuSettings"/>
+   <addaction name="menuContacts"/>
+   <addaction name="menu"/>
   </widget>
   <action name="actionAccounts">
    <property name="text">
     <string>Accounts</string>
+   </property>
+  </action>
+  <action name="actionAddContact">
+   <property name="icon">
+    <iconset theme="list-add"/>
+   </property>
+   <property name="text">
+    <string>Add Contact</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset theme="help-about"/>
+   </property>
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

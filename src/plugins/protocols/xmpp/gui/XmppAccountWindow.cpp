@@ -9,15 +9,10 @@ XmppAccountWindow::XmppAccountWindow(XmppPlugin *plugin, XmppAccount *account, Q
 {
     ui->setupUi(this);
 
-    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &XmppAccountWindow::accepted);
-    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &XmppAccountWindow::close);
-
-    connect(this, &XmppAccountWindow::accepted, this, &XmppAccountWindow::accept);
-
-    ui->username->setText(account->getUser());
-    ui->server->setText(account->getServer());
-    ui->password->setText(account->getPassword());
-    ui->resource->setText(account->getResource());
+    ui->username->setText(account->user());
+    ui->server->setText(account->server());
+    ui->password->setText(account->password());
+    ui->resource->setText(account->resource());
 }
 
 XmppAccountWindow::~XmppAccountWindow()
@@ -31,7 +26,9 @@ void XmppAccountWindow::accept()
     account->save();
     
     account->initAccount();
+    
+    // @TODO move away
     account->connectToServer();
-
-    close();
+    
+    QDialog::accept();
 }

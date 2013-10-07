@@ -2,6 +2,7 @@
 #include <QDebug>
 
 #include "base/ApplicationController.h"
+#include "base/AccountManager.h"
 
 int main(int argc, char *argv[])
 {

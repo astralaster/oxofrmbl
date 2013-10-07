@@ -8,22 +8,28 @@
 #include "common.h"
 #include "Person.h"
 
+#include "ChatSession.h"
+#include "ChatMessage.h"
+#include "MessageHandler.h"
+
+class MessageHandler;
+
 class Account : public Person
 {
     Q_OBJECT
 public:
-    explicit Account(QObject *parent = 0);
+    explicit Account(QObject *parent = nullptr);
     ~Account();
     
-    virtual QString getType() const = 0;
-    virtual QString getId() const = 0;
-    virtual QString getDisplayName() const = 0;
+    virtual QString type() const = 0;
+    virtual QString id() const = 0;
+    virtual QString displayName() const = 0;
     
-    ChatSession *getSession(const QString &contactId);
-    QMap<QString, ChatSession*> getSessions();
-    QList<Contact*> getContacts();
+    ChatSession *session(const QString &contactId);
+    QMap<QString, ChatSession*> sessions();
+    QList<Contact*> contacts();
 
-    Status *getStatus();
+    Status *status();
 
     bool isConnected() const;
     bool isActive() const;
@@ -34,6 +40,11 @@ signals:
     
     void messageReceived(const ChatMessage *msg);
     void contactStatusChanged(Contact *contact, Status *status);
+    
+    void contactAdded(Contact *contact);
+    void contactRemoved(Contact *contact);
+    
+    void error();
    
     void connected();
     void disconnected();
@@ -52,22 +63,23 @@ public slots:
     
     virtual void initAccount() = 0;
     
-    void setId(const QString &id);
-    void setStatus(Status *status);
-    
-    void addContact(Contact *contact);
+    virtual Contact *createContact(const QString &contactId) = 0;
+    virtual void addContact(Contact *contact);
+    virtual void removeContact(Contact *contact);
 
-    ChatSession *startSession(Contact *contact);
-    void endSession(ChatSession *session);
+    virtual ChatSession *startSession(Contact *contact);
+    virtual void endSession(ChatSession *session);
+    
+    virtual void installMessageHandler(MessageHandler *handler);
+    virtual void removeMessageHandler(MessageHandler *handler);
 
 protected:
-    QString accountId;
-
     bool connectedStatus = false;
     bool active = true;
 
-    QList<Contact*> contacts;
-    QMap<QString, ChatSession*> chatSessions;
+    QList<Contact*> m_contacts;
+    QList<MessageHandler*> m_messageHandlers;
+    QMap<QString, ChatSession*> m_chatSessions;
 };
 
 #endif // ACCOUNT_H

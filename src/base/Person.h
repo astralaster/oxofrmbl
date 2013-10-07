@@ -5,27 +5,29 @@
 
 #include "common.h"
 
+#include "Status.h"
+
 class Person : public QObject {
     Q_OBJECT
 public:
-    explicit Person(QObject *parent);
-    explicit Person(const QString &nickname, QObject *parent);
+    explicit Person(QObject *parent = nullptr);
+    explicit Person(const QString &id, QObject *parent = nullptr);
     
-    virtual QString getId() const = 0;
-
-    virtual QString getDisplayName() const;
-
-    virtual Status *getStatus();
+    virtual QString id() const;
+    virtual QString displayName() const;
+    virtual Status *status();
 
 signals:
     void statusChanged(Status *status);
 
 public slots:
-    virtual void setStatus(Status *status);
+    virtual void setId(const QString &m_id);
+    virtual void setStatus(Status *m_status);
 
 protected:
-    Status *status;
-    QString nickname;
+    QString m_id;
+    QString m_nickname;
+    Status *m_status;
 };
 
 #endif // PERSON_H

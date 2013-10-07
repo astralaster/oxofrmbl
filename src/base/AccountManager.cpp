@@ -10,19 +10,19 @@
 #include "ApplicationController.h"
 #include "interfaces/ProtocolPluginInterface.h"
 
-AccountManager::AccountManager(ApplicationController *app, QObject *parent) : QAbstractListModel(parent), app(app)
+AccountManager::AccountManager(ApplicationController *app, QObject *parent) : QAbstractListModel(parent), m_app(app)
 {
     connect(this, &AccountManager::changed, this, &AccountManager::dataChangedSlot);
 }
 
-Account *AccountManager::getAccount(int index)
+Account *AccountManager::account(int index)
 {
-    return accounts[index];
+    return m_accounts[index];
 }
 
 void AccountManager::addAccount(Account *account, bool saveData)
 {
-    accounts << account;
+    m_accounts << account;
     connect(account, &Account::accountSaved, this, &AccountManager::accountSavedSlot);
     
     emit accountAdded(account);
@@ -33,7 +33,7 @@ void AccountManager::removeAccount(Account *account)
 {
     emit accountRemoved(account);
     
-    accounts.removeOne(account);
+    m_accounts.removeOne(account);
     account->remove();
     
     delete account;
@@ -41,21 +41,21 @@ void AccountManager::removeAccount(Account *account)
     emit changed(true);
 }
 
-QList<Account *> AccountManager::getAccounts() const
+QList<Account *> AccountManager::accounts() const
 {
-    return accounts;
+    return m_accounts;
 }
 
 int AccountManager::rowCount(const QModelIndex &parent) const
 {
-    return accounts.count();
+    return m_accounts.count();
 }
 
 QVariant AccountManager::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole)
     {
-        return accounts[index.row()]->getDisplayName();
+        return m_accounts[index.row()]->displayName();
     }
 
     return QVariant();
@@ -72,19 +72,19 @@ void AccountManager::dataChangedSlot(bool saveData)
         save();
     }
     
-    dataChanged(index(accounts.size()-1),index(accounts.size()-1));
+    dataChanged(index(m_accounts.size()-1),index(m_accounts.size()-1));
 }
 
 void AccountManager::connectAccounts()
 {
-    for(auto a: accounts) {
+    for(auto a: m_accounts) {
         a->connectToServer();
     }
 }
 
 void AccountManager::changeStatus(Status *status)
 {
-    for(auto a: accounts) {
+    for(auto a: m_accounts) {
         a->setStatus(status);
     }
 }
@@ -95,15 +95,15 @@ void AccountManager::save() const
     
     settings.remove("accounts/list/");
     
-    if(!accounts.isEmpty()) {
-        settings.beginWriteArray("accounts/list/", accounts.size());
+    if(!m_accounts.isEmpty()) {
+        settings.beginWriteArray("accounts/list/", m_accounts.size());
     
         int i=0;
     
-        for(auto a: accounts) {
+        for(auto a: m_accounts) {
             settings.setArrayIndex(i++);
-            settings.setValue("id", a->getId());
-            settings.setValue("type", a->getType());
+            settings.setValue("id", a->id());
+            settings.setValue("type", a->type());
         }
     
         settings.endArray();
@@ -121,7 +121,7 @@ void AccountManager::load()
 
         QString type = settings.value("type").toString();
         
-        ProtocolPlugin *plugin = app->getProtocolPlugin(type);
+        ProtocolPlugin *plugin = m_app->protocolPlugin(type);
 
         Account *account = plugin->createAccount();
 

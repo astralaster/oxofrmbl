@@ -1,7 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-class Person;
+/*class Person;
 class Contact;
 class Account;
 class AccountInterface;
@@ -13,15 +13,18 @@ class AccountManager;
 class ApplicationController;
 class GuiController;
 
-class AccountsWindow;
-class ChatWindow;
-class ContactListWindow;
-
 class ContactList;
 class ContactListWidget;
 class ChatLogWidget;
 
+class AccountsWindow;
+class ChatWindow;
+class ContactListWindow;
+
+class MessageHandler;
+
 class Plugin;
-class ProtocolPlugin;
+class ProtocolPlugin;*/
+
 
 #endif // COMMON_H

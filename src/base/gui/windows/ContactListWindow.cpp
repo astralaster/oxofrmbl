@@ -17,7 +17,9 @@ ContactListWindow::ContactListWindow(GuiController *controller, QWidget *parent)
 {
     ui->setupUi(this);
 
-    connect(ui->actionAccounts, &QAction::triggered, controller, &GuiController::showAccountsWindow);
+    connect(ui->actionAccounts,   &QAction::triggered, controller, &GuiController::showAccountsWindow);
+    connect(ui->actionAddContact, &QAction::triggered, controller, &GuiController::showAddContactDialog);
+    connect(ui->actionAbout,      &QAction::triggered, controller, &GuiController::showAboutDialog);
 }
 
 ContactListWindow::~ContactListWindow()
@@ -62,3 +64,4 @@ void ContactListWindow::on_status_currentIndexChanged(int index)
     
     emit statusChanged(status);
 }
+

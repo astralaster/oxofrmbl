@@ -1,5 +1,7 @@
 #include "StatusIcon.h"
 
+#include <QDebug>
+
 #include "base/Status.h"
 
 StatusIcon::StatusIcon()
@@ -8,18 +10,18 @@ StatusIcon::StatusIcon()
 
 QIcon StatusIcon::forStatus(Status *status)
 {
-    switch(status->getType()) {
+    switch(status->type()) {
     case Status::Away:
         return QIcon::fromTheme("user-away");
         break;
         
-    case Status::Offline:
-        return QIcon::fromTheme("user-offline");
+    case Status::Online:
+        return QIcon::fromTheme("user-available");
         break;
         
-    case Status::Online:
+    case Status::Offline:
     default:
-        return QIcon::fromTheme("user-available");
+        return QIcon::fromTheme("user-offline");
         break;
     }
 }

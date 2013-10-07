@@ -5,6 +5,12 @@
 
 #include "common.h"
 
+#include "Account.h"
+#include "Contact.h"
+#include "ChatMessage.h"
+
+class ChatMessage;
+
 class ChatSession : public QObject
 {
     Q_OBJECT
@@ -12,8 +18,8 @@ public:
     ChatSession(Contact *contact, Account *account);
     ~ChatSession();
 
-    Contact *getContact() {return contact;}
-    Account *getAccount() {return account;}
+    Contact *contact() {return m_contact;}
+    Account *account() {return m_account;}
 
 signals:
     void messageReceived(const ChatMessage *msg);
@@ -25,8 +31,8 @@ private slots:
     void messageReceivedSlot(const ChatMessage *msg);
 
 private:
-    Contact *contact = nullptr;
-    Account *account = nullptr;
+    Contact *m_contact = nullptr;
+    Account *m_account = nullptr;
 };
 
 #endif // CONVERSATION_H
