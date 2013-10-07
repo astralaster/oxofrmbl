@@ -23,7 +23,7 @@ Account *AccountManager::account(int index)
 void AccountManager::addAccount(Account *account, bool saveData)
 {
     m_accounts << account;
-    connect(account, &Account::accountSaved, this, &AccountManager::accountSavedSlot);
+    connect(account, &Account::accountSaved, this, &AccountManager::save);
     
     emit accountAdded(account);
     emit changed(saveData);
@@ -59,11 +59,6 @@ QVariant AccountManager::data(const QModelIndex &index, int role) const
     }
 
     return QVariant();
-}
-
-void AccountManager::accountSavedSlot()
-{
-    emit changed(true);
 }
 
 void AccountManager::dataChangedSlot(bool saveData)

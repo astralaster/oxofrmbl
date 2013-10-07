@@ -28,7 +28,6 @@ signals:
     void accountAdded(Account *account);
 
 public slots:
-    void accountSavedSlot();
     void dataChangedSlot(bool save);
     
     void connectAccounts();

@@ -39,7 +39,7 @@ void AccountsWindow::addAccount(/*const QString &protocol*/)
     auto accountWindow = plugin->createAccountWindow(account);
     
     if(accountWindow->exec() == QDialog::Accepted) {
-        app->accountManager()->addAccount(account);
+        app->accountManager()->addAccount(account, true);
     } else {
         delete account;
     }
