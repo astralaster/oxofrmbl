@@ -21,7 +21,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 public slots:
-    void addContact(Contact *contact);
+    //void addContact(Contact *contact);
     void removeContact(Contact *contact);
     //void removeContactAtIndex(int index);
     //void clearContacts();

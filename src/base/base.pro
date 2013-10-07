@@ -9,7 +9,7 @@ QMAKE_CXXFLAGS += -Wall -std=c++11
 TARGET = $$qtLibraryTarget(oxofrmbl_base)
 DESTDIR = ../build/base
 
-LIBS += -lotr
+#LIBS += -lotr
 
 HEADERS += \
     ApplicationController.h \
@@ -22,7 +22,7 @@ HEADERS += \
     Status.h \
     gui/StatusIcon.h \
     MessageHandler.h \
-    otr/OtrMessageHandler.h \
+    #otr/OtrMessageHandler.h \
     gui/windows/AddContactDialog.h
 
 SOURCES += \
@@ -36,7 +36,7 @@ SOURCES += \
     gui/StatusIcon.cpp \
     Person.cpp \
     MessageHandler.cpp \
-    otr/OtrMessageHandler.cpp \
+    #otr/OtrMessageHandler.cpp \
     gui/windows/AddContactDialog.cpp
 
 SOURCES += \
