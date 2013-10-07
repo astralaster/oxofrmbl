@@ -106,7 +106,7 @@ void GuiController::trayMenuTriggered(QSystemTrayIcon::ActivationReason reason)
 
 void GuiController::handleError()
 {
-    //QMessageBox::critical(clw, "An error occured", "bla");
+    QMessageBox::critical(m_contactListWindow, "An error occured", "?");
 }
 
 void GuiController::addAccount(Account *account)

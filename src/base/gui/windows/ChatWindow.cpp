@@ -19,15 +19,13 @@ ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
 
     ui->messageEdit->installEventFilter(this);
     ui->messageEdit->setFocus();
-
-    ui->sendButton->setVisible(false);
+    
+    ui->splitter->setSizes(QList<int>({0, 50}));
     
     auto contact = session->contact();
 
     setWindowTitle(contact->displayName());
     setWindowIcon(StatusIcon::forStatus(contact->status()));
-
-    connect(ui->sendButton, &QPushButton::clicked, this, &ChatWindow::sendMessage);
 
     connect(this, &ChatWindow::messageSent, session, &ChatSession::sendMessage);
     connect(session, &ChatSession::messageReceived, this, &ChatWindow::messageReceived);
