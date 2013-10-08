@@ -12,11 +12,13 @@ ChatLogWidget::ChatLogWidget(QWidget *parent) :
 
 void ChatLogWidget::addMessage(const ChatMessage *msg)
 {
+    QString time = msg->time().toString("hh:mm:ss");
+    
     QString sender = msg->isIncoming() ?
-                QString("<b style='color: red'>%1</b>").arg(msg->getRemoteParticipant()->getDisplayName()) :
-                QString("<b style='color: blue'>%1</b>").arg(msg->getLocalParticipant()->getDisplayName());
+                QString("<span style='color: red '>(%1) <b>%2</b></span>").arg(time).arg(msg->remoteParticipant()->displayName()) :
+                QString("<span style='color: blue'>(%1) <b>%2</b></span>").arg(time).arg(msg->localParticipant()->displayName());
 
-    QString message = msg->getBody();
+    QString message = msg->body();
 
     append(sender+": "+message);
 }

@@ -6,14 +6,23 @@
 #include <QMenu>
 
 #include "common.h"
+#include "base/ApplicationController.h"
 
+#include "ContactList.h"
+#include "windows/AccountsWindow.h"
+#include "windows/ChatWindow.h"
+#include "windows/TabbedChatWindow.h"
+#include "windows/ContactListWindow.h"
+
+class ApplicationController;
 class ContactListWindow;
+class AccountsWindow;
 
 class GuiController : public QObject
 {
     Q_OBJECT
 public:
-    explicit GuiController(ApplicationController *app = 0);
+    explicit GuiController(ApplicationController *m_app = 0);
 
 signals:
     void quit();
@@ -22,23 +31,34 @@ public slots:
     void show();
     void startChat(ChatSession *session);
     void activateChat(ChatSession *session);
+    void changeStatusIcon(Status *status);
 
     void showAccountsWindow();
-    void activateContactList(QSystemTrayIcon::ActivationReason reason);
+    void showAboutDialog();
+    void showAddContactDialog();
+    void trayMenuTriggered(QSystemTrayIcon::ActivationReason reason);
+    
+    void handleError();
     
 public slots:
     void addAccount(Account *account);
     void removeAccount(Account *account);
-
-protected:
+    
+private:
     QMenu *trayContextMenu() const;
 
-    ApplicationController *app = nullptr;
-    ContactListWindow *clw = nullptr;
-    AccountsWindow *aw = nullptr;
+private:
+    QSystemTrayIcon *m_trayIcon;
+
+    ApplicationController *m_app = nullptr;
+    ContactListWindow *m_contactListWindow = nullptr;
+    AccountsWindow *m_accountsWindow = nullptr;
     
-    QMap<Account*, ContactList*> contactLists;
-    QMap<ChatSession*, ChatWindow*> chatWindows;
+    QMap<Account*, ContactList*> m_contactLists;
+    QMap<ChatSession*, ChatWindow*> m_chatWindows;
+    TabbedChatWindow *m_tabbedChatWindow;
+
+    bool m_useTabs = true;
 
 };
 

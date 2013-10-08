@@ -21,41 +21,32 @@ ApplicationController::ApplicationController(QObject *parent) :
 
     //qDebug() << account->metaObject()->className();
 
-    accountManager = new AccountManager(this);    
-    gui = new GuiController(this);
+    m_accountManager = new AccountManager(this);
+    m_gui = new GuiController(this);
     
-    connect(accountManager, &AccountManager::accountAdded,   gui, &GuiController::addAccount);
-    connect(accountManager, &AccountManager::accountRemoved, gui, &GuiController::removeAccount);
+    connect(m_accountManager, &AccountManager::accountAdded,   m_gui, &GuiController::addAccount);
+    connect(m_accountManager, &AccountManager::accountRemoved, m_gui, &GuiController::removeAccount);
     
-    accountManager->load();
+    m_accountManager->load();
     
-    accountManager->connectAccounts();
+    m_accountManager->connectAccounts();
     
-    gui->show();
+    m_gui->show();
 }
 
-AccountManager *ApplicationController::getAccountManager()
+AccountManager *ApplicationController::accountManager()
 {
-    return accountManager;
+    return m_accountManager;
 }
 
-QList<QString> ApplicationController::getProtocolPluginNames() const
+QList<QString> ApplicationController::protocolPluginNames() const
 {
     return protocolPlugins.keys();
 }
 
-ProtocolPlugin *ApplicationController::getProtocolPlugin(const QString &protocol)
+ProtocolPlugin *ApplicationController::protocolPlugin(const QString &protocol)
 {
     return protocolPlugins[protocol];
-}
-
-void ApplicationController::addAccount(Account *account)
-{
-    gui->addAccount(account);
-    
-    /*if(account->isConnected()) {
-        
-    }*/
 }
 
 void ApplicationController::discoverPlugins()

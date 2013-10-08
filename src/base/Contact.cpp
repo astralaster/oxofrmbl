@@ -1,14 +1,19 @@
 #include "Contact.h"
 
-#include <QDebug>
+
 
 #include "Account.h"
 
-Contact::Contact(Account *acc) : Person(acc), account(acc)
+Contact::Contact(Account *acc) : Contact(acc, "")
 {
 }
 
-Account *Contact::getAccount()
+Contact::Contact(Account *acc, const QString &id, QObject *parent) : Person(id, acc), m_account(acc)
 {
-    return account;
+    
+}
+
+Account *Contact::account()
+{
+    return m_account;
 }

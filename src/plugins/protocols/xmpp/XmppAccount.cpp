@@ -16,28 +16,38 @@ XmppAccount::XmppAccount()
 
 XmppAccount::~XmppAccount()
 {
-    delete client;
+    delete m_client;
 }
 
 void XmppAccount::initAccount()
 {
-    client = new QXmppClient();
+    m_client = new QXmppClient();
 
-    client->logger()->setLoggingType(QXmppLogger::StdoutLogging);
+    m_client->logger()->setLoggingType(QXmppLogger::StdoutLogging);
+    
+    connect(m_client, &QXmppClient::error, this, &Account::error);
 
-    connect(&client->rosterManager(), &QXmppRosterManager::rosterReceived, this, &XmppAccount::retrieveContacts);
-    connect(client, &QXmppClient::messageReceived, this, &XmppAccount::messageReceivedSlot);
+    connect(&m_client->rosterManager(), &QXmppRosterManager::rosterReceived, this, &XmppAccount::retrieveContacts);
+    connect(m_client, &QXmppClient::messageReceived, this, &XmppAccount::messageReceivedSlot);
     
-    connect(client, &QXmppClient::presenceReceived, this, &XmppAccount::presenceReceivedSlot);
+    connect(m_client, &QXmppClient::presenceReceived, this, &XmppAccount::presenceReceivedSlot);
     
-    connect(client, &QXmppClient::disconnected, this, &XmppAccount::disconnected);
+    connect(m_client, &QXmppClient::disconnected, this, &XmppAccount::disconnected);
     connect(this, &XmppAccount::disconnected, this, &XmppAccount::clearContacts);
 }
 
 void XmppAccount::retrieveContacts()
 {
-    for(auto contact_jid: client->rosterManager().getRosterBareJids()) {
-        addContact(new XmppContact(this, contact_jid));
+    for(auto contact_jid: m_client->rosterManager().getRosterBareJids()) {
+        
+        auto presences = m_client->rosterManager().getAllPresencesForBareJid(contact_jid);
+        for(QXmppPresence p: presences.values()) {
+            qDebug() << p.from();
+        }
+        
+        auto resources = m_client->rosterManager().getResources(contact_jid);
+        
+        Account::addContact(new XmppContact(this, contact_jid, resources));
     }
 
     emit connected();
@@ -45,19 +55,21 @@ void XmppAccount::retrieveContacts()
 
 void XmppAccount::remove()
 {
-    client->disconnectFromServer();
-    QSettings().remove(QString("accounts/xmpp/%1/").arg(getId()));
+    m_client->disconnectFromServer();
+    QSettings().remove(QString("accounts/xmpp/%1/").arg(id()));
 }
 
 void XmppAccount::save() const
 {
     QSettings settings;
 
-    settings.beginGroup(QString("accounts/xmpp/%1/").arg(getId()));
+    settings.beginGroup(QString("accounts/xmpp/%1/").arg(id()));
 
-    settings.setValue("server", server);
-    settings.setValue("user", user);
-    settings.setValue("password", password);
+    settings.setValue("server", m_server);
+    settings.setValue("user", m_user);
+    settings.setValue("password", m_password);
+    settings.setValue("resource", m_resource);
+    settings.setValue("priority", m_priority);
 
     settings.endGroup();
     
@@ -68,97 +80,139 @@ void XmppAccount::load()
 {
     QSettings settings;
 
-    settings.beginGroup(QString("accounts/xmpp/%1/").arg(getId()));
+    settings.beginGroup(QString("accounts/xmpp/%1/").arg(id()));
 
-    server = settings.value("server", server).toString();
-    user = settings.value("user", user).toString();
-    password = settings.value("password", password).toString();
+    m_server = settings.value("server", m_server).toString();
+    m_user = settings.value("user", m_user).toString();
+    m_password = settings.value("password", m_password).toString();
+    m_resource = settings.value("resource", m_resource).toString();
+    m_priority = settings.value("priority", m_priority).toInt();
 
     settings.endGroup();
 }
 
-QString XmppAccount::getServer() const
+QString XmppAccount::server() const
 {
-    return server;
+    return m_server;
 }
 
-QString XmppAccount::getUser() const
+QString XmppAccount::user() const
 {
-    return user;
+    return m_user;
 }
 
-QString XmppAccount::getPassword() const
+QString XmppAccount::password() const
 {
-    return password;
+    return m_password;
 }
 
-QString XmppAccount::getResource() const
+QString XmppAccount::resource() const
 {
-    return resource;
+    return m_resource;
 }
 
-QString XmppAccount::getType() const
+int XmppAccount::priority() const
+{
+    return m_priority;
+}
+
+QString XmppAccount::type() const
 {
     return "xmpp";
 }
 
-QString XmppAccount::getId() const
+QString XmppAccount::id() const
 {
-    if(accountId.isEmpty()) {
-        return user+"@"+server;
+    if(m_id.isEmpty()) {
+        return m_user+"@"+m_server;
     } else {
-        return accountId;
+        return m_id;
     }
 }
 
-QString XmppAccount::getDisplayName() const
+QString XmppAccount::displayName() const
 {
-    return getId();
+    return id();
 }
 
 bool XmppAccount::connectToServer()
 {
-    client->connectToServer(user+"@"+server, password);
+    m_client->connectToServer(m_user+"@"+m_server, m_password);
     return true;
 }
 
 void XmppAccount::disconnectFromServer()
 {
-    client->disconnectFromServer();
+    m_client->disconnectFromServer();
     emit disconnected();
 }
 
 void XmppAccount::sendMessage(const ChatMessage *msg)
 {
-    client->sendMessage(msg->getRemoteParticipant()->getId(), msg->getBody());
+    m_client->sendMessage(msg->remoteParticipant()->id(), msg->body());
 }
 
-void XmppAccount::setState(const QString &server, const QString &user, const QString &password, const QString &resource)
+ChatSession *XmppAccount::startSession(Contact *contact)
+{
+    auto chatSession = session(contact->id());
+    
+    if(chatSession == nullptr)
+    {
+        auto from = XmppContact::parseJabberId(contact->id());
+        
+        if(from[2].isEmpty()) {
+            auto fromJid = from[0]+"@"+from[1];
+            
+            QRegExp pattern(QRegExp::escape(fromJid)+"/(.+)");
+            
+            auto s = sessions(pattern);
+            
+            if(!s.isEmpty()) {
+                chatSession = s.first();
+            }
+        }
+    }
+    
+    if(chatSession != nullptr) {
+        emit sessionActivated(chatSession);
+        return chatSession;
+    }
+    
+    return Account::startSession(contact);
+}
+
+void XmppAccount::setState(const QString &server, const QString &user, const QString &password, const QString &resource, int priority)
 {
     setServer(server);
     setUser(user);
     setPassword(password);
     setResource(resource);
+    setPriority(priority);
 }
 
 void XmppAccount::setServer(const QString &server)
 {
-    this->server = server;
+    m_server = server;
 }
 
 void XmppAccount::setUser(const QString &user)
 {
-    this->user = user;
+    m_user = user;
 }
 
 void XmppAccount::setPassword(const QString &password)
 {
-    this->password = password;
+    m_password = password;
 }
 
 void XmppAccount::setResource(const QString &resource)
 {
-    this->resource = resource;
+    m_resource = resource;
+}
+
+void XmppAccount::setPriority(int priority)
+{
+    m_priority = priority;
 }
 
 void XmppAccount::setStatus(Status *status)
@@ -167,7 +221,7 @@ void XmppAccount::setStatus(Status *status)
 
     presence << *status;
 
-    client->setClientPresence(presence);
+    m_client->setClientPresence(presence);
 
     if(presence.type() == QXmppPresence::Unavailable) {
         disconnectFromServer();
@@ -176,9 +230,31 @@ void XmppAccount::setStatus(Status *status)
     Account::setStatus(status);
 }
 
+Contact *XmppAccount::createContact(const QString &contactId)
+{
+    return new XmppContact(this, contactId);
+}
+
+void XmppAccount::addContact(Contact *contact)
+{
+    QString jid = contact->id();
+    
+    if(m_client->rosterManager().addItem(jid)) {
+        //*contact->status() << presence;
+        Account::addContact(contact);
+    }
+}
+
+void XmppAccount::removeContact(Contact *contact)
+{
+    if(m_client->rosterManager().removeItem(contact->id())) {
+        Account::removeContact(contact);
+    }
+}
+
 void XmppAccount::clearContacts()
 {
-    contacts.clear();
+    m_contacts.clear();
 }
 
 void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
@@ -188,40 +264,51 @@ void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
     }
 
     auto from = XmppContact::parseJabberId(msg.from());
-    auto session = getSession(from[0]+"@"+from[1]);
 
-    if((msg.state() == QXmppMessage::Active || !msg.state()) && !msg.body().isEmpty()) {
-        if(session == nullptr) {
+    if((msg.state() == QXmppMessage::Active || !msg.state()) && !msg.body().isEmpty())
+    {
+        qDebug() << msg.from() << from[2];
+        auto chatSession = session(QString("%1@%2/%3").arg(from[0], from[1], from[2]));
+        
+        if(chatSession == nullptr) {
+            chatSession = session(QString("%1@%2").arg(from[0], from[1]));
+        }
+        
+        if(chatSession == nullptr) {
             auto contact = new XmppContact(this, msg.from());
 
-            session = startSession(contact);
+            chatSession = startSession(contact);
         }
 
-        auto message = new ChatMessage(session, true, msg.body());
+        auto message = new ChatMessage(chatSession, true, msg.body(), msg.stamp());
         emit messageReceived(message);
     }
 }
 
-
 void XmppAccount::presenceReceivedSlot(const QXmppPresence &presence)
 {
     auto from = XmppContact::parseJabberId(presence.from());
-    auto id = from[0]+"@"+from[1];
+    auto jid = from[0]+"@"+from[1];
+    auto jid_long = jid+"/"+from[2];
     
-    if(id == getId()) {
+    if(jid == id()) {
         return;
     }
     
-    Contact *contact = nullptr;
+    XmppContact *contact = nullptr;
     
-    for(Contact *c: contacts) {
-        if(c->getId() == id) {
-            contact = c;
+    for(Contact *c: m_contacts) {
+        if(c->id() == jid || c->id() == jid_long) {
+            contact = qobject_cast<XmppContact*>(c);
             break;
         }
     }
     
+    if(!from[2].isEmpty()) {
+        contact->addResource(from[2]);
+    }
+    
     if(contact != nullptr) {
-        contact->setStatus(&(*contact->getStatus() << presence));
+        contact->setStatus(&(*contact->status() << presence));
     }
 }

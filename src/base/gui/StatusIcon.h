@@ -5,6 +5,8 @@
 
 #include "common.h"
 
+#include "base/Status.h"
+
 class StatusIcon
 {
 public:

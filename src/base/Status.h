@@ -15,17 +15,16 @@ public:
         Unknown
     };
     
-    explicit Status(QObject *parent = 0);
+    explicit Status(QObject *parent = nullptr);
     
-    bool isOnline() const;
-    Type getType() const;
+    Type type() const;
     
 public slots:
     void setType(Type type);
     
 private:
-    Type type;
-    QString message;
+    Type m_type;
+    QString m_message;
     
 };
 

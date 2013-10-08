@@ -10,7 +10,7 @@ public:
     
     virtual Account *createAccount() = 0;
     
-    virtual void showAccountWindow(Account *account) = 0;
+    virtual QDialog *createAccountWindow(Account *account) = 0;
 };
 
 Q_DECLARE_INTERFACE(ProtocolPlugin, "com.oxofrmbl/plugins/ProtocolPlugin/1.0")

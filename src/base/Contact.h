@@ -5,17 +5,21 @@
 
 #include "common.h"
 #include "Person.h"
+#include "Account.h"
+
+class Account;
 
 class Contact : public Person
 {
     Q_OBJECT
 public:
-    Contact(Account *acc);
+    explicit Contact(Account *acc);
+    explicit Contact(Account *acc, const QString &m_id, QObject *parent = nullptr);
 
-    Account *getAccount();
+    Account *account();
 
 protected:
-    Account *account = nullptr;
+    Account *m_account = nullptr;
     
 };
 

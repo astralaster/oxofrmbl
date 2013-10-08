@@ -5,6 +5,9 @@
 
 #include "common.h"
 
+#include "base/Account.h"
+#include "base/Contact.h"
+
 class ContactList : public QAbstractListModel
 {
     Q_OBJECT
@@ -18,9 +21,15 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 public slots:
-    void updateContactStatus(Contact *contact, Status *status);
-    void clearContacts();
-    void retrieveContacts();
+    //void addContact(Contact *contact);
+    void removeContact(Contact *contact);
+    //void removeContactAtIndex(int index);
+    //void clearContacts();
+    //void retrieveContacts();
+    //void updateContactStatus(Contact *contact, Status *status);
+    
+    void update();
+
 
 private:
     Account *account = nullptr;

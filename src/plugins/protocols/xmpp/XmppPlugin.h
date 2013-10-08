@@ -14,16 +14,16 @@ class XmppPlugin : public QObject, public ProtocolPlugin
     Q_INTERFACES(ProtocolPlugin)
     
 public:
-    explicit XmppPlugin(QObject *parent = 0);
+    explicit XmppPlugin(QObject *parent = nullptr);
     
     Account *createAccount() override;
-    void showAccountWindow(Account *account) override;
+    QDialog *createAccountWindow(Account *account) override;
     
 public slots:
-    void init(ApplicationController *app) override;
+    void init(ApplicationController *m_app) override;
 
 private:
-    ApplicationController *app = nullptr;
+    ApplicationController *m_app = nullptr;
     
 };
 

@@ -1,35 +1,52 @@
 #include "ChatMessage.h"
 
-#include <QDebug>
-
 #include "Account.h"
 #include "ChatSession.h"
 
-ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &body) : QObject(session),
-    Session(session), incoming(incoming), body(body)
+ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &body) :
+    ChatMessage(session, incoming, body, QDateTime())
 {
+}
+
+ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &body, const QDateTime &time) : QObject(session),
+    m_session(session), m_incoming(incoming), m_body(body)
+{
+    if(time.isNull()) {
+        m_time.setDate(QDate::currentDate());
+        m_time.setTime(QTime::currentTime());
+    }
 }
 
 ChatMessage::~ChatMessage()
 {
 }
 
-const Account *ChatMessage::getLocalParticipant() const
+bool ChatMessage::isIncoming() const
 {
-    return Session->getAccount();
+    return m_incoming;
 }
 
-const Contact *ChatMessage::getRemoteParticipant() const
+const Account *ChatMessage::localParticipant() const
 {
-    return Session->getContact();
+    return m_session->account();
+}
+
+const Contact *ChatMessage::remoteParticipant() const
+{
+    return m_session->contact();
 }
 
 bool ChatMessage::isEmpty() const
 {
-    return body.isEmpty();
+    return m_body.isEmpty();
 }
 
-QString ChatMessage::getBody() const
+QString ChatMessage::body() const
 {
-    return body;
+    return m_body;
+}
+
+QDateTime ChatMessage::time() const
+{
+    return m_time;
 }

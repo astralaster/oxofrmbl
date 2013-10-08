@@ -4,8 +4,12 @@
 #include <QMainWindow>
 #include <QListView>
 #include <QComboBox>
+#include <QMenu>
 
 #include "common.h"
+
+#include "../GuiController.h"
+#include "../widgets/ContactListWidget.h"
 
 class GuiController;
 
@@ -18,7 +22,7 @@ class ContactListWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit ContactListWindow(GuiController *controller, QWidget *parent = 0);
+    explicit ContactListWindow(GuiController *controller, QWidget *parent = nullptr);
     ~ContactListWindow();
 
     QComboBox *getStatusSelect();

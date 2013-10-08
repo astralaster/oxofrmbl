@@ -1,26 +1,27 @@
 #include <QStringList>
 
-#include <QDebug>
+
 
 #include "XmppContact.h"
 
-XmppContact::XmppContact(Account *account, const QString &jid) : Contact(account), jid(jid)
+XmppContact::XmppContact(Account *account, const QString &jid) :
+    XmppContact(account, jid, QList<QString>())
 {
 }
 
-XmppContact::XmppContact(Account *account, const QString &server, const QString &user) :
-    XmppContact(account, server+"@"+user)
+XmppContact::XmppContact(Account *account, const QString &jid, const QList<QString> &resources) : 
+    Contact(account), m_jid(jid), m_resources(resources)
 {
 }
 
-QString XmppContact::getDisplayName() const
+QString XmppContact::displayName() const
 {
-    return getId();
+    return id();// + (m_resource.isEmpty() ? "" : "/"+m_resource);
 }
 
-QString XmppContact::getId() const
+QString XmppContact::id() const
 {
-    return parseJabberId(jid)[0] +"@"+ parseJabberId(jid)[1];
+    return m_jid;// parseJabberId(m_jid)[0] +"@"+ parseJabberId(m_jid)[1];
 }
 
 QStringList XmppContact::parseJabberId(const QString jid)
@@ -33,10 +34,15 @@ QStringList XmppContact::parseJabberId(const QString jid)
 
     rxp.indexIn(jid);
 
-    return QStringList({rxp.cap(1), rxp.cap(2), rxp.cap(4)});
+    return QStringList({rxp.cap(1), rxp.cap(2), rxp.cap(3)});
+}
+
+void XmppContact::addResource(const QString &resource)
+{
+    m_resources << resource;
 }
 
 void XmppContact::setJid(const QString &jid)
 {
-    this->jid = jid;
+    this->m_jid = jid;
 }

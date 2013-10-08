@@ -6,14 +6,18 @@
 
 #include "common.h"
 
+#include "ApplicationController.h"
+#include "Account.h"
+class ApplicationController;
+
 class AccountManager : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit AccountManager(ApplicationController *app, QObject *parent = 0);
+    explicit AccountManager(ApplicationController *app, QObject *parent = nullptr);
 
-    Account *getAccount(int index);
-    QList<Account*> getAccounts() const;
+    Account *account(int index);
+    QList<Account*> accounts() const;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -24,7 +28,6 @@ signals:
     void accountAdded(Account *account);
 
 public slots:
-    void accountSavedSlot();
     void dataChangedSlot(bool save);
     
     void connectAccounts();
@@ -37,8 +40,8 @@ public slots:
     void load();
 
 private:
-    ApplicationController *app = nullptr;
-    QList<Account*> accounts;
+    ApplicationController *m_app = nullptr;
+    QList<Account*> m_accounts;
 };
 
 #endif // ACCOUNTMANAGER_H

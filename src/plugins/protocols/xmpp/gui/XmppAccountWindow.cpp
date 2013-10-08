@@ -9,15 +9,11 @@ XmppAccountWindow::XmppAccountWindow(XmppPlugin *plugin, XmppAccount *account, Q
 {
     ui->setupUi(this);
 
-    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &XmppAccountWindow::accepted);
-    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &XmppAccountWindow::close);
-
-    connect(this, &XmppAccountWindow::accepted, this, &XmppAccountWindow::accept);
-
-    ui->username->setText(account->getUser());
-    ui->server->setText(account->getServer());
-    ui->password->setText(account->getPassword());
-    ui->resource->setText(account->getResource());
+    ui->usernameEdit->setText(account->user());
+    ui->serverEdit->setText(account->server());
+    ui->passwordEdit->setText(account->password());
+    ui->resourceEdit->setText(account->resource());
+    ui->prioritySpinBox->setValue(account->priority());
 }
 
 XmppAccountWindow::~XmppAccountWindow()
@@ -27,11 +23,20 @@ XmppAccountWindow::~XmppAccountWindow()
 
 void XmppAccountWindow::accept()
 {
-    account->setState(ui->server->text(), ui->username->text(), ui->password->text(), ui->resource->text());
+    account->setState(
+                ui->serverEdit->text(), 
+                ui->usernameEdit->text(), 
+                ui->passwordEdit->text(), 
+                ui->resourceEdit->text(), 
+                ui->prioritySpinBox->value()
+    );
+    
     account->save();
     
     account->initAccount();
+    
+    // @TODO move away
     account->connectToServer();
-
-    close();
+    
+    QDialog::accept();
 }

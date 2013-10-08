@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#include "base/ApplicationController.h"
+
 class Plugin {
 public:
     virtual ~Plugin() {}

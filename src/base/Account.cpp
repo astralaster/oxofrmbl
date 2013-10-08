@@ -4,6 +4,9 @@
 #include "ChatMessage.h"
 #include "Contact.h"
 #include "ChatSession.h"
+#include "MessageHandler.h"
+
+#include <QRegExp>
 
 Account::Account(QObject *parent) : Person(parent)
 {
@@ -13,19 +16,34 @@ Account::~Account()
 {
 }
 
-ChatSession *Account::getSession(const QString &contactId)
+ChatSession *Account::session(const QString &contactId)
 {
-    return chatSessions.contains(contactId) ? chatSessions[contactId] : nullptr;
+    return m_chatSessions.contains(contactId) ? m_chatSessions[contactId] : nullptr;
 }
 
-QMap<QString, ChatSession*> Account::getSessions()
+QList<ChatSession*> Account::sessions(const QRegExp &contatcIdPattern)
 {
-    return chatSessions;
+    QList<ChatSession*> result;
+    
+    for(ChatSession *session: sessions())
+    {
+        if(contatcIdPattern.exactMatch(session->contact()->id()))
+        {
+            result << session;
+        }
+    }
+    
+    return result;
 }
 
-QList<Contact*> Account::getContacts()
+QMap<QString, ChatSession*> Account::sessions()
 {
-    return contacts;
+    return m_chatSessions;
+}
+
+QList<Contact*> Account::contacts()
+{
+    return m_contacts;
 }
 
 /*QString Account::getId() const
@@ -37,23 +55,18 @@ QList<Contact*> Account::getContacts()
     }
 }*/
 
-QString Account::getDisplayName() const
+QString Account::displayName() const
 {
-    if(nickname.isEmpty()) {
-        return getDisplayName();
+    if(m_nickname.isEmpty()) {
+        return displayName();
     } else {
-        return nickname;
+        return m_nickname;
     }
 }
 
-Status *Account::getStatus()
+Status *Account::status()
 {
-    return status;
-}
-
-void Account::setId(const QString &id)
-{
-    accountId = id;
+    return m_status;
 }
 
 bool Account::isConnected() const
@@ -73,27 +86,32 @@ void Account::contactStatusChangedSlot(Status *status)
 
 void Account::addContact(Contact *contact)
 {
-    contacts.append(contact);
+    m_contacts.append(contact);
     connect(contact, &Contact::statusChanged, this, &Account::contactStatusChangedSlot);
+    
+    emit contactAdded(contact);
 }
 
-void Account::setStatus(Status *status)
+void Account::removeContact(Contact *contact)
 {
-    Person::setStatus(status);
+    m_contacts.removeOne(contact);
+    emit contactRemoved(contact);
+    
+    delete contact;
 }
 
 ChatSession *Account::startSession(Contact *contact)
 {
     ChatSession *session;
 
-    if(!chatSessions.contains(contact->getId())) {
+    if(!m_chatSessions.contains(contact->id())) {
         session = new ChatSession(contact, this);
 
-        chatSessions[contact->getId()] = session;
+        m_chatSessions[contact->id()] = session;
 
         emit sessionStarted(session);
     } else {
-        session = chatSessions[contact->getId()];
+        session = m_chatSessions[contact->id()];
         emit sessionActivated(session);
     }
 
@@ -102,6 +120,16 @@ ChatSession *Account::startSession(Contact *contact)
 
 void Account::endSession(ChatSession *session)
 {
-    chatSessions.remove(session->getContact()->getId());
+    m_chatSessions.remove(session->contact()->id());
     delete session;
+}
+
+void Account::installMessageHandler(MessageHandler *handler)
+{
+    m_messageHandlers.append(handler);
+}
+
+void Account::removeMessageHandler(MessageHandler *handler)
+{
+    m_messageHandlers.removeOne(handler);
 }

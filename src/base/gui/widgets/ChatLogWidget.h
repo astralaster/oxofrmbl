@@ -5,12 +5,13 @@
 #include <QTextEdit>
 
 #include "common.h"
+#include "base/ChatMessage.h"
 
 class ChatLogWidget : public QTextEdit
 {
     Q_OBJECT
 public:
-    explicit ChatLogWidget(QWidget *parent = 0);
+    explicit ChatLogWidget(QWidget *parent = nullptr);
 
 signals:
 

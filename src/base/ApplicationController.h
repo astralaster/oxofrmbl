@@ -6,29 +6,40 @@
 
 #include "common.h"
 
+#include "AccountManager.h"
+#include "Account.h"
+#include "Contact.h"
+
+#include "gui/GuiController.h"
+
+#include "interfaces/ProtocolPluginInterface.h"
+
+class AccountManager;
+class ProtocolPlugin;
+class GuiController;
+
 class ApplicationController : public QObject
 {
     Q_OBJECT
 public:
-    explicit ApplicationController(QObject *parent = 0);
+    explicit ApplicationController(QObject *parent = nullptr);
 
-    AccountManager *getAccountManager();
+    AccountManager *accountManager();
     
-    QList<QString> getProtocolPluginNames() const;
-    ProtocolPlugin *getProtocolPlugin(const QString &protocol);
+    QList<QString> protocolPluginNames() const;
+    ProtocolPlugin *protocolPlugin(const QString &protocol);
 
 signals:
     void quit();
     
 public slots:
-    void addAccount(Account *account);
     void discoverPlugins();
 
 protected:
     QMap<QString, ProtocolPlugin*> protocolPlugins;
     
-    GuiController *gui = nullptr;
-    AccountManager *accountManager = nullptr;
+    GuiController *m_gui = nullptr;
+    AccountManager *m_accountManager = nullptr;
 
 };
 

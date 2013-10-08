@@ -25,8 +25,9 @@ SOURCES += main.cpp
 target.path = $$PREFIX/bin/
 INSTALLS += target
 
+
 CONFIG(debug, debug|release) {
-    LIBS += -L./build/base/ -loxofrmbl_base
+    LIBS += -L./build/base -loxofrmbl_base
 } else {
-    LIBS += -Wl,-rpath,/usr/lib/oxofrmbl/ -L./build/base/ -loxofrmbl_base
+    LIBS += -Wl,-rpath,/usr/lib/oxofrmbl -L./build/base -loxofrmbl_base
 }

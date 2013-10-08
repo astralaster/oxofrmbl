@@ -17,20 +17,20 @@ Account *XmppPlugin::createAccount()
     return new XmppAccount();
 }
 
-void XmppPlugin::showAccountWindow(Account *account)
+QDialog *XmppPlugin::createAccountWindow(Account *account)
 {
-    (new XmppAccountWindow(this, dynamic_cast<XmppAccount*>(account)))->show();
+    return new XmppAccountWindow(this, dynamic_cast<XmppAccount*>(account));
 }
 
 void XmppPlugin::init(ApplicationController *app)
 {
-    this->app = app;
+    this->m_app = app;
 }
 
 
 QXmppPresence &operator<<(QXmppPresence &presence, const Status &status)
 {
-    switch (status.getType())
+    switch (status.type())
     {
     case Status::Away:
         presence.setType(QXmppPresence::Available);
@@ -53,17 +53,11 @@ QXmppPresence &operator<<(QXmppPresence &presence, const Status &status)
     return presence;
 }
 
-
 Status &operator<<(Status &status, const QXmppPresence &presence)
 {
     switch (presence.type())
     {
-    case QXmppPresence::Unavailable:
-        status.setType(Status::Offline);
-        break;
-
     case QXmppPresence::Available:
-    default:
         switch(presence.availableStatusType())
         {
         case QXmppPresence::Away:
@@ -76,6 +70,11 @@ Status &operator<<(Status &status, const QXmppPresence &presence)
             break;
         }
 
+        break;
+        
+    case QXmppPresence::Unavailable:
+    default:
+        status.setType(Status::Offline);
         break;
     }
     

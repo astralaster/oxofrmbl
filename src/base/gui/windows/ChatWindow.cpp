@@ -1,7 +1,7 @@
 #include "ChatWindow.h"
 #include "ui_ChatWindow.h"
 
-#include <QDebug>
+
 #include <QKeyEvent>
 
 #include "gui/StatusIcon.h"
@@ -17,17 +17,16 @@ ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->messageLog->installEventFilter(this);
     ui->messageEdit->installEventFilter(this);
     ui->messageEdit->setFocus();
-
-    ui->sendButton->setVisible(false);
     
-    auto contact = session->getContact();
+    ui->splitter->setSizes(QList<int>({0, 50}));
+    
+    auto contact = session->contact();
 
-    setWindowTitle(contact->getDisplayName());
-    setWindowIcon(StatusIcon::forStatus(contact->getStatus()));
-
-    connect(ui->sendButton, &QPushButton::clicked, this, &ChatWindow::sendMessage);
+    setWindowTitle(contact->displayName());
+    setWindowIcon(StatusIcon::forStatus(contact->status()));
 
     connect(this, &ChatWindow::messageSent, session, &ChatSession::sendMessage);
     connect(session, &ChatSession::messageReceived, this, &ChatWindow::messageReceived);
@@ -42,6 +41,7 @@ ChatWindow::~ChatWindow()
 void ChatWindow::updateContactStatus(Status *status)
 {
     setWindowIcon(StatusIcon::forStatus(status));
+    emit iconChanged(windowIcon());
 }
 
 void ChatWindow::messageReceived(const ChatMessage *msg)
@@ -51,25 +51,40 @@ void ChatWindow::messageReceived(const ChatMessage *msg)
 
 bool ChatWindow::eventFilter(QObject *o, QEvent *e)
 {
-    if(o == ui->messageEdit && e->type() == QKeyEvent::KeyPress) {
+    if(o == ui->messageEdit && e->type() == QKeyEvent::KeyPress)
+    {
         QKeyEvent *ev = (QKeyEvent*)e;
 
-        if((ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return)) {
-
-            if(!(ev->modifiers() & Qt::SHIFT)) {
+        if((ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return))
+        {
+            if(!(ev->modifiers() & Qt::SHIFT))
+            {
                 e->accept();
                 sendMessage();
                 return true;
             }
         }
     }
+    else if(o == ui->messageLog && e->type() == QKeyEvent::KeyPress)
+    {
+        QKeyEvent *ev = (QKeyEvent*)e;
+
+        e->accept();
+        ui->messageEdit->setFocus();
+    }
 
     return false;
 }
 
+void ChatWindow::showEvent(QShowEvent *e)
+{
+    activateWindow();
+    ui->messageEdit->setFocus();
+}
+
 void ChatWindow::closeEvent(QCloseEvent *e)
 {
-    session->getAccount()->endSession(session);
+    session->account()->endSession(session);
     e->accept();
 }
 

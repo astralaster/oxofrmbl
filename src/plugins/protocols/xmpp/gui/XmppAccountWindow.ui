@@ -40,13 +40,17 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="username"/>
+        <widget class="QLineEdit" name="usernameEdit"/>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="server"/>
+        <widget class="QLineEdit" name="serverEdit"/>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="password"/>
+        <widget class="QLineEdit" name="passwordEdit">
+         <property name="echoMode">
+          <enum>QLineEdit::PasswordEchoOnEdit</enum>
+         </property>
+        </widget>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_4">
@@ -56,7 +60,17 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLineEdit" name="resource"/>
+        <widget class="QLineEdit" name="resourceEdit"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Priority</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QSpinBox" name="prioritySpinBox"/>
        </item>
       </layout>
      </item>
@@ -72,5 +86,38 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>XmppAccountWindow</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>XmppAccountWindow</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
