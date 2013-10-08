@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Contacts</string>
   </property>
+  <property name="windowIcon">
+   <iconset theme="user-available"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -126,7 +129,9 @@
   </action>
   <action name="actionAddContact">
    <property name="icon">
-    <iconset theme="list-add"/>
+    <iconset theme="list-add">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>Add Contact</string>
@@ -134,7 +139,9 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset theme="help-about"/>
+    <iconset theme="help-about">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>About</string>

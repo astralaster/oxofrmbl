@@ -1,14 +1,11 @@
 #include "ChatMessage.h"
 
-#include <QDebug>
-
 #include "Account.h"
 #include "ChatSession.h"
 
 ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &body) :
     ChatMessage(session, incoming, body, QDateTime())
 {
-    qDebug() << "no time";
 }
 
 ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &body, const QDateTime &time) : QObject(session),

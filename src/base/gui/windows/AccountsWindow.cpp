@@ -4,7 +4,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QKeyEvent>
-#include <QDebug>
+
 
 #include "base/Account.h"
 #include "base/AccountManager.h"

@@ -1,7 +1,7 @@
 #include "ContactList.h"
 
 #include <QIcon>
-#include <QDebug>
+
 
 #include "base/Account.h"
 #include "base/Contact.h"

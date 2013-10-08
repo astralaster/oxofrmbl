@@ -1,6 +1,6 @@
 #include <QStringList>
 
-#include <QDebug>
+
 
 #include "XmppContact.h"
 

@@ -1,7 +1,7 @@
 #include "ContactListWindow.h"
 #include "ui_ContactListWindow.h"
 
-#include <QDebug>
+
 #include <QCloseEvent>
 
 #include "ChatWindow.h"

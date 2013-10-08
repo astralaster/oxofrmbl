@@ -1,6 +1,6 @@
 #include "ContactListWidget.h"
 
-#include <QDebug>
+
 #include <QKeyEvent>
 #include <QAction>
 #include <QMessageBox>

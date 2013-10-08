@@ -1,6 +1,6 @@
 #include "StatusIcon.h"
 
-#include <QDebug>
+
 
 #include "base/Status.h"
 

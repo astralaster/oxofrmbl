@@ -23,7 +23,8 @@ HEADERS += \
     gui/StatusIcon.h \
     MessageHandler.h \
     #otr/OtrMessageHandler.h \
-    gui/windows/AddContactDialog.h
+    gui/windows/AddContactDialog.h \
+    gui/windows/TabbedChatWindow.h
 
 SOURCES += \
     ApplicationController.cpp \
@@ -37,7 +38,8 @@ SOURCES += \
     Person.cpp \
     MessageHandler.cpp \
     #otr/OtrMessageHandler.cpp \
-    gui/windows/AddContactDialog.cpp
+    gui/windows/AddContactDialog.cpp \
+    gui/windows/TabbedChatWindow.cpp
 
 SOURCES += \
     gui/GuiController.cpp \
@@ -62,7 +64,8 @@ FORMS += \
     gui/windows/ContactListWindow.ui \
     gui/windows/ChatWindow.ui \
     gui/windows/AccountsWindow.ui \
-    gui/windows/AddContactDialog.ui
+    gui/windows/AddContactDialog.ui \
+    gui/windows/TabbedChatWindow.ui
 
 CONFIG(debug, debug|release) {
     DEFINES += 'OXOFRMBL_LIBDIR=\"QCoreApplication::applicationDirPath()\"'

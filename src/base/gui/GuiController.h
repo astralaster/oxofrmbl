@@ -11,6 +11,7 @@
 #include "ContactList.h"
 #include "windows/AccountsWindow.h"
 #include "windows/ChatWindow.h"
+#include "windows/TabbedChatWindow.h"
 #include "windows/ContactListWindow.h"
 
 class ApplicationController;
@@ -30,7 +31,6 @@ public slots:
     void show();
     void startChat(ChatSession *session);
     void activateChat(ChatSession *session);
-    void closeTab(int tabIndex);
     void changeStatusIcon(Status *status);
 
     void showAccountsWindow();
@@ -56,10 +56,9 @@ private:
     
     QMap<Account*, ContactList*> m_contactLists;
     QMap<ChatSession*, ChatWindow*> m_chatWindows;
+    TabbedChatWindow *m_tabbedChatWindow;
 
-    QTabWidget *m_tabMain = nullptr;
-
-    bool tabbing = true;
+    bool m_useTabs = true;
 
 };
 

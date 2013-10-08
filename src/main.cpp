@@ -1,5 +1,5 @@
 #include <QApplication>
-#include <QDebug>
+
 
 #include "base/ApplicationController.h"
 #include "base/AccountManager.h"

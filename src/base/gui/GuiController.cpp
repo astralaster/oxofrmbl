@@ -2,7 +2,7 @@
 #include "StatusIcon.h"
 
 #include <QApplication>
-#include <QDebug>
+
 #include <QMessageBox>
 #include <QShortcut>
 
@@ -38,12 +38,8 @@ GuiController::GuiController(ApplicationController *app) :
     connect(m_contactListWindow, &ContactListWindow::statusChanged, app->accountManager(), &AccountManager::changeStatus);
     connect(m_contactListWindow, &ContactListWindow::statusChanged, this, &GuiController::changeStatusIcon);
 
-    if(tabbing)
-    {
-        m_tabMain = new QTabWidget();
-        m_tabMain->setMovable(true);
-        m_tabMain->setTabsClosable(true);
-        connect(m_tabMain, &QTabWidget::tabCloseRequested, this, &GuiController::closeTab);
+    if(m_useTabs) {
+        m_tabbedChatWindow = new TabbedChatWindow();
     }
 }
 
@@ -54,46 +50,31 @@ void GuiController::show()
 
 void GuiController::startChat(ChatSession *session)
 {
-    auto cw = new ChatWindow(session);
-    m_chatWindows[session] = cw;
+    auto window = new ChatWindow(session);
+    m_chatWindows[session] = window;
 
-    if(tabbing)
-    {
-        m_tabMain->addTab(cw, cw->windowTitle());
-        m_tabMain->setCurrentIndex(m_tabMain->indexOf(m_chatWindows[session]));
-        m_tabMain->show();
-    }
-    else
-    {
-        cw->show();
+    if(m_useTabs) {
+        m_tabbedChatWindow->addTab(window);
+    } else {
+        window->showNormal();
     }
 }
 
 void GuiController::activateChat(ChatSession *session)
 {
-    if(tabbing)
-    {
-        m_tabMain->show();
-        m_tabMain->setCurrentIndex(m_tabMain->indexOf(m_chatWindows[session]));
+    if(m_useTabs) {
+        m_tabbedChatWindow->activateChatWindow(m_chatWindows[session]);
+    } else {
+        m_chatWindows[session]->showNormal();
     }
-    else
-    {
-        ChatWindow *cw = m_chatWindows[session];
-
-        cw->showNormal();
-        cw->activateWindow();
-    }
-}
-
-void GuiController::closeTab(int tabIndex)
-{
-    m_tabMain->widget(tabIndex)->close();
-    m_tabMain->removeTab(tabIndex);
 }
 
 void GuiController::changeStatusIcon(Status *status)
 {
-    m_trayIcon->setIcon(StatusIcon::forStatus(status));
+    auto icon = StatusIcon::forStatus(status);
+    
+    m_contactListWindow->setWindowIcon(icon);
+    m_trayIcon->setIcon(icon);
 }
 
 void GuiController::showAccountsWindow()
@@ -114,7 +95,8 @@ void GuiController::showAddContactDialog()
 {
     auto dialog = new AddContactDialog(m_app->accountManager());
     
-    if(dialog->exec() == QDialog::Accepted) {
+    if(dialog->exec() == QDialog::Accepted)
+    {
         auto contactId = dialog->getId();
         auto account = dialog->getAccount();
         

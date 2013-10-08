@@ -1,7 +1,7 @@
 #include "AccountManager.h"
 
 #include <QApplication>
-#include <QDebug>
+
 #include <QDir>
 #include <QPluginLoader>
 #include <QSettings>
