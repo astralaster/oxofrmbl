@@ -30,6 +30,7 @@ public slots:
     void show();
     void startChat(ChatSession *session);
     void activateChat(ChatSession *session);
+    void closeTab(int tabIndex);
     void changeStatusIcon(Status *status);
 
     void showAccountsWindow();
@@ -55,6 +56,10 @@ private:
     
     QMap<Account*, ContactList*> m_contactLists;
     QMap<ChatSession*, ChatWindow*> m_chatWindows;
+
+    QTabWidget *m_tabMain = nullptr;
+
+    bool tabbing = true;
 
 };
 
