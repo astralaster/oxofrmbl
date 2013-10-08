@@ -42,7 +42,7 @@ GuiController::GuiController(ApplicationController *app) :
     {
         m_tabMain = new QTabWidget();
         m_tabMain->setTabsClosable(true);
-        connect(m_tabMain, &QTabWidget::tabCloseRequested, this, &GuiController::endChat);
+        connect(m_tabMain, &QTabWidget::tabCloseRequested, this, &GuiController::closeTab);
     }
 }
 
@@ -59,6 +59,7 @@ void GuiController::startChat(ChatSession *session)
     if(tabbing)
     {
         m_tabMain->addTab(cw, cw->windowTitle());
+        m_tabMain->setCurrentIndex(m_tabMain->indexOf(m_chatWindows[session]));
         m_tabMain->show();
     }
     else
@@ -72,6 +73,7 @@ void GuiController::activateChat(ChatSession *session)
     if(tabbing)
     {
         m_tabMain->show();
+        m_tabMain->setCurrentIndex(m_tabMain->indexOf(m_chatWindows[session]));
     }
     else
     {
@@ -82,8 +84,9 @@ void GuiController::activateChat(ChatSession *session)
     }
 }
 
-void GuiController::endChat(int tabIndex)
+void GuiController::closeTab(int tabIndex)
 {
+    m_tabMain->widget(tabIndex)->close();
     m_tabMain->removeTab(tabIndex);
 }
 

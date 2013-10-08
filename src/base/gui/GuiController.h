@@ -30,7 +30,7 @@ public slots:
     void show();
     void startChat(ChatSession *session);
     void activateChat(ChatSession *session);
-    void endChat(int tabIndex);
+    void closeTab(int tabIndex);
     void changeStatusIcon(Status *status);
 
     void showAccountsWindow();
