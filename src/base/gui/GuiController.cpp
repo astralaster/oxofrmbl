@@ -41,6 +41,7 @@ GuiController::GuiController(ApplicationController *app) :
     if(tabbing)
     {
         m_tabMain = new QTabWidget();
+        m_tabMain->setMovable(true);
         m_tabMain->setTabsClosable(true);
         connect(m_tabMain, &QTabWidget::tabCloseRequested, this, &GuiController::closeTab);
     }
