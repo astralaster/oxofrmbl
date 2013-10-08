@@ -37,6 +37,13 @@ GuiController::GuiController(ApplicationController *app) :
 
     connect(m_contactListWindow, &ContactListWindow::statusChanged, app->accountManager(), &AccountManager::changeStatus);
     connect(m_contactListWindow, &ContactListWindow::statusChanged, this, &GuiController::changeStatusIcon);
+
+    if(tabbing)
+    {
+        m_tabMain = new QTabWidget();
+        m_tabMain->setTabsClosable(true);
+        connect(m_tabMain, &QTabWidget::tabCloseRequested, this, &GuiController::endChat);
+    }
 }
 
 void GuiController::show()
@@ -49,15 +56,35 @@ void GuiController::startChat(ChatSession *session)
     auto cw = new ChatWindow(session);
     m_chatWindows[session] = cw;
 
-    cw->show();
+    if(tabbing)
+    {
+        m_tabMain->addTab(cw, cw->windowTitle());
+        m_tabMain->show();
+    }
+    else
+    {
+        cw->show();
+    }
 }
 
 void GuiController::activateChat(ChatSession *session)
 {
-    ChatWindow *cw = m_chatWindows[session];
+    if(tabbing)
+    {
+        m_tabMain->show();
+    }
+    else
+    {
+        ChatWindow *cw = m_chatWindows[session];
 
-    cw->showNormal();
-    cw->activateWindow();
+        cw->showNormal();
+        cw->activateWindow();
+    }
+}
+
+void GuiController::endChat(int tabIndex)
+{
+    m_tabMain->removeTab(tabIndex);
 }
 
 void GuiController::changeStatusIcon(Status *status)
