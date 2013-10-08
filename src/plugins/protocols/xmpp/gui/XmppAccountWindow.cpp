@@ -9,10 +9,11 @@ XmppAccountWindow::XmppAccountWindow(XmppPlugin *plugin, XmppAccount *account, Q
 {
     ui->setupUi(this);
 
-    ui->username->setText(account->user());
-    ui->server->setText(account->server());
-    ui->password->setText(account->password());
-    ui->resource->setText(account->resource());
+    ui->usernameEdit->setText(account->user());
+    ui->serverEdit->setText(account->server());
+    ui->passwordEdit->setText(account->password());
+    ui->resourceEdit->setText(account->resource());
+    ui->prioritySpinBox->setValue(account->priority());
 }
 
 XmppAccountWindow::~XmppAccountWindow()
@@ -22,7 +23,14 @@ XmppAccountWindow::~XmppAccountWindow()
 
 void XmppAccountWindow::accept()
 {
-    account->setState(ui->server->text(), ui->username->text(), ui->password->text(), ui->resource->text());
+    account->setState(
+                ui->serverEdit->text(), 
+                ui->usernameEdit->text(), 
+                ui->passwordEdit->text(), 
+                ui->resourceEdit->text(), 
+                ui->prioritySpinBox->value()
+    );
+    
     account->save();
     
     account->initAccount();

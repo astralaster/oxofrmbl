@@ -59,13 +59,22 @@ void AccountsWindow::removeAccountAtIndex(const QModelIndex &index)
     }
 }
 
+void AccountsWindow::openSelectedAccount()
+{
+    openAccountAtIndex(ui->accountsList->currentIndex());
+}
+
 void AccountsWindow::openAccountAtIndex(const QModelIndex &index)
 {
     auto account = dynamic_cast<Account*>(app->accountManager()->account(index.row()));
     
     ProtocolPlugin *plugin = app->protocolPlugin(account->type());
     
-    plugin->createAccountWindow(account);
+    auto accountWindow = plugin->createAccountWindow(account);
+    
+    if(accountWindow->exec() == QDialog::Accepted) {
+        app->accountManager()->save();
+    }
 }
 
 void AccountsWindow::keyPressEvent(QKeyEvent *event)

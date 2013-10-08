@@ -103,6 +103,8 @@ void AccountManager::save() const
     
         settings.endArray();
     }
+    
+    settings.sync();
 }
 
 void AccountManager::load()

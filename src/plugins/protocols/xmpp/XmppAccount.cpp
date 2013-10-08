@@ -39,7 +39,14 @@ void XmppAccount::initAccount()
 void XmppAccount::retrieveContacts()
 {
     for(auto contact_jid: m_client->rosterManager().getRosterBareJids()) {
+        
+        auto presences = m_client->rosterManager().getAllPresencesForBareJid(contact_jid);
+        for(QXmppPresence p: presences.values()) {
+            qDebug() << p.from();
+        }
+        
         auto resources = m_client->rosterManager().getResources(contact_jid);
+        
         Account::addContact(new XmppContact(this, contact_jid, resources));
     }
 
@@ -61,6 +68,8 @@ void XmppAccount::save() const
     settings.setValue("server", m_server);
     settings.setValue("user", m_user);
     settings.setValue("password", m_password);
+    settings.setValue("resource", m_resource);
+    settings.setValue("priority", m_priority);
 
     settings.endGroup();
     
@@ -76,6 +85,8 @@ void XmppAccount::load()
     m_server = settings.value("server", m_server).toString();
     m_user = settings.value("user", m_user).toString();
     m_password = settings.value("password", m_password).toString();
+    m_resource = settings.value("resource", m_resource).toString();
+    m_priority = settings.value("priority", m_priority).toInt();
 
     settings.endGroup();
 }
@@ -98,6 +109,11 @@ QString XmppAccount::password() const
 QString XmppAccount::resource() const
 {
     return m_resource;
+}
+
+int XmppAccount::priority() const
+{
+    return m_priority;
 }
 
 QString XmppAccount::type() const
@@ -136,12 +152,42 @@ void XmppAccount::sendMessage(const ChatMessage *msg)
     m_client->sendMessage(msg->remoteParticipant()->id(), msg->body());
 }
 
-void XmppAccount::setState(const QString &server, const QString &user, const QString &password, const QString &resource)
+ChatSession *XmppAccount::startSession(Contact *contact)
+{
+    auto chatSession = session(contact->id());
+    
+    if(chatSession == nullptr)
+    {
+        auto from = XmppContact::parseJabberId(contact->id());
+        
+        if(from[2].isEmpty()) {
+            auto fromJid = from[0]+"@"+from[1];
+            
+            QRegExp pattern(QRegExp::escape(fromJid)+"/(.+)");
+            
+            auto s = sessions(pattern);
+            
+            if(!s.isEmpty()) {
+                chatSession = s.first();
+            }
+        }
+    }
+    
+    if(chatSession != nullptr) {
+        emit sessionActivated(chatSession);
+        return chatSession;
+    }
+    
+    return Account::startSession(contact);
+}
+
+void XmppAccount::setState(const QString &server, const QString &user, const QString &password, const QString &resource, int priority)
 {
     setServer(server);
     setUser(user);
     setPassword(password);
     setResource(resource);
+    setPriority(priority);
 }
 
 void XmppAccount::setServer(const QString &server)
@@ -162,6 +208,11 @@ void XmppAccount::setPassword(const QString &password)
 void XmppAccount::setResource(const QString &resource)
 {
     m_resource = resource;
+}
+
+void XmppAccount::setPriority(int priority)
+{
+    m_priority = priority;
 }
 
 void XmppAccount::setStatus(Status *status)
@@ -189,7 +240,6 @@ void XmppAccount::addContact(Contact *contact)
     QString jid = contact->id();
     
     if(m_client->rosterManager().addItem(jid)) {
-        //QXmppPresence presence = m_client->rosterManager().getPresence(jid, "desktop");
         //*contact->status() << presence;
         Account::addContact(contact);
     }
@@ -235,23 +285,27 @@ void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
     }
 }
 
-
 void XmppAccount::presenceReceivedSlot(const QXmppPresence &presence)
 {
     auto from = XmppContact::parseJabberId(presence.from());
     auto jid = from[0]+"@"+from[1];
+    auto jid_long = jid+"/"+from[2];
     
     if(jid == id()) {
         return;
     }
     
-    Contact *contact = nullptr;
+    XmppContact *contact = nullptr;
     
     for(Contact *c: m_contacts) {
-        if(c->id() == jid) {
-            contact = c;
+        if(c->id() == jid || c->id() == jid_long) {
+            contact = qobject_cast<XmppContact*>(c);
             break;
         }
+    }
+    
+    if(!from[2].isEmpty()) {
+        contact->addResource(from[2]);
     }
     
     if(contact != nullptr) {

@@ -22,6 +22,7 @@ public:
     QString user() const;
     QString password() const;
     QString resource() const;
+    int priority() const;
 
     QString type() const override;
     QString id() const override;
@@ -31,6 +32,8 @@ public slots:
     bool connectToServer() override;
     void disconnectFromServer() override;
     void sendMessage(const ChatMessage *msg) override;
+    
+    ChatSession *startSession(Contact *contact) override;
 
     void retrieveContacts();
 
@@ -39,11 +42,12 @@ public slots:
     void load() override;
     
 public slots:
-    void setState(const QString &server, const QString &user, const QString &password, const QString &resource);
+    void setState(const QString &server, const QString &user, const QString &password, const QString &resource, int priority = 0);
     void setServer(const QString &server);
     void setUser(const QString &user);
     void setPassword(const QString &password);
     void setResource(const QString &resource);
+    void setPriority(int priority);
     
     void setStatus(Status *status) override;
     
@@ -60,6 +64,7 @@ private slots:
 private:
     QXmppClient *m_client = nullptr;
     QString m_server, m_user, m_password, m_resource;
+    int m_priority = 0;
 };
 
 

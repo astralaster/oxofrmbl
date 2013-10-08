@@ -2,6 +2,7 @@
 #define XMPPCONTACT_H
 
 #include <QString>
+#include <QSet>
 
 #include "base/Contact.h"
 
@@ -17,6 +18,7 @@ public:
     static QStringList parseJabberId(const QString jid);
 
 public slots:
+    void addResource(const QString &resource);
     void setJid(const QString &jid);
 
 private:

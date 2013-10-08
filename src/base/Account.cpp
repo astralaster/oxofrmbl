@@ -21,18 +21,20 @@ ChatSession *Account::session(const QString &contactId)
     return m_chatSessions.contains(contactId) ? m_chatSessions[contactId] : nullptr;
 }
 
-/*ChatSession *Account::session(const QRegExp &contatcIdPattern)
+QList<ChatSession*> Account::sessions(const QRegExp &contatcIdPattern)
 {
+    QList<ChatSession*> result;
+    
     for(ChatSession *session: sessions())
     {
         if(contatcIdPattern.exactMatch(session->contact()->id()))
         {
-            return session;
+            result << session;
         }
     }
     
-    return nullptr;
-}*/
+    return result;
+}
 
 QMap<QString, ChatSession*> Account::sessions()
 {

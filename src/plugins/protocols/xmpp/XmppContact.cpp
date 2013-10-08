@@ -37,6 +37,11 @@ QStringList XmppContact::parseJabberId(const QString jid)
     return QStringList({rxp.cap(1), rxp.cap(2), rxp.cap(3)});
 }
 
+void XmppContact::addResource(const QString &resource)
+{
+    m_resources << resource;
+}
+
 void XmppContact::setJid(const QString &jid)
 {
     this->m_jid = jid;

@@ -26,6 +26,7 @@ public slots:
     //void deleteAccount();
     void removeSelectedAccount();
     void removeAccountAtIndex(const QModelIndex &index);
+    void openSelectedAccount();
     void openAccountAtIndex(const QModelIndex &index);
 
 private slots:

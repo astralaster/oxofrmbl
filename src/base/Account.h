@@ -26,7 +26,7 @@ public:
     virtual QString displayName() const = 0;
     
     ChatSession *session(const QString &contactId);
-    //ChatSession *session(const QRegExp &contatcIdPattern);
+    QList<ChatSession *> sessions(const QRegExp &contatcIdPattern);
     QMap<QString, ChatSession*> sessions();
     QList<Contact*> contacts();
 
