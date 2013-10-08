@@ -214,16 +214,23 @@ void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
     }
 
     auto from = XmppContact::parseJabberId(msg.from());
-    auto _session = session(from[0]+"@"+from[1]);
 
-    if((msg.state() == QXmppMessage::Active || !msg.state()) && !msg.body().isEmpty()) {
-        if(_session == nullptr) {
+    if((msg.state() == QXmppMessage::Active || !msg.state()) && !msg.body().isEmpty())
+    {
+        qDebug() << msg.from() << from[2];
+        auto chatSession = session(QString("%1@%2/%3").arg(from[0], from[1], from[2]));
+        
+        if(chatSession == nullptr) {
+            chatSession = session(QString("%1@%2").arg(from[0], from[1]));
+        }
+        
+        if(chatSession == nullptr) {
             auto contact = new XmppContact(this, msg.from());
 
-            _session = startSession(contact);
+            chatSession = startSession(contact);
         }
 
-        auto message = new ChatMessage(_session, true, msg.body(), msg.stamp());
+        auto message = new ChatMessage(chatSession, true, msg.body(), msg.stamp());
         emit messageReceived(message);
     }
 }

@@ -6,6 +6,8 @@
 #include "ChatSession.h"
 #include "MessageHandler.h"
 
+#include <QRegExp>
+
 Account::Account(QObject *parent) : Person(parent)
 {
 }
@@ -18,6 +20,19 @@ ChatSession *Account::session(const QString &contactId)
 {
     return m_chatSessions.contains(contactId) ? m_chatSessions[contactId] : nullptr;
 }
+
+/*ChatSession *Account::session(const QRegExp &contatcIdPattern)
+{
+    for(ChatSession *session: sessions())
+    {
+        if(contatcIdPattern.exactMatch(session->contact()->id()))
+        {
+            return session;
+        }
+    }
+    
+    return nullptr;
+}*/
 
 QMap<QString, ChatSession*> Account::sessions()
 {

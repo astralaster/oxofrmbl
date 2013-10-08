@@ -21,7 +21,7 @@ QString XmppContact::displayName() const
 
 QString XmppContact::id() const
 {
-    return parseJabberId(m_jid)[0] +"@"+ parseJabberId(m_jid)[1];
+    return m_jid;// parseJabberId(m_jid)[0] +"@"+ parseJabberId(m_jid)[1];
 }
 
 QStringList XmppContact::parseJabberId(const QString jid)
@@ -34,7 +34,7 @@ QStringList XmppContact::parseJabberId(const QString jid)
 
     rxp.indexIn(jid);
 
-    return QStringList({rxp.cap(1), rxp.cap(2), rxp.cap(4)});
+    return QStringList({rxp.cap(1), rxp.cap(2), rxp.cap(3)});
 }
 
 void XmppContact::setJid(const QString &jid)
