@@ -1,12 +1,13 @@
 #include "Account.h"
 
+#include <QRegExp>
+#include <QDebug>
+
 #include "Status.h"
 #include "ChatMessage.h"
 #include "Contact.h"
 #include "ChatSession.h"
 #include "MessageHandler.h"
-
-#include <QRegExp>
 
 Account::Account(QObject *parent) : Person(parent)
 {
@@ -81,7 +82,13 @@ bool Account::isActive() const
 
 void Account::contactStatusChangedSlot(Status *status)
 {
-    emit contactStatusChanged(qobject_cast<Contact*>(QObject::sender()), status);
+    auto sender = qobject_cast<Contact*>(QObject::sender());
+
+    if(sender != nullptr) {
+        emit contactStatusChanged(sender, status);
+    } else {
+        qDebug() << "sender is null";
+    }
 }
 
 void Account::addContact(Contact *contact)

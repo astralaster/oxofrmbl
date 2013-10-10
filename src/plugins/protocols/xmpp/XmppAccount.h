@@ -31,7 +31,9 @@ public:
 public slots:
     bool connectToServer() override;
     void disconnectFromServer() override;
+
     void sendMessage(const ChatMessage *msg) override;
+    void sendStateUpdate(const Contact *contact, ChatSession::State state) override;
     
     ChatSession *startSession(Contact *contact) override;
 

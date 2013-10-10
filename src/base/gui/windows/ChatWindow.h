@@ -2,10 +2,12 @@
 #define CHATWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
 
 #include "common.h"
 
 #include "base/ChatSession.h"
+#include "base/Status.h"
 
 namespace Ui {
 class ChatWindow;
@@ -21,12 +23,15 @@ public:
 
 signals:
     void messageSent(const ChatMessage *msg);
+    void stateChanged(ChatSession::State state);
     void iconChanged(const QIcon &icon);
 
 public slots:
     void updateContactStatus(Status *status);
+
+    void typingPaused();
     
-    void messageReceived(const ChatMessage *msg);
+    //void messageReceived(const ChatMessage *msg);
     bool eventFilter(QObject *o, QEvent *e) override;
 
     void showEvent(QShowEvent *e) override;
@@ -35,7 +40,9 @@ public slots:
 protected:
     void sendMessage();
 
-    ChatSession *session;
+    QTimer m_typingTimeout;
+
+    ChatSession *m_session;
     Ui::ChatWindow *ui;
 
 };

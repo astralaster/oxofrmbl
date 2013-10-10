@@ -2,6 +2,7 @@
 
 #include <QSettings>
 
+#include <qxmpp/QXmppDiscoveryManager.h>
 #include <qxmpp/QXmppRosterManager.h>
 
 #include "base/ChatMessage.h"
@@ -152,6 +153,13 @@ void XmppAccount::sendMessage(const ChatMessage *msg)
     m_client->sendMessage(msg->remoteParticipant()->id(), msg->body());
 }
 
+void XmppAccount::sendStateUpdate(const Contact *contact, ChatSession::State state)
+{
+    // TODO can't touch this
+    //QXmppDiscoveryManager *ext = m_client->findExtension<QXmppDiscoveryManager>();
+    //m_client->sendMessage(session->contact()->id(), );
+}
+
 ChatSession *XmppAccount::startSession(Contact *contact)
 {
     auto chatSession = session(contact->id());
@@ -265,7 +273,7 @@ void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
 
     auto from = XmppContact::parseJabberId(msg.from());
 
-    if((msg.state() == QXmppMessage::Active || !msg.state()) && !msg.body().isEmpty())
+    if(msg.state() != QXmppMessage::Inactive)
     {
         qDebug() << msg.from() << from[2];
         auto chatSession = session(QString("%1@%2/%3").arg(from[0], from[1], from[2]));
@@ -273,15 +281,41 @@ void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
         if(chatSession == nullptr) {
             chatSession = session(QString("%1@%2").arg(from[0], from[1]));
         }
-        
-        if(chatSession == nullptr) {
-            auto contact = new XmppContact(this, msg.from());
 
-            chatSession = startSession(contact);
+        if((msg.state() == QXmppMessage::Active || !msg.state()) && !msg.body().isEmpty())
+        {
+            if(chatSession == nullptr) {
+                auto contact = new XmppContact(this, msg.from());
+
+                chatSession = startSession(contact);
+            }
+
+            auto message = new ChatMessage(chatSession, true, msg.body(), msg.stamp());
+            emit messageReceived(message);
         }
 
-        auto message = new ChatMessage(chatSession, true, msg.body(), msg.stamp());
-        emit messageReceived(message);
+        ChatSession::State state;
+
+        switch(msg.state()) {
+        case QXmppMessage::Composing:
+            state = ChatSession::State::Composing;
+            break;
+
+        case QXmppMessage::Paused:
+            state = ChatSession::State::Paused;
+            break;
+
+        case QXmppMessage::Gone:
+            state = ChatSession::State::Gone;
+            break;
+
+        case QXmppMessage::Active:
+        case QXmppMessage::Inactive:
+        default:
+            state = ChatSession::State::Unknown;
+        }
+
+        emit stateUpdateReceived(state);
     }
 }
 
@@ -295,18 +329,19 @@ void XmppAccount::presenceReceivedSlot(const QXmppPresence &presence)
         return;
     }
     
-    XmppContact *contact = nullptr;
+    /*Xmpp*/Contact *contact = nullptr;
+
     
     for(Contact *c: m_contacts) {
         if(c->id() == jid || c->id() == jid_long) {
-            contact = qobject_cast<XmppContact*>(c);
+            contact = c;//qobject_cast<XmppContact*>(c);
             break;
         }
     }
     
-    if(!from[2].isEmpty()) {
+    /*if(!from[2].isEmpty()) {
         contact->addResource(from[2]);
-    }
+    }*/
     
     if(contact != nullptr) {
         contact->setStatus(&(*contact->status() << presence));

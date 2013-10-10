@@ -12,10 +12,12 @@
 #include "base/Status.h"
 
 ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
-    QMainWindow(parent), session(session),
+    QMainWindow(parent), m_session(session), m_typingTimeout(this),
     ui(new Ui::ChatWindow)
 {
     ui->setupUi(this);
+
+    ui->messageLog->setContact(session->contact());
 
     ui->messageLog->installEventFilter(this);
     ui->messageEdit->installEventFilter(this);
@@ -29,8 +31,13 @@ ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
     setWindowIcon(StatusIcon::forStatus(contact->status()));
 
     connect(this, &ChatWindow::messageSent, session, &ChatSession::sendMessage);
-    connect(session, &ChatSession::messageReceived, this, &ChatWindow::messageReceived);
+    connect(this, &ChatWindow::stateChanged, session, &ChatSession::sendStateUpdate);
+    connect(session, &ChatSession::messageReceived, ui->messageLog, &ChatLogWidget:: addMessage);
+    connect(session, &ChatSession::chatStateChanged, ui->messageLog, &ChatLogWidget::updateChatState);
+
     connect(contact, &Contact::statusChanged, this, &ChatWindow::updateContactStatus);
+
+    connect(&m_typingTimeout, &QTimer::timeout, this, &ChatWindow::typingPaused);
 }
 
 ChatWindow::~ChatWindow()
@@ -44,9 +51,9 @@ void ChatWindow::updateContactStatus(Status *status)
     emit iconChanged(windowIcon());
 }
 
-void ChatWindow::messageReceived(const ChatMessage *msg)
+void ChatWindow::typingPaused()
 {
-    ui->messageLog->addMessage(msg);
+    emit stateChanged(ChatSession::State::Paused);
 }
 
 bool ChatWindow::eventFilter(QObject *o, QEvent *e)
@@ -72,6 +79,12 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
         e->accept();
         ui->messageEdit->setFocus();
     }
+    else
+    {
+        e->ignore();
+        emit stateChanged(ChatSession::State::Composing);
+        m_typingTimeout.start(5000);
+    }
 
     return false;
 }
@@ -84,7 +97,7 @@ void ChatWindow::showEvent(QShowEvent *e)
 
 void ChatWindow::closeEvent(QCloseEvent *e)
 {
-    session->account()->endSession(session);
+    m_session->account()->endSession(m_session);
     e->accept();
 }
 
@@ -93,7 +106,7 @@ void ChatWindow::sendMessage()
     QString body = ui->messageEdit->toPlainText();
 
     if(!body.isEmpty()) {
-        auto msg = new ChatMessage(session, false, body);
+        auto msg = new ChatMessage(m_session, false, body);
         ui->messageLog->addMessage(msg);
 
         ui->messageEdit->clear();

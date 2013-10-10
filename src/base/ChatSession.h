@@ -5,16 +5,21 @@
 
 #include "common.h"
 
-#include "Account.h"
-#include "Contact.h"
-#include "ChatMessage.h"
-
+class Account;
+class Contact;
 class ChatMessage;
 
 class ChatSession : public QObject
 {
     Q_OBJECT
 public:
+    enum class State {
+        Unknown = 0,
+        Composing,
+        Paused,
+        Gone
+    };
+
     ChatSession(Contact *contact, Account *account);
     ~ChatSession();
 
@@ -23,14 +28,17 @@ public:
 
 signals:
     void messageReceived(const ChatMessage *msg);
+    void chatStateChanged(State state);
 
 public slots:
     void sendMessage(const ChatMessage *msg);
+    void sendStateUpdate(State state);
 
 private slots:
     void messageReceivedSlot(const ChatMessage *msg);
 
 private:
+    State m_state;
     Contact *m_contact = nullptr;
     Account *m_account = nullptr;
 };
