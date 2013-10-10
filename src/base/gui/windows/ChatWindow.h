@@ -41,6 +41,7 @@ protected:
     void sendMessage();
 
     QTimer m_typingTimeout;
+    QTimer m_pausingTimeout;
 
     ChatSession *m_session;
     Ui::ChatWindow *ui;

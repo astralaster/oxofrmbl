@@ -39,7 +39,7 @@ void ChatLogWidget::updateChatState(ChatSession::State state)
     }
 
     m_stateLabel->setText(text);
-    m_stateLabel->setGeometry(0, height()-25, width(), 25);
+    m_stateLabel->setGeometry(5, height()-25, width(), 25);
     m_stateLabel->show();
 }
 

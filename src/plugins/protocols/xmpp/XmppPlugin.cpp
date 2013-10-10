@@ -1,8 +1,10 @@
 #include "XmppPlugin.h"
 
+#include "XmppAccount.h"
+
 #include "base/Account.h"
 #include "base/Status.h"
-#include "XmppAccount.h"
+#include "base/ChatSession.h"
 
 #include "gui/XmppAccountWindow.h"
 
@@ -27,6 +29,53 @@ void XmppPlugin::init(ApplicationController *app)
     this->m_app = app;
 }
 
+QXmppMessage::State &operator<<(QXmppMessage::State &xmppState, const ChatSession::State &state)
+{
+    switch(state) {
+    case ChatSession::State::Composing:
+        xmppState = QXmppMessage::State::Composing;
+        break;
+        
+    case ChatSession::State::Paused:
+        xmppState = QXmppMessage::State::Paused;
+        break;
+        
+    case ChatSession::State::Gone:
+        xmppState = QXmppMessage::State::Gone;
+        break;
+        
+    case ChatSession::State::Unknown:
+    default:
+        xmppState = QXmppMessage::State::None;
+        break;
+    }
+    
+    return xmppState;
+}
+
+ChatSession::State &operator<<(ChatSession::State &state, const QXmppMessage::State &xmppState)
+{
+    switch(xmppState) {
+    case QXmppMessage::State::Composing:
+        state = ChatSession::State::Composing;
+        break;
+        
+    case QXmppMessage::State::Paused:
+        state = ChatSession::State::Paused;
+        break;
+        
+    case QXmppMessage::State::Gone:
+        state = ChatSession::State::Gone;
+        break;
+        
+    case QXmppMessage::State::None:
+    default:
+        state = ChatSession::State::Unknown;
+        break;
+    }
+    
+    return state;
+}
 
 QXmppPresence &operator<<(QXmppPresence &presence, const Status &status)
 {

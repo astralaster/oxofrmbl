@@ -158,6 +158,15 @@ void XmppAccount::sendStateUpdate(const Contact *contact, ChatSession::State sta
     // TODO can't touch this
     //QXmppDiscoveryManager *ext = m_client->findExtension<QXmppDiscoveryManager>();
     //m_client->sendMessage(session->contact()->id(), );
+    
+    QXmppMessage message(id(), contact->id());
+    
+    QXmppMessage::State xmppState;
+    xmppState << state;
+    
+    message.setState(xmppState);
+    
+    m_client->sendPacket(message);
 }
 
 ChatSession *XmppAccount::startSession(Contact *contact)
@@ -295,25 +304,8 @@ void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
         }
 
         ChatSession::State state;
-
-        switch(msg.state()) {
-        case QXmppMessage::Composing:
-            state = ChatSession::State::Composing;
-            break;
-
-        case QXmppMessage::Paused:
-            state = ChatSession::State::Paused;
-            break;
-
-        case QXmppMessage::Gone:
-            state = ChatSession::State::Gone;
-            break;
-
-        case QXmppMessage::Active:
-        case QXmppMessage::Inactive:
-        default:
-            state = ChatSession::State::Unknown;
-        }
+        
+        state = state << msg.state();
 
         emit stateUpdateReceived(state);
     }

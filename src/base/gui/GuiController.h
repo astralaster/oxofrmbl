@@ -25,10 +25,11 @@ public:
     explicit GuiController(ApplicationController *m_app = 0);
 
 signals:
-    void quit();
+    void exited();
 
 public slots:
     void show();
+    void quit();
     void startChat(ChatSession *session);
     void activateChat(ChatSession *session);
     void changeStatusIcon(Status *status);

@@ -12,7 +12,7 @@
 #include "base/Status.h"
 
 ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
-    QMainWindow(parent), m_session(session), m_typingTimeout(this),
+    QMainWindow(parent), m_typingTimeout(this), m_pausingTimeout(this), m_session(session),
     ui(new Ui::ChatWindow)
 {
     ui->setupUi(this);
@@ -30,14 +30,17 @@ ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
     setWindowTitle(contact->displayName());
     setWindowIcon(StatusIcon::forStatus(contact->status()));
 
-    connect(this, &ChatWindow::messageSent, session, &ChatSession::sendMessage);
-    connect(this, &ChatWindow::stateChanged, session, &ChatSession::sendStateUpdate);
-    connect(session, &ChatSession::messageReceived, ui->messageLog, &ChatLogWidget:: addMessage);
+    connect(this,    &ChatWindow::messageSent,  session, &ChatSession::sendMessage);
+    connect(this,    &ChatWindow::stateChanged, session, &ChatSession::sendStateUpdate);
+    connect(session, &ChatSession::messageReceived,  ui->messageLog, &ChatLogWidget::addMessage);
     connect(session, &ChatSession::chatStateChanged, ui->messageLog, &ChatLogWidget::updateChatState);
 
     connect(contact, &Contact::statusChanged, this, &ChatWindow::updateContactStatus);
+    
+    m_typingTimeout.setSingleShot(true);
+    m_pausingTimeout.setSingleShot(true);
 
-    connect(&m_typingTimeout, &QTimer::timeout, this, &ChatWindow::typingPaused);
+    connect(&m_pausingTimeout, &QTimer::timeout, this, &ChatWindow::typingPaused);
 }
 
 ChatWindow::~ChatWindow()
@@ -58,34 +61,40 @@ void ChatWindow::typingPaused()
 
 bool ChatWindow::eventFilter(QObject *o, QEvent *e)
 {
-    if(o == ui->messageEdit && e->type() == QKeyEvent::KeyPress)
+    if(e->type() == QKeyEvent::KeyPress)
     {
-        QKeyEvent *ev = (QKeyEvent*)e;
-
-        if((ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return))
+        if(o == ui->messageEdit)
         {
-            if(!(ev->modifiers() & Qt::SHIFT))
+            QKeyEvent *ev = (QKeyEvent*)e;
+    
+            if((ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return))
             {
-                e->accept();
-                sendMessage();
-                return true;
+                if(!(ev->modifiers() & Qt::SHIFT))
+                {
+                    e->accept();
+                    sendMessage();
+                    return true;
+                }
+            }
+            else
+            {
+                e->ignore();
+                
+                if(!m_pausingTimeout.isActive()) {
+                    emit stateChanged(ChatSession::State::Composing);
+                }
+                
+                m_typingTimeout.start(1000);
+                m_pausingTimeout.start(5000);
             }
         }
+        else if(o == ui->messageLog)
+        {
+            e->accept();
+            ui->messageEdit->setFocus();
+        }
     }
-    else if(o == ui->messageLog && e->type() == QKeyEvent::KeyPress)
-    {
-        QKeyEvent *ev = (QKeyEvent*)e;
-
-        e->accept();
-        ui->messageEdit->setFocus();
-    }
-    else
-    {
-        e->ignore();
-        emit stateChanged(ChatSession::State::Composing);
-        m_typingTimeout.start(5000);
-    }
-
+    
     return false;
 }
 
@@ -97,12 +106,16 @@ void ChatWindow::showEvent(QShowEvent *e)
 
 void ChatWindow::closeEvent(QCloseEvent *e)
 {
+    emit stateChanged(ChatSession::State::Gone);
     m_session->account()->endSession(m_session);
     e->accept();
 }
 
 void ChatWindow::sendMessage()
 {
+    m_typingTimeout.stop();
+    m_pausingTimeout.stop();
+    
     QString body = ui->messageEdit->toPlainText();
 
     if(!body.isEmpty()) {

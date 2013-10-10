@@ -48,6 +48,15 @@ void GuiController::show()
     m_contactListWindow->show();
 }
 
+void GuiController::quit()
+{
+    for(auto w: m_chatWindows.values()) {
+        w->close();
+    }
+    
+    emit exited();
+}
+
 void GuiController::startChat(ChatSession *session)
 {
     auto window = new ChatWindow(session);
@@ -108,12 +117,15 @@ void GuiController::showAddContactDialog()
 
 void GuiController::trayMenuTriggered(QSystemTrayIcon::ActivationReason reason)
 {
-    if(reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
+    if(reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick)
+    {
         m_contactListWindow->setVisible(!m_contactListWindow->isVisible());
-    } else if(reason == QSystemTrayIcon::Context) {
-
+    }
+    else if(reason == QSystemTrayIcon::Context)
+    {
+        // 
     } else {
-        emit quit();
+        quit();
     }
 }
 
@@ -129,8 +141,8 @@ void GuiController::addAccount(Account *account)
     
     connect(account, &Account::error, this, &GuiController::handleError);
     
-    connect(this, &GuiController::quit, account, &Account::disconnectFromServer);
-    connect(this, &GuiController::quit, m_app, &ApplicationController::quit);
+    connect(this, &GuiController::exited, account, &Account::disconnectFromServer);
+    connect(this, &GuiController::exited, m_app, &ApplicationController::quit);
 
     auto contactList = new ContactList(account, this);
     
@@ -153,7 +165,7 @@ QMenu *GuiController::trayContextMenu() const
 
     result->addAction(QIcon::fromTheme("help-about"), "About", this, SLOT(showAboutDialog()));
     result->addAction("Accounts", this, SLOT(showAccountsWindow()));
-    result->addAction(QIcon::fromTheme("application-exit"), "Quit", this, SIGNAL(quit()));
+    result->addAction(QIcon::fromTheme("application-exit"), "Quit", this, SLOT(quit()));
 
     return result;
 }

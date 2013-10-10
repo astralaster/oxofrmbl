@@ -27,6 +27,9 @@ private:
     
 };
 
+QXmppMessage::State &operator<<(QXmppMessage::State &xmppState, const ChatSession::State &state);
+ChatSession::State &operator<<(ChatSession::State &state, const QXmppMessage::State &xmppState);
+
 QXmppPresence &operator<<(QXmppPresence &presence, const Status &status);
 Status &operator<<(Status &status, const QXmppPresence &presence);
 
