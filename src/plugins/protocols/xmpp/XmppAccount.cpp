@@ -190,11 +190,6 @@ ChatSession *XmppAccount::startSession(Contact *contact)
         }
     }
     
-    if(chatSession != nullptr) {
-        emit sessionActivated(chatSession);
-        return chatSession;
-    }
-    
     return Account::startSession(contact);
 }
 
@@ -256,7 +251,9 @@ void XmppAccount::addContact(Contact *contact)
 {
     QString jid = contact->id();
     
-    if(m_client->rosterManager().addItem(jid)) {
+    if(m_client->rosterManager().addItem(jid))
+    {
+        m_client->rosterManager().subscribe(jid);
         //*contact->status() << presence;
         Account::addContact(contact);
     }
@@ -264,7 +261,11 @@ void XmppAccount::addContact(Contact *contact)
 
 void XmppAccount::removeContact(Contact *contact)
 {
-    if(m_client->rosterManager().removeItem(contact->id())) {
+    QString jid = contact->id();
+    
+    if(m_client->rosterManager().removeItem(jid))
+    {
+        m_client->rosterManager().unsubscribe(jid);
         Account::removeContact(contact);
     }
 }
@@ -321,21 +322,19 @@ void XmppAccount::presenceReceivedSlot(const QXmppPresence &presence)
         return;
     }
     
-    /*Xmpp*/Contact *contact = nullptr;
+    Contact *contact = nullptr;
 
     
     for(Contact *c: m_contacts) {
         if(c->id() == jid || c->id() == jid_long) {
-            contact = c;//qobject_cast<XmppContact*>(c);
+            contact = c;
             break;
         }
     }
     
-    /*if(!from[2].isEmpty()) {
-        contact->addResource(from[2]);
-    }*/
-    
     if(contact != nullptr) {
-        contact->setStatus(&(*contact->status() << presence));
+        if(presence.type() == QXmppPresence::Available || presence.type() == QXmppPresence::Unavailable) {
+            contact->setStatus(&(*contact->status() << presence));
+        }
     }
 }

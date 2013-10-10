@@ -111,8 +111,10 @@ ChatSession *Account::startSession(Contact *contact)
 {
     ChatSession *session;
 
-    if(!m_chatSessions.contains(contact->id())) {
+    if(!m_chatSessions.contains(contact->id()))
+    {
         session = new ChatSession(contact, this);
+        qDebug() << contact;
 
         m_chatSessions[contact->id()] = session;
 
