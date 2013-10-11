@@ -31,6 +31,8 @@ void XmppAccount::initAccount()
     connect(&m_client->rosterManager(), &QXmppRosterManager::rosterReceived, this, &XmppAccount::retrieveContacts);
     connect(&m_client->rosterManager(), &QXmppRosterManager::subscriptionReceived, this, &XmppAccount::subscriptionReceivedSlot);
     connect(m_client, &QXmppClient::messageReceived, this, &XmppAccount::messageReceivedSlot);
+    connect(m_client, &QXmppClient::iqReceived, this, &XmppAccount::iqReceivedSlot);
+
     
     connect(m_client, &QXmppClient::presenceReceived, this, &XmppAccount::presenceReceivedSlot);
     
@@ -40,16 +42,23 @@ void XmppAccount::initAccount()
 
 void XmppAccount::retrieveContacts()
 {
-    for(auto contact_jid: m_client->rosterManager().getRosterBareJids()) {
-        
-        auto presences = m_client->rosterManager().getAllPresencesForBareJid(contact_jid);
+    for(auto contact_jid: m_client->rosterManager().getRosterBareJids())
+    {
+        /*auto presences = m_client->rosterManager().getAllPresencesForBareJid(contact_jid);
         for(QXmppPresence p: presences.values()) {
             qDebug() << p.from();
         }
         
-        auto resources = m_client->rosterManager().getResources(contact_jid);
+        auto resources = m_client->rosterManager().getResources(contact_jid);*/
         
-        Account::addContact(new XmppContact(this, contact_jid, resources));
+        auto type = m_client->rosterManager().getRosterEntry(contact_jid).subscriptionType();
+        if(type == QXmppRosterIq::Item::From || type == QXmppRosterIq::Item::None ||
+                type == QXmppRosterIq::Item::NotSet || type == QXmppRosterIq::Item::Remove)
+        {
+
+        } else {
+            Account::addContact(new XmppContact(this, contact_jid));
+        }
     }
 
     emit connected();
@@ -279,6 +288,7 @@ void XmppAccount::removeContact(Contact *contact)
     if(m_client->rosterManager().removeItem(jid))
     {
         m_client->rosterManager().unsubscribe(jid);
+        m_client->rosterManager().refuseSubscription(jid);
         Account::removeContact(contact);
     }
 }
@@ -286,6 +296,11 @@ void XmppAccount::removeContact(Contact *contact)
 void XmppAccount::clearContacts()
 {
     m_contacts.clear();
+}
+
+void XmppAccount::iqReceivedSlot(const QXmppIq &iq)
+{
+    qDebug() << iq.type();
 }
 
 void XmppAccount::subscriptionReceivedSlot(const QString &jid)

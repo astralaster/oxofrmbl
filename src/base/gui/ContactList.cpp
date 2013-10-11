@@ -28,7 +28,7 @@ ContactList::ContactList(Account *account, QObject *parent) :
 
 Contact *ContactList::getContact(int index) const
 {
-    return account->contacts().toList()[index];
+    return account->contacts()[index];
 }
 
 Account *ContactList::getAccount() const
@@ -47,7 +47,7 @@ QVariant ContactList::data(const QModelIndex &index, int role) const
         return QVariant();
     }
     
-    auto contact = account->contacts().toList()[index.row()];
+    auto contact = account->contacts()[index.row()];
     
     switch (role) {
     case Qt::DisplayRole:
