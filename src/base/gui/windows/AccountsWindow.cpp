@@ -54,7 +54,9 @@ void AccountsWindow::removeAccountAtIndex(const QModelIndex &index)
 {
     auto account = dynamic_cast<Account*>(app->accountManager()->account(index.row()));
     
-    if(QMessageBox::question(this, "Delete Account", QString("Are you sure, that you want to delete %1?").arg(account->id())) == QMessageBox::Yes) {
+    auto text = QString("Are you sure, that you want to delete %1?").arg(account->id());
+    
+    if(QMessageBox::question(this, "Delete Account", text) == QMessageBox::Yes) {
         app->accountManager()->removeAccount(account);
     }
 }

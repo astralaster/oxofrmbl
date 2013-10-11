@@ -53,6 +53,9 @@ public slots:
     
     void setStatus(Status *status) override;
     
+    void acceptContact(Contact *contact) override;
+    void refuseContact(Contact *contact) override;
+    
     Contact *createContact(const QString &contactId) override;
     void addContact(Contact *contact) override;
     void removeContact(Contact *contact) override;
@@ -60,6 +63,7 @@ public slots:
 
 private slots:
     void clearContacts();
+    void subscriptionReceivedSlot(const QString &jid);
     void presenceReceivedSlot(const QXmppPresence &presence);
     void messageReceivedSlot(const QXmppMessage &message);
 

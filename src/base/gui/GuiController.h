@@ -42,6 +42,7 @@ public slots:
     void handleError();
     
 public slots:
+    void confirmContact(Contact *Contact);
     void addAccount(Account *account);
     void removeAccount(Account *account);
     

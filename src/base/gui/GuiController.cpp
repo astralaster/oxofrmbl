@@ -134,12 +134,26 @@ void GuiController::handleError()
     //QMessageBox::critical(m_contactListWindow, "An error occured", "?");
 }
 
+void GuiController::confirmContact(Contact *c)
+{
+    auto text = QString("Add %1 as your contact?").arg(c->displayName());
+    
+    if(QMessageBox::question(m_contactListWindow, "Contact request", text) == QMessageBox::Yes)
+    {
+        c->account()->acceptContact(c);
+    } else {
+        c->account()->refuseContact(c);
+    }
+}
+
 void GuiController::addAccount(Account *account)
 {
     connect(account, &Account::sessionStarted,   this, &GuiController::startChat);
     connect(account, &Account::sessionActivated, this, &GuiController::activateChat);
     
     connect(account, &Account::error, this, &GuiController::handleError);
+    
+    connect(account, &Account::contactRequestReceived, this, &GuiController::confirmContact);
     
     connect(this, &GuiController::exited, account, &Account::disconnectFromServer);
     connect(this, &GuiController::exited, m_app, &ApplicationController::quit);

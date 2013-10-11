@@ -30,7 +30,9 @@ void ContactListWidget::removeContactAtIndex(const QModelIndex &index)
 {
     auto contact = contactList->getContact(index.row());
     
-    if(QMessageBox::question(this, "Delete Contact", QString("Are you sure, that you want to delete %1?").arg(contact->id())) == QMessageBox::Yes) {
+    auto text = QString("Are you sure, that you want to delete %1?").arg(contact->id());
+    
+    if(QMessageBox::question(this, "Delete Contact", text) == QMessageBox::Yes) {
         emit contactRemoved(contact);
     }
 }
