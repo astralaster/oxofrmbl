@@ -23,6 +23,8 @@ class GuiController : public QObject
     Q_OBJECT
 public:
     explicit GuiController(ApplicationController *m_app = 0);
+    
+    ChatWindow *chatWindowForSession(ChatSession *session);
 
 signals:
     void exited();

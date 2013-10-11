@@ -23,7 +23,7 @@ public:
     QString getId() const;
     Account *getAccount();
     
-protected:
+private:
     AccountManager *accounts;
     Ui::AddContactDialog *ui;
 };

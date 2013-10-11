@@ -23,7 +23,7 @@ public slots:
     void updateChatState(ChatSession::State state);
     void addMessage(const ChatMessage *msg);
 
-protected:
+private:
     Contact *m_contact;
     QLabel *m_stateLabel;
 

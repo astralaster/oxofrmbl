@@ -5,6 +5,8 @@
 
 #include "ChatWindow.h"
 
+class GuiController;
+
 namespace Ui {
 class TabbedChatWindow;
 }
@@ -14,13 +16,14 @@ class TabbedChatWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit TabbedChatWindow(QWidget *parent = 0);
+    explicit TabbedChatWindow(GuiController *gui, QWidget *parent = nullptr);
     ~TabbedChatWindow();
-    
     
 public slots:
     void activateChatWindow(ChatWindow *window);
     void updateTabIcon(const QIcon &icon);
+    void updateTabTitle(const QString &title);
+    void updateTabState(ChatSession::State state);
     
     int addTab(ChatWindow *window);
     void activateTab(int tabIndex);
@@ -31,6 +34,7 @@ public slots:
     void closeEvent(QCloseEvent *e) override;
     
 private:
+    GuiController *m_gui;
     Ui::TabbedChatWindow *ui;
 };
 

@@ -39,8 +39,13 @@ GuiController::GuiController(ApplicationController *app) :
     connect(m_contactListWindow, &ContactListWindow::statusChanged, this, &GuiController::changeStatusIcon);
 
     if(m_useTabs) {
-        m_tabbedChatWindow = new TabbedChatWindow();
+        m_tabbedChatWindow = new TabbedChatWindow(this, m_contactListWindow);
     }
+}
+
+ChatWindow *GuiController::chatWindowForSession(ChatSession *session)
+{
+    return m_chatWindows.contains(session) ? m_chatWindows[session] : nullptr;
 }
 
 void GuiController::show()

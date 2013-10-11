@@ -139,7 +139,6 @@ ChatSession *Account::startSession(Contact *contact)
     if(!m_chatSessions.contains(contact->id()))
     {
         session = new ChatSession(contact, this);
-        qDebug() << contact;
 
         m_chatSessions[contact->id()] = session;
 
@@ -166,4 +165,9 @@ void Account::installMessageHandler(MessageHandler *handler)
 void Account::removeMessageHandler(MessageHandler *handler)
 {
     m_messageHandlers.removeOne(handler);
+}
+
+void Account::clearContacts()
+{
+    m_contacts.clear();
 }

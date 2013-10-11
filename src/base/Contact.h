@@ -18,7 +18,7 @@ public:
 
     Account *account();
 
-protected:
+private:
     Account *m_account = nullptr;
     
 };

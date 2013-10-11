@@ -1,8 +1,8 @@
 #include "ChatWindow.h"
 #include "ui_ChatWindow.h"
 
-
 #include <QKeyEvent>
+#include <QDebug>
 
 #include "gui/StatusIcon.h"
 #include "base/Account.h"
@@ -32,7 +32,7 @@ ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
 
     connect(this,    &ChatWindow::messageSent,  session, &ChatSession::sendMessage);
     connect(this,    &ChatWindow::stateChanged, session, &ChatSession::sendStateUpdate);
-    connect(session, &ChatSession::messageReceived,  ui->messageLog, &ChatLogWidget::addMessage);
+    connect(session, &ChatSession::messageReceived,  this, &ChatWindow::receiveMessage);
     connect(session, &ChatSession::chatStateChanged, ui->messageLog, &ChatLogWidget::updateChatState);
 
     connect(contact, &Contact::statusChanged, this, &ChatWindow::updateContactStatus);
@@ -41,11 +41,27 @@ ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
     m_pausingTimeout.setSingleShot(true);
 
     connect(&m_pausingTimeout, &QTimer::timeout, this, &ChatWindow::typingPaused);
+    
+    connect(&m_newMessageBlink, SIGNAL(timeout()), this, SLOT(toggleIcon()));
 }
 
 ChatWindow::~ChatWindow()
 {
     delete ui;
+}
+
+ChatSession *ChatWindow::session()
+{
+    return m_session;
+}
+
+void ChatWindow::receiveMessage(const ChatMessage *msg)
+{
+    if(!isActiveWindow()) {
+        m_newMessageBlink.start(1000);
+    }
+    
+    ui->messageLog->addMessage(msg);
 }
 
 void ChatWindow::updateContactStatus(Status *status)
@@ -59,6 +75,17 @@ void ChatWindow::typingPaused()
     emit stateChanged(ChatSession::State::Paused);
 }
 
+void ChatWindow::toggleIcon(bool forceStatus)
+{
+    QIcon statusIcon = StatusIcon::forStatus(m_session->contact()->status());
+    
+    if(forceStatus || windowIcon().name() != statusIcon.name()) {
+        setWindowIcon(statusIcon);
+    } else {
+        setWindowIcon(QIcon::fromTheme("mail-message-new"));
+    }
+}
+
 bool ChatWindow::eventFilter(QObject *o, QEvent *e)
 {
     if(e->type() == QKeyEvent::KeyPress)
@@ -66,6 +93,7 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
         if(o == ui->messageEdit)
         {
             QKeyEvent *ev = (QKeyEvent*)e;
+            qDebug() << ev->key();
     
             if((ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return))
             {
@@ -80,7 +108,8 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
             {
                 e->ignore();
                 
-                if(!m_pausingTimeout.isActive()) {
+                if(!m_pausingTimeout.isActive())
+                {
                     emit stateChanged(ChatSession::State::Composing);
                 }
                 
@@ -94,6 +123,10 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
             ui->messageEdit->setFocus();
         }
     }
+    else if(e->type() == QFocusEvent::FocusIn)
+    {
+        focusInEvent((QFocusEvent*)e);
+    }
     
     return false;
 }
@@ -102,13 +135,40 @@ void ChatWindow::showEvent(QShowEvent *e)
 {
     activateWindow();
     ui->messageEdit->setFocus();
+    
+    QMainWindow::showEvent(e);
+}
+
+void ChatWindow::focusInEvent(QFocusEvent *e)
+{
+    m_newMessageBlink.stop();
+    toggleIcon(true);
+    QMainWindow::focusInEvent(e);
 }
 
 void ChatWindow::closeEvent(QCloseEvent *e)
 {
+    m_newMessageBlink.stop();
+    m_pausingTimeout.stop();
+    m_typingTimeout.stop();
+    
     emit stateChanged(ChatSession::State::Gone);
     m_session->account()->endSession(m_session);
     e->accept();
+    
+    QMainWindow::closeEvent(e);
+}
+
+void ChatWindow::setWindowIcon(const QIcon &icon)
+{
+    emit iconChanged(icon);
+    QMainWindow::setWindowIcon(icon);
+}
+
+void ChatWindow::setWindowTitle(const QString &title)
+{
+    emit titleChanged(title);
+    QMainWindow::setWindowTitle(title);
 }
 
 void ChatWindow::sendMessage()

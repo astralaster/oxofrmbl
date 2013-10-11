@@ -48,7 +48,7 @@ signals:
     void messageReceived(const ChatMessage *msg);
     void contactStatusChanged(Contact *contact, Status *status);
 
-    void stateUpdateReceived(ChatSession::State state);
+    void stateUpdateReceived(Contact *contact, ChatSession::State state);
 
 signals: // connection state
     void error();
@@ -84,9 +84,10 @@ public slots:
     virtual void removeMessageHandler(MessageHandler *handler);
 
 protected slots:
+    virtual void clearContacts();
     virtual void contactStatusChangedSlot(Status *status);
 
-protected:
+private:
     bool connectedStatus = false;
     bool active = true;
 

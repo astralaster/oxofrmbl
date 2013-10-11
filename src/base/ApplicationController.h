@@ -35,7 +35,7 @@ signals:
 public slots:
     void discoverPlugins();
 
-protected:
+private:
     QMap<QString, ProtocolPlugin*> protocolPlugins;
     
     GuiController *m_gui = nullptr;

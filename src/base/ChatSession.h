@@ -35,6 +35,7 @@ public slots:
     void sendStateUpdate(State state);
 
 private slots:
+    void chatStateChangedSlot(Contact *contact, State state);
     void messageReceivedSlot(const ChatMessage *msg);
 
 private:

@@ -18,19 +18,19 @@ void ChatLogWidget::setContact(Contact *contact)
 
 void ChatLogWidget::updateChatState(ChatSession::State state)
 {
-    QString text  = QString("<b>%1 %2 %3</b>").arg(m_contact->displayName());
+    /*QString text  = QString("<b>%1 %2</b>").arg(m_contact->displayName());
 
     switch (state) {
     case ChatSession::State::Composing:
-        text = text.arg("is").arg("typing");
+        text = text.arg("is typing");
         break;
 
     case ChatSession::State::Paused:
-        text = text.arg("has stopped").arg("typing");
+        text = text.arg("has stopped typing");
         break;
 
     case ChatSession::State::Gone:
-        text = text.arg("has left").arg("the building");
+        text = text.arg("has left the building");
         break;
 
     default:
@@ -40,7 +40,7 @@ void ChatLogWidget::updateChatState(ChatSession::State state)
 
     m_stateLabel->setText(text);
     m_stateLabel->setGeometry(5, height()-25, width(), 25);
-    m_stateLabel->show();
+    m_stateLabel->show();*/
 }
 
 void ChatLogWidget::addMessage(const ChatMessage *msg)

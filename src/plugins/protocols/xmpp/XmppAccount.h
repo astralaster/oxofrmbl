@@ -62,7 +62,6 @@ public slots:
     
 
 private slots:
-    void clearContacts();
     void iqReceivedSlot(const QXmppIq &iq);
     void subscriptionReceivedSlot(const QString &jid);
     void presenceReceivedSlot(const QXmppPresence &presence);
