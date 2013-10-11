@@ -27,12 +27,6 @@ ContactListWindow::~ContactListWindow()
     delete ui;
 }
 
-
-QComboBox *ContactListWindow::getStatusSelect()
-{
-    return ui->status;
-}
-
 void ContactListWindow::addContactList(ContactList *cl)
 {
     auto widget = new ContactListWidget(cl, ui->contactList);

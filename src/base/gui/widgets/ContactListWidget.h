@@ -22,9 +22,7 @@ public slots:
     
 protected slots:
     void keyPressEvent(QKeyEvent *event) override;
-    
-private:
-    void generateContextMenu();
+    void contextMenuEvent(QContextMenuEvent *e) override;
 
 private:
     ContactList *contactList;

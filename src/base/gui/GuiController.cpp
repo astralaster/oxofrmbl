@@ -102,6 +102,10 @@ void GuiController::showAboutDialog()
 
 void GuiController::showAddContactDialog()
 {
+    if(m_app->accountManager()->accounts().isEmpty()) {
+        return;
+    }
+
     auto dialog = new AddContactDialog(m_app->accountManager());
     
     if(dialog->exec() == QDialog::Accepted)

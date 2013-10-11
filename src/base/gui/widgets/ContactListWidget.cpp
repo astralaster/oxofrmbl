@@ -4,6 +4,7 @@
 #include <QKeyEvent>
 #include <QAction>
 #include <QMessageBox>
+#include <QMenu>
 
 #include "base/Account.h"
 #include "base/Contact.h"
@@ -14,8 +15,7 @@ ContactListWidget::ContactListWidget(ContactList *cl, QWidget *parent) :
 {
     this->setModel(cl);
     
-    setContextMenuPolicy(Qt::ActionsContextMenu);
-    generateContextMenu();
+    //setContextMenuPolicy(Qt::ActionsContextMenu);
     
     connect(this, &ContactListWidget::contactRemoved, cl, &ContactList::removeContact);
     connect(this, &QListView::doubleClicked, this, &ContactListWidget::openContactAtIndex);
@@ -29,8 +29,9 @@ void ContactListWidget::removeSelectedContact()
 void ContactListWidget::removeContactAtIndex(const QModelIndex &index)
 {
     auto contact = contactList->getContact(index.row());
+    auto text = QString("Are you sure, that you want to delete %1?").arg(contact->id());
     
-    if(QMessageBox::question(this, "Delete Contact", QString("Are you sure, that you want to delete %1?").arg(contact->id())) == QMessageBox::Yes) {
+    if(QMessageBox::question(this, "Delete Contact", text) == QMessageBox::Yes) {
         emit contactRemoved(contact);
     }
 }
@@ -53,13 +54,18 @@ void ContactListWidget::keyPressEvent(QKeyEvent *event)
     event->ignore();
 }
 
-void ContactListWidget::generateContextMenu()
+void ContactListWidget::contextMenuEvent(QContextMenuEvent *e)
 {
+    if(!indexAt(e->pos()).isValid()) {
+        return;
+    }
+
+    QMenu menu(this);
+
     QAction *removeContact = new QAction("Remove contact", this);
     connect(removeContact, &QAction::triggered, this, &ContactListWidget::removeSelectedContact);
-    
-    QList<QAction*> actions;
-    actions << removeContact;
-    
-    addActions(actions);
+
+    menu.addAction(removeContact);
+
+    menu.exec(e->globalPos());
 }

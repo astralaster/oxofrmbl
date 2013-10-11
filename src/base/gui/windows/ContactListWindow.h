@@ -25,8 +25,6 @@ public:
     explicit ContactListWindow(GuiController *controller, QWidget *parent = nullptr);
     ~ContactListWindow();
 
-    QComboBox *getStatusSelect();
-
 signals:
     void statusChanged(Status *status);
     
