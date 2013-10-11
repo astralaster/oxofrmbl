@@ -28,6 +28,7 @@ public:
     ChatSession *session(const QString &contactId);
     QList<ChatSession *> sessions(const QRegExp &contatcIdPattern);
     QMap<QString, ChatSession*> sessions();
+    Contact *contact(const QString &id);
     QList<Contact*> contacts();
 
     Status *status();
@@ -39,13 +40,15 @@ signals:
     void sessionStarted(ChatSession *session);
     void sessionActivated(ChatSession *session);
     
+    void contactAdded(Contact *contact);
+    void contactRemoved(Contact *contact);
+    
+signals:
+    void contactRequestReceived(Contact *contact);
     void messageReceived(const ChatMessage *msg);
     void contactStatusChanged(Contact *contact, Status *status);
 
     void stateUpdateReceived(ChatSession::State state);
-    
-    void contactAdded(Contact *contact);
-    void contactRemoved(Contact *contact);
 
 signals: // connection state
     void error();
@@ -67,9 +70,12 @@ public slots:
     
     virtual void initAccount() = 0;
     
+    virtual void acceptContact(Contact *contact);
+    virtual void refuseContact(Contact *contact);
+    
     virtual Contact *createContact(const QString &contactId) = 0;
-    virtual void addContact(Contact *contact);
-    virtual void removeContact(Contact *contact);
+    virtual void addContact(Contact *c);
+    virtual void removeContact(Contact *c);
 
     virtual ChatSession *startSession(Contact *contact);
     virtual void endSession(ChatSession *session);

@@ -42,6 +42,17 @@ QMap<QString, ChatSession*> Account::sessions()
     return m_chatSessions;
 }
 
+Contact *Account::contact(const QString &id)
+{
+    for(auto c: contacts()) {
+        if(id == c->id()) {
+            return c;
+        }
+    }
+    
+    return nullptr;
+}
+
 QList<Contact*> Account::contacts()
 {
     return m_contacts;
@@ -80,6 +91,16 @@ bool Account::isActive() const
     return active;
 }
 
+void Account::acceptContact(Contact *contact)
+{
+    addContact(contact);
+}
+
+void Account::refuseContact(Contact *contact)
+{
+    removeContact(contact);
+}
+
 void Account::contactStatusChangedSlot(Status *status)
 {
     auto sender = qobject_cast<Contact*>(QObject::sender());
@@ -91,20 +112,24 @@ void Account::contactStatusChangedSlot(Status *status)
     }
 }
 
-void Account::addContact(Contact *contact)
+void Account::addContact(Contact *c)
 {
-    m_contacts.append(contact);
-    connect(contact, &Contact::statusChanged, this, &Account::contactStatusChangedSlot);
-    
-    emit contactAdded(contact);
+    if(contact(c->id()) == nullptr) {
+        m_contacts.append(c);
+        connect(c, &Contact::statusChanged, this, &Account::contactStatusChangedSlot);
+        
+        emit contactAdded(c);
+    }
 }
 
-void Account::removeContact(Contact *contact)
+void Account::removeContact(Contact *c)
 {
-    m_contacts.removeOne(contact);
-    emit contactRemoved(contact);
-    
-    delete contact;
+    if(contact(c->id()) != nullptr) {
+        m_contacts.removeOne(c);
+        emit contactRemoved(c);
+        
+        delete c;
+    }
 }
 
 ChatSession *Account::startSession(Contact *contact)

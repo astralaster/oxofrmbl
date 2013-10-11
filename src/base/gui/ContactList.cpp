@@ -28,7 +28,7 @@ ContactList::ContactList(Account *account, QObject *parent) :
 
 Contact *ContactList::getContact(int index) const
 {
-    return account->contacts()[index];
+    return account->contacts().toList()[index];
 }
 
 Account *ContactList::getAccount() const
@@ -47,7 +47,7 @@ QVariant ContactList::data(const QModelIndex &index, int role) const
         return QVariant();
     }
     
-    auto contact = account->contacts()[index.row()];
+    auto contact = account->contacts().toList()[index.row()];
     
     switch (role) {
     case Qt::DisplayRole:
@@ -74,35 +74,3 @@ void ContactList::update()
 {
     emit dataChanged(index(0), index(0));
 }
-
-/*
-void ContactList::addContact(Contact *contact)
-{
-    emit dataChanged(index(0), index(0));
-}
-
-void ContactList::removeContact(Contact *contact)
-{
-    //account->removeContact(contact);
-    emit dataChanged(index(0), index(0));
-}
-
-void ContactList::removeContactAtIndex(int index)
-{
-    removeContact(account->getContacts()[index]);
-}
-
-void ContactList::updateContactStatus(Contact *contact, Status *status)
-{
-    emit dataChanged(index(0), index(0));
-}
-
-void ContactList::clearContacts()
-{
-    emit dataChanged(index(0), index(0));
-}
-
-void ContactList::retrieveContacts()
-{
-    emit dataChanged(index(0), index(0));
-}*/
