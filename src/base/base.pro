@@ -11,6 +11,9 @@ DESTDIR = ../build/base
 
 #LIBS += -lotr
 
+CONFIG += precompile_header
+PRECOMPILED_HEADER  = ../common.h
+
 HEADERS += \
     ApplicationController.h \
     ChatMessage.h \

@@ -18,6 +18,7 @@ public:
 
     Account *account();
 
+
 private:
     Account *m_account = nullptr;
     

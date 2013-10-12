@@ -1,6 +1,21 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <QDebug>
+#include <QObject>
+#include <QApplication>
+#include <QList>
+#include <QMap>
+#include <QString>
+
+#include <QApplication>
+
+#include <QLabel>
+#include <QListView>
+#include <QDialog>
+#include <QIcon>
+#include <QMainWindow>
+
 /*class Person;
 class Contact;
 class Account;
