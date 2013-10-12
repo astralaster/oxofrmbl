@@ -62,7 +62,7 @@ private:
     QMap<ChatSession*, ChatWindow*> m_chatWindows;
     TabbedChatWindow *m_tabbedChatWindow;
 
-    bool m_useTabs = true;
+    bool m_useTabs = false;
 
 };
 

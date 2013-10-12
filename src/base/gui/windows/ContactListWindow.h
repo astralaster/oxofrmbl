@@ -33,6 +33,7 @@ public slots:
     void removeContactList(ContactList *cl);
 
 private slots:
+    void contextMenuEvent(QContextMenuEvent *e) override;
     void closeEvent(QCloseEvent *e) override;
     void on_status_currentIndexChanged(int index);
 

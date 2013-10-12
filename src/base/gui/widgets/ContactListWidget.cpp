@@ -56,16 +56,16 @@ void ContactListWidget::keyPressEvent(QKeyEvent *event)
 
 void ContactListWidget::contextMenuEvent(QContextMenuEvent *e)
 {
-    if(!indexAt(e->pos()).isValid()) {
-        return;
+    if(!indexAt(e->pos()).isValid())
+    {
+        e->ignore();
+    } else {
+        e->accept();
+        QMenu menu(this);
+        QAction *removeContact = new QAction("Remove contact", this);
+        connect(removeContact, &QAction::triggered, this, &ContactListWidget::removeSelectedContact);
+    
+        menu.addAction(removeContact);
+        menu.exec(e->globalPos());
     }
-
-    QMenu menu(this);
-
-    QAction *removeContact = new QAction("Remove contact", this);
-    connect(removeContact, &QAction::triggered, this, &ContactListWidget::removeSelectedContact);
-
-    menu.addAction(removeContact);
-
-    menu.exec(e->globalPos());
 }

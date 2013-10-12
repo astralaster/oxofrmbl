@@ -44,10 +44,15 @@ void ContactListWindow::removeContactList(ContactList *cl)
     delete widget;
 }
 
+void ContactListWindow::contextMenuEvent(QContextMenuEvent *e)
+{
+    ui->menuContacts->exec(e->globalPos());
+}
+
 void ContactListWindow::closeEvent(QCloseEvent *e)
 {
-    //setVisible(false);
-    //e->ignore();
+    setVisible(false);
+    e->ignore();
     //emit windowClosed();
 }
 

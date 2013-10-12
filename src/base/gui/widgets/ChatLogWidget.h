@@ -15,13 +15,14 @@ class ChatLogWidget : public QTextEdit
 public:
     explicit ChatLogWidget(QWidget *parent = nullptr);
 
-signals:
-
 public slots:
     void setContact(Contact *contact);
 
     void updateChatState(ChatSession::State state);
     void addMessage(const ChatMessage *msg);
+    
+private slots:
+    void resizeEvent(QResizeEvent *e) override;
 
 private:
     Contact *m_contact;

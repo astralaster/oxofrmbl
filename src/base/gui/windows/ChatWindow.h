@@ -45,6 +45,9 @@ public slots:
     
     void setWindowIcon(const QIcon &icon);
     void setWindowTitle(const QString &title);
+    
+private slots:
+    void textChangedSlot();
 
 private:
     void sendMessage();

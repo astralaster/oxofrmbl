@@ -18,29 +18,16 @@ void ChatLogWidget::setContact(Contact *contact)
 
 void ChatLogWidget::updateChatState(ChatSession::State state)
 {
-    /*QString text  = QString("<b>%1 %2</b>").arg(m_contact->displayName());
-
-    switch (state) {
-    case ChatSession::State::Composing:
-        text = text.arg("is typing");
-        break;
-
-    case ChatSession::State::Paused:
-        text = text.arg("has stopped typing");
-        break;
-
-    case ChatSession::State::Gone:
-        text = text.arg("has left the building");
-        break;
-
-    default:
-        text = "";
-        break;
+    if(state == ChatSession::State::Gone) {
+        append(QString("<b>%1 has left the building</b>").arg(m_contact->displayName()));
     }
-
-    m_stateLabel->setText(text);
-    m_stateLabel->setGeometry(5, height()-25, width(), 25);
-    m_stateLabel->show();*/
+    
+    if(state == ChatSession::State::Composing) {
+        m_stateLabel->setText("<b>...</b>");
+        m_stateLabel->show();
+    } else {
+        m_stateLabel->hide();
+    }
 }
 
 void ChatLogWidget::addMessage(const ChatMessage *msg)
@@ -54,4 +41,10 @@ void ChatLogWidget::addMessage(const ChatMessage *msg)
     QString message = msg->body();
 
     append(sender+": "+message);
+}
+
+void ChatLogWidget::resizeEvent(QResizeEvent *e)
+{
+    m_stateLabel->setGeometry(width()-25, height()-25, 25, 25);
+    QTextEdit::resizeEvent(e);
 }

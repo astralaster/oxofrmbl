@@ -31,6 +31,8 @@ GuiController::GuiController(ApplicationController *app) :
 
     auto quitShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q), m_contactListWindow);
     //quitShortcut->setContext(Qt::ApplicationShortcut);
+    
+    QApplication::setQuitOnLastWindowClosed(false);
 
     connect(quitShortcut, &QShortcut::activated, this, &GuiController::quit);
     connect(m_trayIcon, &QSystemTrayIcon::activated, this, &GuiController::trayMenuTriggered);

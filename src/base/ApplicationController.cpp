@@ -19,8 +19,6 @@ ApplicationController::ApplicationController(QObject *parent) :
     
     discoverPlugins();
 
-    //qDebug() << account->metaObject()->className();
-
     m_accountManager = new AccountManager(this);
     m_gui = new GuiController(this);
     

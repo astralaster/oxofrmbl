@@ -37,11 +37,12 @@ ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
 
     connect(contact, &Contact::statusChanged, this, &ChatWindow::updateContactStatus);
     
+    connect(ui->messageEdit, &QTextEdit::textChanged, this, &ChatWindow::textChangedSlot);
+    
     m_typingTimeout.setSingleShot(true);
     m_pausingTimeout.setSingleShot(true);
 
     connect(&m_pausingTimeout, &QTimer::timeout, this, &ChatWindow::typingPaused);
-    
     connect(&m_newMessageBlink, SIGNAL(timeout()), this, SLOT(toggleIcon()));
 }
 
@@ -93,8 +94,7 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
         if(o == ui->messageEdit)
         {
             QKeyEvent *ev = (QKeyEvent*)e;
-            qDebug() << ev->key();
-    
+            
             if((ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return))
             {
                 if(!(ev->modifiers() & Qt::SHIFT))
@@ -103,18 +103,6 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
                     sendMessage();
                     return true;
                 }
-            }
-            else
-            {
-                e->ignore();
-                
-                if(!m_pausingTimeout.isActive())
-                {
-                    emit stateChanged(ChatSession::State::Composing);
-                }
-                
-                m_typingTimeout.start(1000);
-                m_pausingTimeout.start(5000);
             }
         }
         else if(o == ui->messageLog)
@@ -154,8 +142,8 @@ void ChatWindow::closeEvent(QCloseEvent *e)
     
     emit stateChanged(ChatSession::State::Gone);
     m_session->account()->endSession(m_session);
-    e->accept();
     
+    e->accept();
     QMainWindow::closeEvent(e);
 }
 
@@ -169,6 +157,27 @@ void ChatWindow::setWindowTitle(const QString &title)
 {
     emit titleChanged(title);
     QMainWindow::setWindowTitle(title);
+}
+
+void ChatWindow::textChangedSlot()
+{
+    if(ui->messageEdit->document()->isEmpty())
+    {
+        emit stateChanged(ChatSession::State::Unknown);
+        
+        m_typingTimeout.stop();
+        m_pausingTimeout.stop();
+    }
+    else
+    {
+        if(!m_pausingTimeout.isActive())
+        {
+            emit stateChanged(ChatSession::State::Composing);
+        }
+        
+        m_typingTimeout.start(1000);
+        m_pausingTimeout.start(5000);
+    }
 }
 
 void ChatWindow::sendMessage()
