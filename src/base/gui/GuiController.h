@@ -32,9 +32,13 @@ signals:
 public slots:
     void show();
     void quit();
-    void startChat(ChatSession *session);
-    void activateChat(ChatSession *session);
-    void changeStatusIcon(Status *status);
+    void startSession(ChatSession *session);
+    void activateSession(ChatSession *session);
+    void updateStatus(Status *status);
+    void updateStatusIcon(const QIcon &icon);
+    void toggleStatusIcon(bool forceStatus);
+
+public slots:
 
     void showAccountsWindow();
     void showAboutDialog();
@@ -62,7 +66,8 @@ private:
     QMap<ChatSession*, ChatWindow*> m_chatWindows;
     TabbedChatWindow *m_tabbedChatWindow;
 
-    bool m_useTabs = false;
+    bool m_useTabs = true;
+    Status *m_status;
 
 };
 

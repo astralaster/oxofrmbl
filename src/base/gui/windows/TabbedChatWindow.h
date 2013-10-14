@@ -25,10 +25,12 @@ public slots:
     void updateTabTitle(const QString &title);
     void updateTabState(ChatSession::State state);
     
-    int addTab(ChatWindow *window);
+    void addTab(ChatWindow *window);
     void activateTab(int tabIndex);
     void closeTab(int tabIndex);
     void switchTab(int tabIndex);
+
+public slots:
     
     void mousePressEvent(QMouseEvent *e) override;
     void closeEvent(QCloseEvent *e) override;

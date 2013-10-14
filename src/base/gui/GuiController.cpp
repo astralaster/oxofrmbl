@@ -29,6 +29,9 @@ GuiController::GuiController(ApplicationController *app) :
 
     m_trayIcon->setContextMenu(trayContextMenu());
 
+    m_status = new Status();
+    m_status->setType(Status::Online);
+
     auto quitShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q), m_contactListWindow);
     //quitShortcut->setContext(Qt::ApplicationShortcut);
     
@@ -38,7 +41,7 @@ GuiController::GuiController(ApplicationController *app) :
     connect(m_trayIcon, &QSystemTrayIcon::activated, this, &GuiController::trayMenuTriggered);
 
     connect(m_contactListWindow, &ContactListWindow::statusChanged, app->accountManager(), &AccountManager::changeStatus);
-    connect(m_contactListWindow, &ContactListWindow::statusChanged, this, &GuiController::changeStatusIcon);
+    connect(m_contactListWindow, &ContactListWindow::statusChanged, this, &GuiController::updateStatus);
 
     if(m_useTabs) {
         m_tabbedChatWindow = new TabbedChatWindow(this, m_contactListWindow);
@@ -64,33 +67,51 @@ void GuiController::quit()
     emit terminated();
 }
 
-void GuiController::startChat(ChatSession *session)
+void GuiController::startSession(ChatSession *session)
 {
-    auto window = new ChatWindow(session);
+    auto window = new ChatWindow(session);//, m_contactListWindow);
     m_chatWindows[session] = window;
+
+    connect(window, &ChatWindow::blink, this, &GuiController::toggleStatusIcon);
 
     if(m_useTabs) {
         m_tabbedChatWindow->addTab(window);
     } else {
-        window->showNormal();
+        window->show();
     }
 }
 
-void GuiController::activateChat(ChatSession *session)
+void GuiController::activateSession(ChatSession *session)
 {
     if(m_useTabs) {
         m_tabbedChatWindow->activateChatWindow(m_chatWindows[session]);
     } else {
         m_chatWindows[session]->showNormal();
+        m_chatWindows[session]->activateWindow();
     }
 }
 
-void GuiController::changeStatusIcon(Status *status)
+void GuiController::updateStatus(Status *status)
 {
-    auto icon = StatusIcon::forStatus(status);
-    
+    m_status = status;
+    updateStatusIcon(StatusIcon::forStatus(status));
+}
+
+void GuiController::updateStatusIcon(const QIcon &icon)
+{
     m_contactListWindow->setWindowIcon(icon);
     m_trayIcon->setIcon(icon);
+}
+
+void GuiController::toggleStatusIcon(bool forceStatus)
+{
+    QIcon statusIcon = StatusIcon::forStatus(m_status);
+
+    if(forceStatus || m_trayIcon->icon().name() != statusIcon.name()) {
+        m_trayIcon->setIcon(statusIcon);
+    } else {
+        m_trayIcon->setIcon(QIcon::fromTheme("mail-message-new"));
+    }
 }
 
 void GuiController::showAccountsWindow()
@@ -159,12 +180,13 @@ void GuiController::confirmContact(Contact *c)
 
 void GuiController::addAccount(Account *account)
 {
-    connect(account, &Account::sessionStarted,   this, &GuiController::startChat);
-    connect(account, &Account::sessionActivated, this, &GuiController::activateChat);
+    connect(account, &Account::sessionStarted,   this, &GuiController::startSession);
+    connect(account, &Account::sessionActivated, this, &GuiController::activateSession);
     
     connect(account, &Account::error, this, &GuiController::handleError);
     
     connect(account, &Account::contactRequestReceived, this, &GuiController::confirmContact);
+    connect(account, &Account::statusChanged, this, &GuiController::updateStatus);
 
     auto contactList = new ContactList(account, this);
     

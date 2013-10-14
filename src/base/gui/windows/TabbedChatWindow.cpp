@@ -20,7 +20,7 @@ TabbedChatWindow::~TabbedChatWindow()
     delete ui;
 }
 
-int TabbedChatWindow::addTab(ChatWindow *window)
+void TabbedChatWindow::addTab(ChatWindow *window)
 {
     ui->tabWidget->addTab(window, window->windowIcon(), window->windowTitle());
     
@@ -34,7 +34,7 @@ int TabbedChatWindow::addTab(ChatWindow *window)
     showNormal();
     activateWindow();
     
-    return index;
+    //return index;
 }
 
 void TabbedChatWindow::activateChatWindow(ChatWindow *window)

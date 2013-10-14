@@ -148,7 +148,7 @@ QString XmppAccount::displayName() const
 void XmppAccount::connectToServer()
 {
     if(!isConnected()) {
-        m_client->connectToServer(m_user+"@"+m_server, m_password);
+        m_client->connectToServer(m_user+"@"+m_server+"/"+m_resource, m_password);
     }
 }
 

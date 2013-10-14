@@ -1,7 +1,7 @@
 #ifndef CHATWINDOW_H
 #define CHATWINDOW_H
 
-#include <QMainWindow>
+#include <QWidget>
 #include <QTimer>
 
 #include "common.h"
@@ -13,7 +13,7 @@ namespace Ui {
 class ChatWindow;
 }
 
-class ChatWindow : public QMainWindow
+class ChatWindow : public QWidget
 {
     Q_OBJECT
 
@@ -29,13 +29,18 @@ signals:
     void iconChanged(const QIcon &icon);
     void titleChanged(const QString &title);
 
+    void blink(bool stop = false);
+
 public slots:
     void receiveMessage(ChatMessage *msg);
     void updateContactStatus(Status *status);
-    void typingPaused();
+    void typingPausedSlot();
     
+    void setWindowIcon(const QIcon &icon);
+    void setWindowTitle(const QString &title);
     void toggleIcon(bool forceStatus = false);
-    
+
+public slots:
     //void messageReceived(ChatMessage *msg);
     bool eventFilter(QObject *o, QEvent *e) override;
 
@@ -43,9 +48,7 @@ public slots:
     void focusInEvent(QFocusEvent *e) override;
     void closeEvent(QCloseEvent *e) override;
     
-    void setWindowIcon(const QIcon &icon);
-    void setWindowTitle(const QString &title);
-    
+
 private slots:
     void textChangedSlot();
 
