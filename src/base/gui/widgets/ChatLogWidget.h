@@ -19,7 +19,7 @@ public slots:
     void setContact(Contact *contact);
 
     void updateChatState(ChatSession::State state);
-    void addMessage(const ChatMessage *msg);
+    void addMessage(ChatMessage *msg);
     
 private slots:
     void resizeEvent(QResizeEvent *e) override;

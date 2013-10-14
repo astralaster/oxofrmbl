@@ -56,7 +56,7 @@ ChatSession *ChatWindow::session()
     return m_session;
 }
 
-void ChatWindow::receiveMessage(const ChatMessage *msg)
+void ChatWindow::receiveMessage(ChatMessage *msg)
 {
     if(!isActiveWindow()) {
         m_newMessageBlink.start(1000);

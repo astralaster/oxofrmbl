@@ -77,6 +77,13 @@ void AccountManager::connectAccounts()
     }
 }
 
+void AccountManager::disconnectAccounts()
+{
+    for(auto a: m_accounts) {
+        a->disconnectFromServer();
+    }
+}
+
 void AccountManager::changeStatus(Status *status)
 {
     for(auto a: m_accounts) {

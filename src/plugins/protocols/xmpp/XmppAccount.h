@@ -29,10 +29,10 @@ public:
     QString displayName() const override;
 
 public slots:
-    bool connectToServer() override;
+    void connectToServer() override;
     void disconnectFromServer() override;
 
-    void sendMessage(const ChatMessage *msg) override;
+    void sendMessage(ChatMessage *msg) override;
     void sendStateUpdate(const Contact *contact, ChatSession::State state) override;
     
     ChatSession *startSession(Contact *contact) override;

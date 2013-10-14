@@ -15,7 +15,7 @@ ChatSession::~ChatSession()
 {
 }
 
-void ChatSession::sendMessage(const ChatMessage *msg)
+void ChatSession::sendMessage(ChatMessage *msg)
 {
     m_account->sendMessage(msg);
 }
@@ -33,7 +33,7 @@ void ChatSession::chatStateChangedSlot(Contact *contact, ChatSession::State stat
     }
 }
 
-void ChatSession::messageReceivedSlot(const ChatMessage *msg)
+void ChatSession::messageReceivedSlot(ChatMessage *msg)
 {
     if(msg->remoteParticipant()->id() == m_contact->id()) {
         emit messageReceived(msg);

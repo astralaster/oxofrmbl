@@ -9,7 +9,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     ApplicationController ac(&a);
     
-    ac.connect(&ac, &ApplicationController::quit, &QApplication::quit);
+    ac.connect(&a, &QApplication::aboutToQuit, &ac, &ApplicationController::quit);
+    ac.connect(&ac, &ApplicationController::terminated, &QApplication::quit);
     
     return a.exec();
 }

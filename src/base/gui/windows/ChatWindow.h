@@ -24,19 +24,19 @@ public:
     ChatSession *session();
 
 signals:
-    void messageSent(const ChatMessage *msg);
+    void messageSent(ChatMessage *msg);
     void stateChanged(ChatSession::State state);
     void iconChanged(const QIcon &icon);
     void titleChanged(const QString &title);
 
 public slots:
-    void receiveMessage(const ChatMessage *msg);
+    void receiveMessage(ChatMessage *msg);
     void updateContactStatus(Status *status);
     void typingPaused();
     
     void toggleIcon(bool forceStatus = false);
     
-    //void messageReceived(const ChatMessage *msg);
+    //void messageReceived(ChatMessage *msg);
     bool eventFilter(QObject *o, QEvent *e) override;
 
     void showEvent(QShowEvent *e) override;

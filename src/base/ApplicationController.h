@@ -28,11 +28,12 @@ public:
     
     QList<QString> protocolPluginNames() const;
     ProtocolPlugin *protocolPlugin(const QString &protocol);
-
+    
 signals:
-    void quit();
+    void terminated();
     
 public slots:
+    void quit();
     void discoverPlugins();
 
 private:

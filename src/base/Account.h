@@ -45,7 +45,7 @@ signals:
     
 signals:
     void contactRequestReceived(Contact *contact);
-    void messageReceived(const ChatMessage *msg);
+    void messageReceived(ChatMessage *msg);
     void contactStatusChanged(Contact *contact, Status *status);
 
     void stateUpdateReceived(Contact *contact, ChatSession::State state);
@@ -58,10 +58,10 @@ signals: // connection state
     void accountSaved() const;
 
 public slots:
-    virtual bool connectToServer() = 0;
+    virtual void connectToServer() = 0;
     virtual void disconnectFromServer() = 0;
 
-    virtual void sendMessage(const ChatMessage *msg) = 0;
+    virtual void sendMessage(ChatMessage *msg) = 0;
     virtual void sendStateUpdate(const Contact *contact, ChatSession::State state) = 0;
 
     virtual void remove() = 0;

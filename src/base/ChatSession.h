@@ -27,16 +27,16 @@ public:
     Account *account() {return m_account;}
 
 signals:
-    void messageReceived(const ChatMessage *msg);
+    void messageReceived(ChatMessage *msg);
     void chatStateChanged(State state);
 
 public slots:
-    void sendMessage(const ChatMessage *msg);
+    void sendMessage(ChatMessage *msg);
     void sendStateUpdate(State state);
 
 private slots:
     void chatStateChangedSlot(Contact *contact, State state);
-    void messageReceivedSlot(const ChatMessage *msg);
+    void messageReceivedSlot(ChatMessage *msg);
 
 private:
     State m_state;

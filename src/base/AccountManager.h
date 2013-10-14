@@ -31,6 +31,7 @@ public slots:
     void dataChangedSlot(bool save);
     
     void connectAccounts();
+    void disconnectAccounts();
     
     void addAccount(Account *account, bool saveData = false);
     void removeAccount(Account *account);

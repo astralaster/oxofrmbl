@@ -28,12 +28,11 @@ void XmppAccount::initAccount()
     
     connect(m_client, &QXmppClient::error, this, &Account::error);
 
-    connect(&m_client->rosterManager(), &QXmppRosterManager::rosterReceived, this, &XmppAccount::retrieveContacts);
+    connect(&m_client->rosterManager(), &QXmppRosterManager::rosterReceived, this, &XmppAccount::retrieveContacts, Qt::DirectConnection);
     connect(&m_client->rosterManager(), &QXmppRosterManager::subscriptionReceived, this, &XmppAccount::subscriptionReceivedSlot);
+    
     connect(m_client, &QXmppClient::messageReceived, this, &XmppAccount::messageReceivedSlot);
     connect(m_client, &QXmppClient::iqReceived, this, &XmppAccount::iqReceivedSlot);
-
-    
     connect(m_client, &QXmppClient::presenceReceived, this, &XmppAccount::presenceReceivedSlot);
     
     connect(m_client, &QXmppClient::disconnected, this, &XmppAccount::disconnected);
@@ -146,19 +145,22 @@ QString XmppAccount::displayName() const
     return id();
 }
 
-bool XmppAccount::connectToServer()
+void XmppAccount::connectToServer()
 {
-    m_client->connectToServer(m_user+"@"+m_server, m_password);
-    return true;
+    if(!isConnected()) {
+        m_client->connectToServer(m_user+"@"+m_server, m_password);
+    }
 }
 
 void XmppAccount::disconnectFromServer()
 {
-    m_client->disconnectFromServer();
-    emit disconnected();
+    if(isConnected()) {
+        m_client->disconnectFromServer();
+        emit disconnected();
+    }
 }
 
-void XmppAccount::sendMessage(const ChatMessage *msg)
+void XmppAccount::sendMessage(ChatMessage *msg)
 {
     m_client->sendMessage(msg->remoteParticipant()->id(), msg->body());
 }
@@ -311,11 +313,11 @@ void XmppAccount::subscriptionReceivedSlot(const QString &jid)
 
 void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
 {
+    auto from = XmppContact::parseJabberId(msg.from());
+    
     if(msg.type() != QXmppMessage::Chat) {
         return;
     }
-
-    auto from = XmppContact::parseJabberId(msg.from());
 
     if(msg.state() != QXmppMessage::Inactive)
     {
@@ -363,7 +365,6 @@ void XmppAccount::presenceReceivedSlot(const QXmppPresence &presence)
     }
     
     Contact *contact = nullptr;
-
     
     for(Contact *c: contacts()) {
         if(c->id() == jid || c->id() == jid_long) {

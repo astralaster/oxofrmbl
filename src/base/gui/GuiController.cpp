@@ -61,7 +61,7 @@ void GuiController::quit()
         w->close();
     }
     
-    emit exited();
+    emit terminated();
 }
 
 void GuiController::startChat(ChatSession *session)
@@ -128,11 +128,11 @@ void GuiController::showAddContactDialog()
 
 void GuiController::trayMenuTriggered(QSystemTrayIcon::ActivationReason reason)
 {
-    if(reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick)
+    if(reason == QSystemTrayIcon::Trigger)
     {
         m_contactListWindow->setVisible(!m_contactListWindow->isVisible());
     }
-    else if(reason == QSystemTrayIcon::Context)
+    else if(reason == QSystemTrayIcon::Context || reason == QSystemTrayIcon::DoubleClick)
     {
         // 
     } else {
@@ -165,9 +165,6 @@ void GuiController::addAccount(Account *account)
     connect(account, &Account::error, this, &GuiController::handleError);
     
     connect(account, &Account::contactRequestReceived, this, &GuiController::confirmContact);
-    
-    connect(this, &GuiController::exited, account, &Account::disconnectFromServer);
-    connect(this, &GuiController::exited, m_app, &ApplicationController::quit);
 
     auto contactList = new ContactList(account, this);
     

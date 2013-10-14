@@ -30,7 +30,7 @@ void ChatLogWidget::updateChatState(ChatSession::State state)
     }
 }
 
-void ChatLogWidget::addMessage(const ChatMessage *msg)
+void ChatLogWidget::addMessage(ChatMessage *msg)
 {
     QString time = msg->time().toString("hh:mm:ss");
     

@@ -22,11 +22,12 @@ ApplicationController::ApplicationController(QObject *parent) :
     m_accountManager = new AccountManager(this);
     m_gui = new GuiController(this);
     
+    connect(m_gui, &GuiController::terminated, this, &ApplicationController::quit);
+    
     connect(m_accountManager, &AccountManager::accountAdded,   m_gui, &GuiController::addAccount);
     connect(m_accountManager, &AccountManager::accountRemoved, m_gui, &GuiController::removeAccount);
     
     m_accountManager->load();
-    
     m_accountManager->connectAccounts();
     
     m_gui->show();
@@ -45,6 +46,13 @@ QList<QString> ApplicationController::protocolPluginNames() const
 ProtocolPlugin *ApplicationController::protocolPlugin(const QString &protocol)
 {
     return protocolPlugins[protocol];
+}
+
+void ApplicationController::quit()
+{
+    m_accountManager->disconnectAccounts();
+    
+    emit terminated();
 }
 
 void ApplicationController::discoverPlugins()

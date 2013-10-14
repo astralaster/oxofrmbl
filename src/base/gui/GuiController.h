@@ -27,7 +27,7 @@ public:
     ChatWindow *chatWindowForSession(ChatSession *session);
 
 signals:
-    void exited();
+    void terminated();
 
 public slots:
     void show();

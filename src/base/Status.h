@@ -23,7 +23,7 @@ public slots:
     void setType(Type type);
     
 private:
-    Type m_type;
+    Type m_type = Offline;
     QString m_message;
     
 };
