@@ -9,7 +9,7 @@ ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &bod
 }
 
 ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &body, const QDateTime &time) : QObject(session),
-    m_session(session), m_incoming(incoming), m_body(body)
+    m_session(session), m_incoming(incoming), m_body(body), m_time(time)
 {
     if(time.isNull()) {
         m_time.setDate(QDate::currentDate());
