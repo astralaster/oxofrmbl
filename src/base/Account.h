@@ -71,7 +71,7 @@ public slots:
     virtual void sendMessage(ChatMessage *msg) = 0;
     virtual void sendStateUpdate(const Contact *contact, ChatSession::State state) = 0;
 
-    virtual void initFileTransfer(FileTransfer *fileTransfer) = 0;
+    virtual void sendFile(FileTransfer *fileTransfer) = 0;
 
 public slots:
     virtual void remove() = 0;

@@ -3,6 +3,7 @@
 #include <QSettings>
 
 #include <qxmpp/QXmppRosterManager.h>
+#include <qxmpp/QXmppTransferManager.h>
 
 #include "base/ChatMessage.h"
 
@@ -188,13 +189,21 @@ void XmppAccount::sendStateUpdate(const Contact *contact, ChatSession::State sta
     m_client->sendPacket(message);
 }
 
-void XmppAccount::initFileTransfer(FileTransfer *fileTransfer)
+void XmppAccount::sendFile(FileTransfer *fileTransfer)
 {
     auto transferManager = m_client->findExtension<QXmppTransferManager>();
 
     if(transferManager != nullptr)
     {
-        auto job = transferManager->sendFile(fileTransfer->contact()->id(), fileTransfer->fileName());
+        auto jid = fileTransfer->contact()->id();
+        auto jidParts = XmppContact::parseJabberId(jid);
+
+        if(jidParts[2].isEmpty())
+        {
+            jid += "/" + m_client->rosterManager().getResources(jid).first();
+        }
+
+        auto job = transferManager->sendFile(jid, fileTransfer->fileName());
 
         setupFileTransfer(fileTransfer, job);
     }
@@ -208,7 +217,8 @@ ChatSession *XmppAccount::startSession(Contact *contact)
     {
         auto from = XmppContact::parseJabberId(contact->id());
         
-        if(from[2].isEmpty()) {
+        if(from[2].isEmpty())
+        {
             auto fromJid = from[0]+"@"+from[1];
             
             QRegExp pattern(QRegExp::escape(fromJid)+"/(.+)");
@@ -400,11 +410,16 @@ ChatSession *XmppAccount::findSessionForJid(const QString &jid)
 void XmppAccount::setupFileTransfer(FileTransfer *fileTransfer, QXmppTransferJob *job)
 {
     connect(job, &QXmppTransferJob::progress, fileTransfer, &FileTransfer::progress);
+    connect(job, SIGNAL(error(QXmppTransferJob::Error)), this, SLOT(slotError(QXmppTransferJob::Error)));
 
     connect(fileTransfer, SIGNAL(accepted(QString)), job, SLOT(accept(QString)));
     connect(fileTransfer, &FileTransfer::aborted, job, &QXmppTransferJob::abort);
 }
 
+void XmppAccount::slotError(QXmppTransferJob::Error error)
+{
+    qDebug() << "Transmission failed:" << error;
+}
 
 void XmppAccount::presenceReceivedSlot(const QXmppPresence &presence)
 {

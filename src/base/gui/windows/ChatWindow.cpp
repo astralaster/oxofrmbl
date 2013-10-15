@@ -171,7 +171,7 @@ void ChatWindow::dropEvent(QDropEvent *e)
             if(url.isLocalFile())
             {
                 auto fileTransfer = new FileTransfer(m_session, false, url.toLocalFile());
-                m_session->account()->initFileTransfer(fileTransfer);
+                m_session->account()->sendFile(fileTransfer);
             }
         }
 

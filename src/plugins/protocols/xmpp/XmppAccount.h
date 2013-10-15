@@ -38,7 +38,7 @@ public slots:
     void sendMessage(ChatMessage *msg) override;
     void sendStateUpdate(const Contact *contact, ChatSession::State state) override;
 
-    void initFileTransfer(FileTransfer *fileTransfer) override;
+    void sendFile(FileTransfer *fileTransfer) override;
 
 public slots:
     ChatSession *startSession(Contact *contact) override;
@@ -73,6 +73,8 @@ private slots:
     void subscriptionReceivedSlot(const QString &jid);
     void presenceReceivedSlot(const QXmppPresence &presence);
     void messageReceivedSlot(const QXmppMessage &message);
+
+    void slotError(QXmppTransferJob::Error error);
 
 private:
     ChatSession *findSessionForJid(const QString &jid);
