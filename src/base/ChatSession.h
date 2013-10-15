@@ -8,6 +8,7 @@
 class Account;
 class Contact;
 class ChatMessage;
+class FileTransfer;
 
 class ChatSession : public QObject
 {
@@ -28,6 +29,7 @@ public:
 
 signals:
     void messageReceived(ChatMessage *msg);
+    void fileReceived(FileTransfer *transfer);
     void chatStateChanged(State state);
 
 public slots:
@@ -37,6 +39,7 @@ public slots:
 private slots:
     void chatStateChangedSlot(Contact *contact, State state);
     void messageReceivedSlot(ChatMessage *msg);
+    void fileReceivedSlot(FileTransfer *transfer);
 
 private:
     State m_state;

@@ -2,13 +2,13 @@
 
 #include <QSettings>
 
-#include <qxmpp/QXmppDiscoveryManager.h>
 #include <qxmpp/QXmppRosterManager.h>
 
 #include "base/ChatMessage.h"
 
 #include "XmppPlugin.h"
 #include "XmppContact.h"
+
 
 XmppAccount::XmppAccount()
 {
@@ -25,6 +25,13 @@ void XmppAccount::initAccount()
     m_client = new QXmppClient();
 
     m_client->logger()->setLoggingType(QXmppLogger::StdoutLogging);
+
+    auto transferManager = new QXmppTransferManager();
+    //transferManager->setProxy("proxy.qxmpp.org");
+
+    m_client->addExtension(transferManager);
+
+    connect(transferManager, &QXmppTransferManager::fileReceived, this, &XmppAccount::fileReceivedSlot);
     
     connect(m_client, &QXmppClient::error, this, &Account::error);
 
@@ -162,7 +169,7 @@ void XmppAccount::disconnectFromServer()
 
 void XmppAccount::sendMessage(ChatMessage *msg)
 {
-    m_client->sendMessage(msg->remoteParticipant()->id(), msg->body());
+    m_client->sendMessage(msg->contact()->id(), msg->body());
 }
 
 void XmppAccount::sendStateUpdate(const Contact *contact, ChatSession::State state)
@@ -179,6 +186,18 @@ void XmppAccount::sendStateUpdate(const Contact *contact, ChatSession::State sta
     message.setState(xmppState);
     
     m_client->sendPacket(message);
+}
+
+void XmppAccount::initFileTransfer(FileTransfer *fileTransfer)
+{
+    auto transferManager = m_client->findExtension<QXmppTransferManager>();
+
+    if(transferManager != nullptr)
+    {
+        auto job = transferManager->sendFile(fileTransfer->contact()->id(), fileTransfer->fileName());
+
+        setupFileTransfer(fileTransfer, job);
+    }
 }
 
 ChatSession *XmppAccount::startSession(Contact *contact)
@@ -295,6 +314,19 @@ void XmppAccount::removeContact(Contact *contact)
     }
 }
 
+void XmppAccount::fileReceivedSlot(QXmppTransferJob *job)
+{
+    auto chatSession = findSessionForJid(job->jid());
+
+    if(chatSession != nullptr)
+    {
+        auto fileTransfer = new FileTransfer(chatSession, true, job->fileName());
+        setupFileTransfer(fileTransfer, job);
+
+        emit fileReceived(fileTransfer);
+    }
+}
+
 void XmppAccount::iqReceivedSlot(const QXmppIq &iq)
 {
     //qDebug() << iq.type();
@@ -313,39 +345,23 @@ void XmppAccount::subscriptionReceivedSlot(const QString &jid)
 
 void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
 {
-    auto from = XmppContact::parseJabberId(msg.from());
-    
-    if(msg.type() != QXmppMessage::Chat) {
+    if(msg.type() != QXmppMessage::Chat)
+    {
         return;
     }
 
     if(msg.state() != QXmppMessage::Inactive)
     {
-        auto chatSession = session(QString("%1@%2/%3").arg(from[0], from[1], from[2]));
-        auto bareJid = QString("%1@%2").arg(from[0], from[1]);
-        
-        if(chatSession == nullptr) {
-            chatSession = session(bareJid);
-        }
+        auto chatSession = findSessionForJid(msg.from());
 
-        if((msg.state() == QXmppMessage::Active || !msg.state()) && !msg.body().isEmpty())
+        if(chatSession != nullptr)
         {
-            if(chatSession == nullptr) {
-                auto contact = new XmppContact(this, msg.from());
-                auto presence = m_client->rosterManager().getPresence(bareJid, from[2]);
-                
-                if(presence.type() == QXmppPresence::Available || presence.type() == QXmppPresence::Unavailable) {
-                    contact->setStatus(&(*contact->status() << presence));
-                }
-
-                chatSession = startSession(contact);
+            if((msg.state() == QXmppMessage::Active || !msg.state()) && !msg.body().isEmpty())
+            {
+                auto message = new ChatMessage(chatSession, true, msg.body(), msg.stamp());
+                emit messageReceived(message);
             }
 
-            auto message = new ChatMessage(chatSession, true, msg.body(), msg.stamp());
-            emit messageReceived(message);
-        }
-        
-        if(chatSession != nullptr) {
             ChatSession::State state;
             state = state << msg.state();
             
@@ -353,6 +369,42 @@ void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
         }
     }
 }
+
+ChatSession *XmppAccount::findSessionForJid(const QString &jid)
+{
+    ChatSession *result = nullptr;
+
+    result = session(jid);
+
+    if(result == nullptr) {
+        auto jidParts = XmppContact::parseJabberId(jid);
+        auto bareJid = QString("%1@%2").arg(jidParts[0], jidParts[1]);
+
+        result = session(bareJid);
+
+        if(result == nullptr) {
+            auto contact = new XmppContact(this, jid);
+            auto presence = m_client->rosterManager().getPresence(bareJid, jidParts[2]);
+
+            if(presence.type() == QXmppPresence::Available || presence.type() == QXmppPresence::Unavailable) {
+                contact->setStatus(&(*contact->status() << presence));
+            }
+
+            result = startSession(contact);
+        }
+    }
+
+    return result;
+}
+
+void XmppAccount::setupFileTransfer(FileTransfer *fileTransfer, QXmppTransferJob *job)
+{
+    connect(job, &QXmppTransferJob::progress, fileTransfer, &FileTransfer::progress);
+
+    connect(fileTransfer, SIGNAL(accepted(QString)), job, SLOT(accept(QString)));
+    connect(fileTransfer, &FileTransfer::aborted, job, &QXmppTransferJob::abort);
+}
+
 
 void XmppAccount::presenceReceivedSlot(const QXmppPresence &presence)
 {

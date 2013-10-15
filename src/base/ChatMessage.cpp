@@ -1,6 +1,7 @@
 #include "ChatMessage.h"
 
 #include "Account.h"
+#include "Contact.h"
 #include "ChatSession.h"
 
 ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &body) :
@@ -8,8 +9,9 @@ ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &bod
 {
 }
 
-ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &body, const QDateTime &time) : QObject(session),
-    m_session(session), m_incoming(incoming), m_body(body), m_time(time)
+ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &body, const QDateTime &time) :
+    QObject(session),
+    m_session(session), m_time(time), m_incoming(incoming), m_body(body)
 {
     if(time.isNull()) {
         m_time.setDate(QDate::currentDate());
@@ -26,12 +28,12 @@ bool ChatMessage::isIncoming() const
     return m_incoming;
 }
 
-const Account *ChatMessage::localParticipant() const
+const Account *ChatMessage::account() const
 {
     return m_session->account();
 }
 
-const Contact *ChatMessage::remoteParticipant() const
+const Contact *ChatMessage::contact() const
 {
     return m_session->contact();
 }

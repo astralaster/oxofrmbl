@@ -5,8 +5,11 @@
 
 #include <qxmpp/QXmppClient.h>
 #include <qxmpp/QXmppMessage.h>
+#include <qxmpp/QXmppTransferManager.h>
 
 #include "base/Account.h"
+#include "base/ChatMessage.h"
+#include "base/FileTransfer.h"
 
 class XmppAccount : public Account
 {
@@ -34,7 +37,10 @@ public slots:
 
     void sendMessage(ChatMessage *msg) override;
     void sendStateUpdate(const Contact *contact, ChatSession::State state) override;
-    
+
+    void initFileTransfer(FileTransfer *fileTransfer) override;
+
+public slots:
     ChatSession *startSession(Contact *contact) override;
 
     void retrieveContacts();
@@ -62,12 +68,16 @@ public slots:
     
 
 private slots:
+    void fileReceivedSlot(QXmppTransferJob *job);
     void iqReceivedSlot(const QXmppIq &iq);
     void subscriptionReceivedSlot(const QString &jid);
     void presenceReceivedSlot(const QXmppPresence &presence);
     void messageReceivedSlot(const QXmppMessage &message);
 
 private:
+    ChatSession *findSessionForJid(const QString &jid);
+    void setupFileTransfer(FileTransfer *fileTransfer, QXmppTransferJob *job);
+
     QXmppClient *m_client = nullptr;
     QString m_server, m_user, m_password, m_resource;
     int m_priority = 0;

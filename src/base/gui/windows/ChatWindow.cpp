@@ -2,7 +2,9 @@
 #include "ui_ChatWindow.h"
 
 #include <QKeyEvent>
+#include <QMimeData>
 #include <QDebug>
+#include <QFileDialog>
 
 #include "gui/StatusIcon.h"
 #include "base/Account.h"
@@ -34,7 +36,9 @@ ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
 
     connect(this,    &ChatWindow::messageSent,  session, &ChatSession::sendMessage);
     connect(this,    &ChatWindow::stateChanged, session, &ChatSession::sendStateUpdate);
-    connect(session, &ChatSession::messageReceived,  this, &ChatWindow::receiveMessage);
+
+    connect(session, &ChatSession::messageReceived,  this, &ChatWindow::messageReceivedSlot);
+    connect(session, &ChatSession::fileReceived, this, &ChatWindow::fileReceivedSlot);
     connect(session, &ChatSession::chatStateChanged, ui->messageLog, &ChatLogWidget::updateChatState);
 
     connect(contact, &Contact::statusChanged, this, &ChatWindow::updateContactStatus);
@@ -62,13 +66,38 @@ ChatSession *ChatWindow::session()
     return m_session;
 }
 
-void ChatWindow::receiveMessage(ChatMessage *msg)
+void ChatWindow::messageReceivedSlot(ChatMessage *msg)
 {
     if(!hasFocus()) {
         m_newMessageBlink.start();
     }
     
     ui->messageLog->addMessage(msg);
+}
+
+void ChatWindow::fileReceivedSlot(FileTransfer *transfer)
+{
+    auto dialog = new QFileDialog(this, "Select directory to save file");
+
+    dialog->setOption(QFileDialog::ShowDirsOnly);
+    dialog->setFileMode(QFileDialog::Directory);
+    dialog->setAcceptMode(QFileDialog::AcceptOpen);
+
+    dialog->setLabelText(QFileDialog::Accept, "Select");
+
+    if(dialog->exec() == QFileDialog::Accepted)
+    {
+        auto dir = dialog->directory();
+        auto fileName = dir.filePath(transfer->fileName());
+
+        if(dir.exists())
+        {
+            transfer->accept(fileName);
+            return;
+        }
+    }
+
+    transfer->refuse();
 }
 
 void ChatWindow::updateContactStatus(Status *status)
@@ -125,19 +154,43 @@ bool ChatWindow::eventFilter(QObject *o, QEvent *e)
     return false;
 }
 
+void ChatWindow::dragEnterEvent(QDragEnterEvent *e)
+{
+    e->accept();
+    e->acceptProposedAction();
+}
+
+void ChatWindow::dropEvent(QDropEvent *e)
+{
+    auto mime = e->mimeData();
+
+    if(mime->hasUrls())
+    {
+        for(QUrl url: mime->urls())
+        {
+            if(url.isLocalFile())
+            {
+                auto fileTransfer = new FileTransfer(m_session, false, url.toLocalFile());
+                m_session->account()->initFileTransfer(fileTransfer);
+            }
+        }
+
+        e->accept();
+    }
+}
+
 void ChatWindow::showEvent(QShowEvent *e)
 {
     //activateWindow();
-    //ui->messageEdit->setFocus();
+    ui->messageEdit->setFocus();
     
     QWidget::showEvent(e);
 }
 
 void ChatWindow::focusInEvent(QFocusEvent *e)
 {
-    qDebug() << "focus in";
-
-    if(m_newMessageBlink.isActive()) {
+    if(m_newMessageBlink.isActive())
+    {
         m_newMessageBlink.stop();
         emit blink(true);
     }
@@ -149,8 +202,6 @@ void ChatWindow::focusInEvent(QFocusEvent *e)
 
 void ChatWindow::closeEvent(QCloseEvent *e)
 {
-    qDebug() << "close";
-
     m_newMessageBlink.stop();
     m_pausingTimeout.stop();
     m_typingTimeout.stop();

@@ -32,7 +32,8 @@ signals:
     void blink(bool stop = false);
 
 public slots:
-    void receiveMessage(ChatMessage *msg);
+    void messageReceivedSlot(ChatMessage *msg);
+    void fileReceivedSlot(FileTransfer *transfer);
     void updateContactStatus(Status *status);
     void typingPausedSlot();
     
@@ -43,6 +44,9 @@ public slots:
 public slots:
     //void messageReceived(ChatMessage *msg);
     bool eventFilter(QObject *o, QEvent *e) override;
+
+    void dragEnterEvent(QDragEnterEvent *e) override;
+    void dropEvent(QDropEvent *e) override;
 
     void showEvent(QShowEvent *e) override;
     void focusInEvent(QFocusEvent *e) override;

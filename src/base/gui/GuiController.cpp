@@ -44,7 +44,7 @@ GuiController::GuiController(ApplicationController *app) :
     connect(m_contactListWindow, &ContactListWindow::statusChanged, this, &GuiController::updateStatus);
 
     if(m_useTabs) {
-        m_tabbedChatWindow = new TabbedChatWindow(this, m_contactListWindow);
+        m_tabbedChatWindow = new TabbedChatWindow(this);
     }
 }
 
@@ -74,18 +74,22 @@ void GuiController::startSession(ChatSession *session)
 
     connect(window, &ChatWindow::blink, this, &GuiController::toggleStatusIcon);
 
-    if(m_useTabs) {
+    if(m_useTabs)
+    {
         m_tabbedChatWindow->addTab(window);
-    } else {
+    } else
+    {
         window->show();
     }
 }
 
 void GuiController::activateSession(ChatSession *session)
 {
-    if(m_useTabs) {
+    if(m_useTabs)
+    {
         m_tabbedChatWindow->activateChatWindow(m_chatWindows[session]);
-    } else {
+    } else
+    {
         m_chatWindows[session]->showNormal();
         m_chatWindows[session]->activateWindow();
     }

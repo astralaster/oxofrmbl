@@ -27,7 +27,8 @@ HEADERS += \
     MessageHandler.h \
     #otr/OtrMessageHandler.h \
     gui/windows/AddContactDialog.h \
-    gui/windows/TabbedChatWindow.h
+    gui/windows/TabbedChatWindow.h \
+    FileTransfer.h
 
 SOURCES += \
     ApplicationController.cpp \
@@ -42,7 +43,8 @@ SOURCES += \
     MessageHandler.cpp \
     #otr/OtrMessageHandler.cpp \
     gui/windows/AddContactDialog.cpp \
-    gui/windows/TabbedChatWindow.cpp
+    gui/windows/TabbedChatWindow.cpp \
+    FileTransfer.cpp
 
 SOURCES += \
     gui/GuiController.cpp \

@@ -35,8 +35,8 @@ void ChatLogWidget::addMessage(ChatMessage *msg)
     QString time = msg->time().toString("hh:mm:ss");
     
     QString sender = msg->isIncoming() ?
-        QString("<span style='color: red '>(%1) <b>%2</b></span>").arg(time).arg(msg->remoteParticipant()->displayName()) :
-        QString("<span style='color: blue'>(%1) <b>%2</b></span>").arg(time).arg(msg->localParticipant()->displayName());
+        QString("<span style='color: red '>(%1) <b>%2</b></span>").arg(time).arg(msg->contact()->displayName()) :
+        QString("<span style='color: blue'>(%1) <b>%2</b></span>").arg(time).arg(msg->account()->displayName());
 
     QString message = msg->body();
 

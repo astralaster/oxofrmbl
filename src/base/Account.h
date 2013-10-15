@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMap>
 #include <QString>
+#include <QFile>
 
 #include "common.h"
 #include "Person.h"
@@ -11,6 +12,11 @@
 #include "ChatSession.h"
 #include "ChatMessage.h"
 #include "MessageHandler.h"
+#include "FileTransfer.h"
+
+class ChatSession;
+class ChatMessage;
+class FileTransfer;
 
 class MessageHandler;
 
@@ -26,7 +32,7 @@ public:
     virtual QString displayName() const = 0;
     
     ChatSession *session(const QString &contactId);
-    QList<ChatSession *> sessions(const QRegExp &contatcIdPattern);
+    QList<ChatSession*> sessions(const QRegExp &contatcIdPattern);
     QMap<QString, ChatSession*> sessions();
     Contact *contact(const QString &id);
     QList<Contact*> contacts();
@@ -46,6 +52,7 @@ signals:
 signals:
     void contactRequestReceived(Contact *contact);
     void messageReceived(ChatMessage *msg);
+    void fileReceived(FileTransfer *tranfer);
     void contactStatusChanged(Contact *contact, Status *status);
 
     void stateUpdateReceived(Contact *contact, ChatSession::State state);
@@ -64,6 +71,9 @@ public slots:
     virtual void sendMessage(ChatMessage *msg) = 0;
     virtual void sendStateUpdate(const Contact *contact, ChatSession::State state) = 0;
 
+    virtual void initFileTransfer(FileTransfer *fileTransfer) = 0;
+
+public slots:
     virtual void remove() = 0;
     virtual void save() const = 0;
     virtual void load() = 0;

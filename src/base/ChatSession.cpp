@@ -3,11 +3,13 @@
 #include "Account.h"
 #include "Contact.h"
 #include "ChatMessage.h"
+#include "FileTransfer.h"
 
 ChatSession::ChatSession(Contact *contact, Account *account) : QObject(account),
     m_contact(contact), m_account(account)
 {
     connect(account, &Account::messageReceived, this, &ChatSession::messageReceivedSlot);
+    connect(account, &Account::fileReceived, this, &ChatSession::fileReceivedSlot);
     connect(account, &Account::stateUpdateReceived, this, &ChatSession::chatStateChangedSlot);
 }
 
@@ -35,7 +37,14 @@ void ChatSession::chatStateChangedSlot(Contact *contact, ChatSession::State stat
 
 void ChatSession::messageReceivedSlot(ChatMessage *msg)
 {
-    if(msg->remoteParticipant()->id() == m_contact->id()) {
+    if(msg->contact()->id() == m_contact->id()) {
         emit messageReceived(msg);
+    }
+}
+
+void ChatSession::fileReceivedSlot(FileTransfer *transfer)
+{
+    if(transfer->contact()->id() == m_contact->id()) {
+        emit fileReceived(transfer);
     }
 }

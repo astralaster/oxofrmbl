@@ -5,9 +5,6 @@
 #include <QObject>
 
 #include "common.h"
-#include "Account.h"
-#include "Contact.h"
-#include "ChatSession.h"
 
 class Account;
 class Contact;
@@ -25,8 +22,8 @@ public:
     QString body() const;
     QDateTime time() const;
 
-    const Account *localParticipant() const;
-    const Contact *remoteParticipant() const;
+    const Account *account() const;
+    const Contact *contact() const;
 
     bool isIncoming() const;
     bool isEmpty() const;
