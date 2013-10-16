@@ -1,7 +1,7 @@
 #ifndef CONTACTLIST_H
 #define CONTACTLIST_H
 
-#include <QAbstractItemModel>
+#include <QAbstractListModel>
 
 #include "common.h"
 
@@ -14,8 +14,8 @@ class ContactList : public QAbstractListModel
 public:
     ContactList(Account *account, QObject *parent);
 
-    Contact *getContact(int index) const;
-    Account *getAccount() const;
+    Contact *contactAt(int index) const;
+    Account *account() const;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -25,7 +25,7 @@ public slots:
     void update();
 
 private:
-    Account *account = nullptr;
+    Account *m_account = nullptr;
     
 };
 

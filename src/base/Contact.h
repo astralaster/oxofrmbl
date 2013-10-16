@@ -15,6 +15,7 @@ class Contact : public Person
 public:
     explicit Contact(Account *acc);
     explicit Contact(Account *acc, const QString &m_id, QObject *parent = nullptr);
+    ~Contact();
 
     Account *account();
 

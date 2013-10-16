@@ -2,6 +2,7 @@
 
 #include <QSettings>
 
+#include <qxmpp/QXmppUtils.h>
 #include <qxmpp/QXmppRosterManager.h>
 #include <qxmpp/QXmppTransferManager.h>
 
@@ -175,10 +176,6 @@ void XmppAccount::sendMessage(ChatMessage *msg)
 
 void XmppAccount::sendStateUpdate(const Contact *contact, ChatSession::State state)
 {
-    // TODO can't touch this
-    //QXmppDiscoveryManager *ext = m_client->findExtension<QXmppDiscoveryManager>();
-    //m_client->sendMessage(session->contact()->id(), );
-    
     QXmppMessage message(id(), contact->id());
     
     QXmppMessage::State xmppState;
@@ -196,9 +193,8 @@ void XmppAccount::sendFile(FileTransfer *fileTransfer)
     if(transferManager != nullptr)
     {
         auto jid = fileTransfer->contact()->id();
-        auto jidParts = XmppContact::parseJabberId(jid);
 
-        if(jidParts[2].isEmpty())
+        if(QXmppUtils::jidToResource(jid).isEmpty())
         {
             jid += "/" + m_client->rosterManager().getResources(jid).first();
         }
@@ -215,13 +211,13 @@ ChatSession *XmppAccount::startSession(Contact *contact)
     
     if(chatSession == nullptr)
     {
-        auto from = XmppContact::parseJabberId(contact->id());
-        
-        if(from[2].isEmpty())
+        auto jid = contact->id();
+
+        if(QXmppUtils::jidToResource(jid).isEmpty())
         {
-            auto fromJid = from[0]+"@"+from[1];
+            auto bareJid = QXmppUtils::jidToBareJid(jid);
             
-            QRegExp pattern(QRegExp::escape(fromJid)+"/(.+)");
+            QRegExp pattern(QRegExp::escape(bareJid)+"/(.+)");
             
             auto s = sessions(pattern);
             
@@ -362,7 +358,8 @@ void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
 
     if(msg.state() != QXmppMessage::Inactive)
     {
-        auto chatSession = findSessionForJid(msg.from());
+        bool startNewSession = (msg.state() == QXmppMessage::Active) || (msg.state() == QXmppMessage::None);
+        auto chatSession = findSessionForJid(msg.from(), startNewSession);
 
         if(chatSession != nullptr)
         {
@@ -380,21 +377,21 @@ void XmppAccount::messageReceivedSlot(const QXmppMessage &msg)
     }
 }
 
-ChatSession *XmppAccount::findSessionForJid(const QString &jid)
+ChatSession *XmppAccount::findSessionForJid(const QString &jid, bool startNew)
 {
     ChatSession *result = nullptr;
 
     result = session(jid);
 
-    if(result == nullptr) {
-        auto jidParts = XmppContact::parseJabberId(jid);
-        auto bareJid = QString("%1@%2").arg(jidParts[0], jidParts[1]);
+    if(result == nullptr)
+    {
+        auto bareJid = QXmppUtils::jidToBareJid(jid);
 
         result = session(bareJid);
 
-        if(result == nullptr) {
+        if(result == nullptr && startNew) {
             auto contact = new XmppContact(this, jid);
-            auto presence = m_client->rosterManager().getPresence(bareJid, jidParts[2]);
+            auto presence = m_client->rosterManager().getPresence(bareJid, QXmppUtils::jidToResource(jid));
 
             if(presence.type() == QXmppPresence::Available || presence.type() == QXmppPresence::Unavailable) {
                 contact->setStatus(&(*contact->status() << presence));
@@ -423,18 +420,17 @@ void XmppAccount::slotError(QXmppTransferJob::Error error)
 
 void XmppAccount::presenceReceivedSlot(const QXmppPresence &presence)
 {
-    auto from = XmppContact::parseJabberId(presence.from());
-    auto jid = from[0]+"@"+from[1];
-    auto jid_long = jid+"/"+from[2];
+    auto jid = presence.from();
+    auto bareJid = QXmppUtils::jidToBareJid(jid);
     
-    if(jid == id()) {
+    if(jid == id() || bareJid == id()) {
         return;
     }
     
     Contact *contact = nullptr;
     
     for(Contact *c: contacts()) {
-        if(c->id() == jid || c->id() == jid_long) {
+        if(c->id() == jid || c->id() == bareJid) {
             contact = c;
             break;
         }

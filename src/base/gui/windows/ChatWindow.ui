@@ -36,7 +36,7 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QTextEdit" name="messageEdit">
+     <widget class="QPlainTextEdit" name="messageEdit">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
         <horstretch>0</horstretch>

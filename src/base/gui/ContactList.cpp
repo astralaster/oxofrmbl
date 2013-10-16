@@ -9,15 +9,9 @@
 #include "StatusIcon.h"
 
 ContactList::ContactList(Account *account, QObject *parent) : 
-    QAbstractListModel(parent), account(account)
+    QAbstractListModel(parent), m_account(account)
 {
-    /*connect(account, &Account::connected, this, &ContactList::retrieveContacts);
-    connect(account, &Account::disconnected, this, &ContactList::clearContacts);
-    connect(account, &Account::contactAdded, this, &ContactList::addContact);
-    connect(account, &Account::contactRemoved, this, &ContactList::removeContact);
-    
-    connect(account, &Account::contactStatusChanged, this, &ContactList::updateContactStatus);*/
-    
+
     connect(account, &Account::connected, this, &ContactList::update);
     connect(account, &Account::disconnected, this, &ContactList::update);
     connect(account, &Account::contactAdded, this, &ContactList::update);
@@ -26,28 +20,28 @@ ContactList::ContactList(Account *account, QObject *parent) :
     connect(account, &Account::contactStatusChanged, this, &ContactList::update);
 }
 
-Contact *ContactList::getContact(int index) const
+Contact *ContactList::contactAt(int index) const
 {
-    return account->contacts()[index];
+    return m_account->contacts()[index];
 }
 
-Account *ContactList::getAccount() const
+Account *ContactList::account() const
 {
-    return account;
+    return m_account;
 }
 
 int ContactList::rowCount(const QModelIndex &parent) const
 {
-    return account->contacts().count();
+    return m_account->contacts().count();
 }
 
 QVariant ContactList::data(const QModelIndex &index, int role) const
 {
-    if(index.row() >= account->contacts().size()) {
+    if(index.row() >= m_account->contacts().size()) {
         return QVariant();
     }
     
-    auto contact = account->contacts()[index.row()];
+    auto contact = m_account->contacts()[index.row()];
     
     switch (role) {
     case Qt::DisplayRole:
@@ -66,8 +60,7 @@ QVariant ContactList::data(const QModelIndex &index, int role) const
 
 void ContactList::removeContact(Contact *contact)
 {
-    account->removeContact(contact);
-    update();
+    m_account->removeContact(contact);
 }
 
 void ContactList::update()

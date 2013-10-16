@@ -1,7 +1,5 @@
 #include "AccountManager.h"
 
-#include <QApplication>
-
 #include <QDir>
 #include <QPluginLoader>
 #include <QSettings>
@@ -10,7 +8,8 @@
 #include "ApplicationController.h"
 #include "interfaces/ProtocolPluginInterface.h"
 
-AccountManager::AccountManager(ApplicationController *app, QObject *parent) : QAbstractListModel(parent), m_app(app)
+AccountManager::AccountManager(ApplicationController *app) :
+    QObject(app), m_app(app)
 {
     connect(this, &AccountManager::changed, this, &AccountManager::dataChangedSlot);
 }
@@ -46,28 +45,13 @@ QList<Account *> AccountManager::accounts() const
     return m_accounts;
 }
 
-int AccountManager::rowCount(const QModelIndex &parent) const
-{
-    return m_accounts.count();
-}
-
-QVariant AccountManager::data(const QModelIndex &index, int role) const
-{
-    if (role == Qt::DisplayRole)
-    {
-        return m_accounts[index.row()]->displayName();
-    }
-
-    return QVariant();
-}
-
 void AccountManager::dataChangedSlot(bool saveData)
 {
     if(saveData) {
         save();
     }
-    
-    dataChanged(index(m_accounts.size()-1),index(m_accounts.size()-1));
+
+    //dataChanged(index(m_accounts.size()-1),index(m_accounts.size()-1));
 }
 
 void AccountManager::connectAccounts()

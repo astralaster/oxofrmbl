@@ -5,6 +5,7 @@
 
 #include "common.h"
 
+#include "../AccountList.h"
 #include "base/AccountManager.h"
 #include "base/Account.h"
 
@@ -17,14 +18,14 @@ class AddContactDialog : public QDialog
     Q_OBJECT
     
 public:
-    explicit AddContactDialog(AccountManager *accounts, QWidget *parent = nullptr);
+    explicit AddContactDialog(AccountList *accounts, QWidget *parent = nullptr);
     ~AddContactDialog();
     
     QString getId() const;
     Account *getAccount();
     
 private:
-    AccountManager *accounts;
+    AccountList *accounts;
     Ui::AddContactDialog *ui;
 };
 

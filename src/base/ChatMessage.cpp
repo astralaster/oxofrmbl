@@ -21,6 +21,7 @@ ChatMessage::ChatMessage(ChatSession *session, bool incoming, const QString &bod
 
 ChatMessage::~ChatMessage()
 {
+    qDebug() << "~ChatMessage";
 }
 
 bool ChatMessage::isIncoming() const

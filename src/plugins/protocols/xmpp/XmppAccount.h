@@ -77,7 +77,7 @@ private slots:
     void slotError(QXmppTransferJob::Error error);
 
 private:
-    ChatSession *findSessionForJid(const QString &jid);
+    ChatSession *findSessionForJid(const QString &jid, bool startNew = true);
     void setupFileTransfer(FileTransfer *fileTransfer, QXmppTransferJob *job);
 
     QXmppClient *m_client = nullptr;

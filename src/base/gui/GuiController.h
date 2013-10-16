@@ -8,6 +8,7 @@
 #include "common.h"
 #include "base/ApplicationController.h"
 
+#include "AccountList.h"
 #include "ContactList.h"
 #include "windows/AccountsWindow.h"
 #include "windows/ChatWindow.h"
@@ -17,6 +18,7 @@
 class ApplicationController;
 class ContactListWindow;
 class AccountsWindow;
+class AccountList;
 
 class GuiController : public QObject
 {
@@ -25,6 +27,7 @@ public:
     explicit GuiController(ApplicationController *m_app = 0);
     
     ChatWindow *chatWindowForSession(ChatSession *session);
+    AccountList *accountList();
 
 signals:
     void terminated();
@@ -39,13 +42,10 @@ public slots:
     void toggleStatusIcon(bool forceStatus);
 
 public slots:
-
     void showAccountsWindow();
     void showAboutDialog();
     void showAddContactDialog();
     void trayMenuTriggered(QSystemTrayIcon::ActivationReason reason);
-    
-    void handleError();
     
 public slots:
     void confirmContact(Contact *Contact);
@@ -57,6 +57,8 @@ private:
 
 private:
     QSystemTrayIcon *m_trayIcon;
+
+    AccountList *m_accountList;
 
     ApplicationController *m_app = nullptr;
     ContactListWindow *m_contactListWindow = nullptr;

@@ -38,6 +38,11 @@ AccountManager *ApplicationController::accountManager()
     return m_accountManager;
 }
 
+GuiController *ApplicationController::guiController()
+{
+    return m_gui;
+}
+
 QList<QString> ApplicationController::protocolPluginNames() const
 {
     return protocolPlugins.keys();

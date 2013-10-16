@@ -42,6 +42,9 @@ public slots:
     void toggleIcon(bool forceStatus = false);
 
 public slots:
+    void sessionEndedSlot();
+
+public slots:
     //void messageReceived(ChatMessage *msg);
     bool eventFilter(QObject *o, QEvent *e) override;
 
@@ -51,7 +54,6 @@ public slots:
     void showEvent(QShowEvent *e) override;
     void focusInEvent(QFocusEvent *e) override;
     void closeEvent(QCloseEvent *e) override;
-    
 
 private slots:
     void textChangedSlot();

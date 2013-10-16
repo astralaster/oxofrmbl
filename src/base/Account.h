@@ -11,14 +11,11 @@
 
 #include "ChatSession.h"
 #include "ChatMessage.h"
-#include "MessageHandler.h"
 #include "FileTransfer.h"
 
 class ChatSession;
 class ChatMessage;
 class FileTransfer;
-
-class MessageHandler;
 
 class Account : public Person
 {
@@ -34,6 +31,7 @@ public:
     ChatSession *session(const QString &contactId);
     QList<ChatSession*> sessions(const QRegExp &contatcIdPattern);
     QMap<QString, ChatSession*> sessions();
+
     Contact *contact(const QString &id);
     QList<Contact*> contacts();
 
@@ -89,9 +87,6 @@ public slots:
 
     virtual ChatSession *startSession(Contact *contact);
     virtual void endSession(ChatSession *session);
-    
-    virtual void installMessageHandler(MessageHandler *handler);
-    virtual void removeMessageHandler(MessageHandler *handler);
 
 protected slots:
     virtual void clearContacts();
@@ -102,7 +97,6 @@ private:
     bool active = true;
 
     QList<Contact*> m_contacts;
-    QList<MessageHandler*> m_messageHandlers;
     QMap<QString, ChatSession*> m_chatSessions;
 };
 

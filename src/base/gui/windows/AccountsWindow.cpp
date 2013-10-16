@@ -19,7 +19,7 @@ AccountsWindow::AccountsWindow(ApplicationController *app, QWidget *parent) :
     ui->setupUi(this);
 
     ui->accountsList->installEventFilter(this);
-    ui->accountsList->setModel(app->accountManager());
+    ui->accountsList->setModel(app->guiController()->accountList());
 
     connect(ui->accountsList, &QListView::doubleClicked, this, &AccountsWindow::openAccountAtIndex);
 }
@@ -100,7 +100,6 @@ void AccountsWindow::on_addAccount_clicked()
     
     ui->addAccount->setMenu(menu);
     ui->addAccount->showMenu();
-    
 }
 
 void AccountsWindow::on_removeAccount_clicked()

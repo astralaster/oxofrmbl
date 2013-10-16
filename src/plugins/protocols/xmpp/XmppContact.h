@@ -15,8 +15,6 @@ public:
     QString displayName() const override;
     QString id() const;
 
-    static QStringList parseJabberId(const QString jid);
-
 public slots:
     void addResource(const QString &resource);
     void setJid(const QString &jid);

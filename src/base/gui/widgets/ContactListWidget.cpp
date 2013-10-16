@@ -28,7 +28,7 @@ void ContactListWidget::removeSelectedContact()
 
 void ContactListWidget::removeContactAtIndex(const QModelIndex &index)
 {
-    auto contact = contactList->getContact(index.row());
+    auto contact = contactList->contactAt(index.row());
     auto text = QString("Are you sure, that you want to delete %1?").arg(contact->id());
     
     if(QMessageBox::question(this, "Delete Contact", text) == QMessageBox::Yes) {
@@ -38,7 +38,7 @@ void ContactListWidget::removeContactAtIndex(const QModelIndex &index)
 
 void ContactListWidget::openContactAtIndex(const QModelIndex &index)
 {
-    auto contact = contactList->getContact(index.row());
+    auto contact = contactList->contactAt(index.row());
 
     contact->account()->startSession(contact);
 }

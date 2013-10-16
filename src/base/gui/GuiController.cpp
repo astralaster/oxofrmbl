@@ -40,6 +40,8 @@ GuiController::GuiController(ApplicationController *app) :
     connect(quitShortcut, &QShortcut::activated, this, &GuiController::quit);
     connect(m_trayIcon, &QSystemTrayIcon::activated, this, &GuiController::trayMenuTriggered);
 
+    m_accountList = new AccountList(app->accountManager());
+
     connect(m_contactListWindow, &ContactListWindow::statusChanged, app->accountManager(), &AccountManager::changeStatus);
     connect(m_contactListWindow, &ContactListWindow::statusChanged, this, &GuiController::updateStatus);
 
@@ -51,6 +53,11 @@ GuiController::GuiController(ApplicationController *app) :
 ChatWindow *GuiController::chatWindowForSession(ChatSession *session)
 {
     return m_chatWindows.contains(session) ? m_chatWindows[session] : nullptr;
+}
+
+AccountList *GuiController::accountList()
+{
+    return m_accountList;
 }
 
 void GuiController::show()
@@ -138,7 +145,7 @@ void GuiController::showAddContactDialog()
         return;
     }
 
-    auto dialog = new AddContactDialog(m_app->accountManager());
+    auto dialog = new AddContactDialog(m_accountList);
     
     if(dialog->exec() == QDialog::Accepted)
     {
@@ -165,11 +172,6 @@ void GuiController::trayMenuTriggered(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
-void GuiController::handleError()
-{
-    //QMessageBox::critical(m_contactListWindow, "An error occured", "?");
-}
-
 void GuiController::confirmContact(Contact *c)
 {
     auto text = QString("Add %1 as your contact?").arg(c->displayName());
@@ -186,8 +188,6 @@ void GuiController::addAccount(Account *account)
 {
     connect(account, &Account::sessionStarted,   this, &GuiController::startSession);
     connect(account, &Account::sessionActivated, this, &GuiController::activateSession);
-    
-    connect(account, &Account::error, this, &GuiController::handleError);
     
     connect(account, &Account::contactRequestReceived, this, &GuiController::confirmContact);
     connect(account, &Account::statusChanged, this, &GuiController::updateStatus);

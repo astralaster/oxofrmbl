@@ -15,6 +15,7 @@ ChatSession::ChatSession(Contact *contact, Account *account) : QObject(account),
 
 ChatSession::~ChatSession()
 {
+    qDebug() << "~ChatSession";
 }
 
 void ChatSession::sendMessage(ChatMessage *msg)

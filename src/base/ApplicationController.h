@@ -25,6 +25,7 @@ public:
     explicit ApplicationController(QObject *parent = nullptr);
 
     AccountManager *accountManager();
+    GuiController *guiController();
     
     QList<QString> protocolPluginNames() const;
     ProtocolPlugin *protocolPlugin(const QString &protocol);

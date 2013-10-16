@@ -1,7 +1,5 @@
 #include <QStringList>
 
-
-
 #include "XmppContact.h"
 
 XmppContact::XmppContact(Account *account, const QString &jid) :
@@ -16,25 +14,12 @@ XmppContact::XmppContact(Account *account, const QString &jid, const QList<QStri
 
 QString XmppContact::displayName() const
 {
-    return id();// + (m_resource.isEmpty() ? "" : "/"+m_resource);
+    return id();
 }
 
 QString XmppContact::id() const
 {
-    return m_jid;// parseJabberId(m_jid)[0] +"@"+ parseJabberId(m_jid)[1];
-}
-
-QStringList XmppContact::parseJabberId(const QString jid)
-{
-    QRegExp rxp("(.+)@(.+)/(.+)");
-
-    if(!rxp.exactMatch(jid)) {
-        rxp.setPattern("(.+)@(.+)");
-    }
-
-    rxp.indexIn(jid);
-
-    return QStringList({rxp.cap(1), rxp.cap(2), rxp.cap(3)});
+    return m_jid;
 }
 
 void XmppContact::addResource(const QString &resource)

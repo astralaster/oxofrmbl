@@ -1,9 +1,7 @@
 #include "AddContactDialog.h"
 #include "ui_AddContactDialog.h"
 
-#include "base/AccountManager.h"
-
-AddContactDialog::AddContactDialog(AccountManager *accounts, QWidget *parent) :
+AddContactDialog::AddContactDialog(AccountList *accounts, QWidget *parent) :
     QDialog(parent), accounts(accounts),
     ui(new Ui::AddContactDialog)
 {
@@ -23,6 +21,6 @@ QString AddContactDialog::getId() const
 
 Account *AddContactDialog::getAccount()
 {
-    auto manager = qobject_cast<AccountManager*>(ui->accountComboBox->model());
-    return manager->account(ui->accountComboBox->currentIndex());
+    auto manager = qobject_cast<AccountList*>(ui->accountComboBox->model());
+    return manager->accountAt(ui->accountComboBox->currentIndex());
 }

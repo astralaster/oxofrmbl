@@ -24,11 +24,12 @@ HEADERS += \
     ChatSession.h \
     Status.h \
     gui/StatusIcon.h \
-    MessageHandler.h \
     #otr/OtrMessageHandler.h \
     gui/windows/AddContactDialog.h \
     gui/windows/TabbedChatWindow.h \
-    FileTransfer.h
+    FileTransfer.h \
+    gui/windows/FileTransfersDialog.h \
+    gui/AccountList.h
 
 SOURCES += \
     ApplicationController.cpp \
@@ -40,11 +41,12 @@ SOURCES += \
     Status.cpp \
     gui/StatusIcon.cpp \
     Person.cpp \
-    MessageHandler.cpp \
     #otr/OtrMessageHandler.cpp \
     gui/windows/AddContactDialog.cpp \
     gui/windows/TabbedChatWindow.cpp \
-    FileTransfer.cpp
+    FileTransfer.cpp \
+    gui/windows/FileTransfersDialog.cpp \
+    gui/AccountList.cpp
 
 SOURCES += \
     gui/GuiController.cpp \
@@ -70,7 +72,8 @@ FORMS += \
     gui/windows/ChatWindow.ui \
     gui/windows/AccountsWindow.ui \
     gui/windows/AddContactDialog.ui \
-    gui/windows/TabbedChatWindow.ui
+    gui/windows/TabbedChatWindow.ui \
+    gui/windows/FileTransfersDialog.ui
 
 CONFIG(debug, debug|release) {
     DEFINES += 'OXOFRMBL_LIBDIR=\"QCoreApplication::applicationDirPath()\"'

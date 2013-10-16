@@ -7,9 +7,15 @@ Person::Person(QObject *parent) : Person("", parent)
 
 }
 
-Person::Person(const QString &id, QObject *parent) : QObject(parent), m_id(id), m_status(new Status())
+Person::Person(const QString &id, QObject *parent) :
+    QObject(parent), m_id(id), m_status(new Status(this))
 {
     
+}
+
+Person::~Person()
+{
+    qDebug() << "~Person";
 }
 
 QString Person::id() const

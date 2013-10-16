@@ -10,18 +10,16 @@
 #include "Account.h"
 class ApplicationController;
 
-class AccountManager : public QAbstractListModel
+class AccountManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit AccountManager(ApplicationController *app, QObject *parent = nullptr);
+    explicit AccountManager(ApplicationController *app);
 
     Account *account(int index);
     QList<Account*> accounts() const;
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    
+
 signals:
     void changed(bool saveData);
     void accountRemoved(Account *account);

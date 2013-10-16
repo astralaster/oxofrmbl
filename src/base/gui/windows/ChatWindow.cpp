@@ -25,8 +25,7 @@ ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
     ui->messageEdit->installEventFilter(this);
 
     setFocusProxy(ui->messageEdit);
-    //ui->messageEdit->setFocus();
-    
+
     ui->splitter->setSizes(QList<int>({0, 50}));
     
     auto contact = session->contact();
@@ -41,12 +40,16 @@ ChatWindow::ChatWindow(ChatSession *session, QWidget *parent) :
     connect(session, &ChatSession::fileReceived, this, &ChatWindow::fileReceivedSlot);
     connect(session, &ChatSession::chatStateChanged, ui->messageLog, &ChatLogWidget::updateChatState);
 
+    connect(session, &ChatSession::destroyed, this, &ChatWindow::sessionEndedSlot);
+
     connect(contact, &Contact::statusChanged, this, &ChatWindow::updateContactStatus);
     
-    connect(ui->messageEdit, &QTextEdit::textChanged, this, &ChatWindow::textChangedSlot);
+    connect(ui->messageEdit, &QPlainTextEdit::textChanged, this, &ChatWindow::textChangedSlot);
     
     m_typingTimeout.setSingleShot(true);
     m_pausingTimeout.setSingleShot(true);
+    m_typingTimeout.setInterval(2000);
+    m_pausingTimeout.setInterval(2500);
 
     m_newMessageBlink.setInterval(600);
 
@@ -103,7 +106,6 @@ void ChatWindow::fileReceivedSlot(FileTransfer *transfer)
 void ChatWindow::updateContactStatus(Status *status)
 {
     setWindowIcon(StatusIcon::forStatus(status));
-    emit iconChanged(windowIcon());
 }
 
 void ChatWindow::typingPausedSlot()
@@ -115,11 +117,20 @@ void ChatWindow::toggleIcon(bool forceStatus)
 {
     QIcon statusIcon = StatusIcon::forStatus(m_session->contact()->status());
     
-    if(forceStatus || windowIcon().name() != statusIcon.name()) {
+    if(forceStatus || windowIcon().name() != statusIcon.name())
+    {
         setWindowIcon(statusIcon);
-    } else {
+    }
+    else
+    {
         setWindowIcon(QIcon::fromTheme("mail-message-new"));
     }
+}
+
+void ChatWindow::sessionEndedSlot()
+{
+    m_session = nullptr;
+    close();
 }
 
 bool ChatWindow::eventFilter(QObject *o, QEvent *e)
@@ -207,7 +218,11 @@ void ChatWindow::closeEvent(QCloseEvent *e)
     m_typingTimeout.stop();
     
     emit stateChanged(ChatSession::State::Gone);
-    m_session->account()->endSession(m_session);
+
+    if(m_session != nullptr)
+    {
+        m_session->account()->endSession(m_session);
+    }
     
     e->accept();
     QWidget::closeEvent(e);
@@ -241,8 +256,8 @@ void ChatWindow::textChangedSlot()
             emit stateChanged(ChatSession::State::Composing);
         }
         
-        m_typingTimeout.start(1000);
-        m_pausingTimeout.start(5000);
+        m_typingTimeout.start();
+        m_pausingTimeout.start();
     }
 }
 
@@ -253,7 +268,8 @@ void ChatWindow::sendMessage()
     
     QString body = ui->messageEdit->toPlainText();
 
-    if(!body.isEmpty()) {
+    if(!body.isEmpty())
+    {
         auto msg = new ChatMessage(m_session, false, body);
         ui->messageLog->addMessage(msg);
 

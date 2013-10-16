@@ -38,7 +38,7 @@ void ChatLogWidget::addMessage(ChatMessage *msg)
         QString("<span style='color: red '>(%1) <b>%2</b></span>").arg(time).arg(msg->contact()->displayName()) :
         QString("<span style='color: blue'>(%1) <b>%2</b></span>").arg(time).arg(msg->account()->displayName());
 
-    QString message = msg->body();
+    QString message = msg->body().toHtmlEscaped();
 
     append(sender+": "+message);
 }

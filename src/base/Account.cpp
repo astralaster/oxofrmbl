@@ -7,7 +7,6 @@
 #include "ChatMessage.h"
 #include "Contact.h"
 #include "ChatSession.h"
-#include "MessageHandler.h"
 
 Account::Account(QObject *parent) : Person(parent)
 {
@@ -15,6 +14,7 @@ Account::Account(QObject *parent) : Person(parent)
 
 Account::~Account()
 {
+    qDebug() << "~Account";
 }
 
 ChatSession *Account::session(const QString &contactId)
@@ -153,18 +153,12 @@ ChatSession *Account::startSession(Contact *contact)
 
 void Account::endSession(ChatSession *session)
 {
-    m_chatSessions.remove(session->contact()->id());
-    delete session;
-}
+    auto contact = session->contact();
 
-void Account::installMessageHandler(MessageHandler *handler)
-{
-    m_messageHandlers.append(handler);
-}
-
-void Account::removeMessageHandler(MessageHandler *handler)
-{
-    m_messageHandlers.removeOne(handler);
+    if(contact != nullptr) {
+        m_chatSessions.remove(contact->id());
+        delete session;
+    }
 }
 
 void Account::clearContacts()

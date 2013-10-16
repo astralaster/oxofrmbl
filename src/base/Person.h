@@ -12,6 +12,7 @@ class Person : public QObject {
 public:
     explicit Person(QObject *parent = nullptr);
     explicit Person(const QString &id, QObject *parent = nullptr);
+    ~Person();
     
     virtual QString id() const;
     virtual QString displayName() const;
